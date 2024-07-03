@@ -62,4 +62,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // TODO: add Favorites
+    // TODO: add Watched with time code
 }
