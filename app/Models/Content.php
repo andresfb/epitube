@@ -19,6 +19,7 @@ class Content extends Model implements HasMedia
         'title',
         'active',
         'og_path',
+        'og_file',
         'source',
         'source_id',
         'notes',
@@ -51,5 +52,10 @@ class Content extends Model implements HasMedia
             ->width(600)
             ->sharpen(8)
             ->performOnCollections('thumbnail');
+    }
+
+    public static function found(string $hash): bool
+    {
+        return self::whereHash($hash)->exists();
     }
 }

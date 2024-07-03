@@ -17,6 +17,8 @@ return new class extends Migration
             $table->text('notes');
             $table->softDeletes();
             $table->timestamps();
+
+            $table->index(['hash']);
         });
     }
 
