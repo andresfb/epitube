@@ -15,13 +15,12 @@ class Content extends Model implements HasMedia
     use HasTags;
 
     protected $fillable = [
-        'hash',
+        'name_hash',
+        'file_hash',
         'title',
         'active',
         'og_path',
         'og_file',
-        'source',
-        'source_id',
         'notes',
     ];
 
@@ -39,23 +38,22 @@ class Content extends Model implements HasMedia
             ->singleFile()
             ->useDisk('media');
 
-        $this->addMediaCollection('thumbnail')
-            ->acceptsMimeTypes([
-                'image/jpeg',
-                'image/png',
-                'image/heic',
-            ])->singleFile()
+        $this->addMediaCollection('transcoded')
+            ->acceptsMimeTypes(['video/mp4'])
+            ->singleFile()
             ->useDisk('media');
 
         $this->addMediaConversion('thumb')
             ->format('jpg')
-            ->width(600)
-            ->sharpen(8)
-            ->performOnCollections('thumbnail');
+            ->withResponsiveImages()
+            ->extractVideoFrameAtSecond(20)
+            ->performOnCollections('videos', 'transcoded');
     }
 
     public static function found(string $hash): bool
     {
-        return self::whereHash($hash)->exists();
+        return self::where('name_hash', $hash)
+            ->orWhere('file_hash', $hash)
+            ->exists();
     }
 }

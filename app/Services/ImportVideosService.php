@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\ImportVideoJob;
 use App\Models\Content;
 use App\Models\MimeType;
 use Exception;
@@ -30,7 +31,14 @@ class ImportVideosService
             throw new \RuntimeException("No files found to import");
         }
 
-        //TODO: send the files to the import video job
+        foreach ($files as $hash => $file) {
+            ImportVideoJob::dispatch([
+                'hash' => $hash,
+                'file' => $file,
+            ])
+            ->onQueue('media')
+            ->delay(now()->addSeconds(15));
+        }
     }
 
     private function scanFiles(): array

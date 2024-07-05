@@ -10,15 +10,16 @@ return new class extends Migration
     {
         Schema::create('contents', static function (Blueprint $table) {
             $table->id();
-            $table->string('hash');
+            $table->string('name_hash');
+            $table->string('file_hash');
             $table->string('title');
             $table->boolean('active');
             $table->text('og_path');
-            $table->text('notes');
+            $table->text('notes')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
-            $table->index(['hash']);
+            $table->index(['name_hash', 'file_hash'], 'hashes');
         });
     }
 

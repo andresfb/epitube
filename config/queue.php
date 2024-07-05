@@ -72,6 +72,14 @@ return [
             'after_commit' => false,
         ],
 
+        'encode' => [
+            'driver' => 'redis',
+            'connection' => 'encode',
+            'queue' => env('ENCODE_REDIS_QUEUE', 'primus'),
+            'retry_after' => 5555,
+            'block_for' => 5,
+        ],
+
     ],
 
     /*

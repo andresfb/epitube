@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Services\ImportVideosService;
+use App\Services\ImportVideoService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,27 +11,27 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ImportVideosJob implements ShouldQueue
+class ImportVideoJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    public function __construct()
+    public function __construct(private readonly array $fileData)
     {
-        $this->queue = 'ingestor';
     }
 
     /**
      * @throws Exception
      */
-    public function handle(ImportVideosService $service): void
+    public function handle(ImportVideoService $service): void
     {
         try {
-            $service->execute();
+            $service->execute($this->fileData);
         } catch (Exception $e) {
-            Log::error($e->getMessage());
+            Log::error("Error imporing file: {$this->fileData['file']}: {$e->getMessage()}");
+
             throw $e;
         }
     }

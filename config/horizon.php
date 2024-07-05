@@ -256,6 +256,7 @@ return [
                 'timeout' => 900,
                 'tries' => 1,
             ],
+
         ],
     ],
 ];

@@ -165,6 +165,14 @@ return [
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
 
+        'encode' => [
+            'url' => env('ENCODE_REDIS_URL'),
+            'host' => env('ENCODE_REDIS_HOST', '127.0.0.1'),
+            'password' => env('ENCODE_REDIS_PASSWORD'),
+            'port' => env('ENCODE_REDIS_PORT', '6379'),
+            'database' => env('ENCODE_REDIS_DATABASE', '5'),
+        ],
+
     ],
 
 ];

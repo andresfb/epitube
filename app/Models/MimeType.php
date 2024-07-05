@@ -16,6 +16,8 @@ class MimeType extends Model
 
     private static array $mimeList = [];
 
+    private static array $transcodableMimeList = [];
+
     private static array $extensionList = [];
 
     public static function list(): array
@@ -30,6 +32,7 @@ class MimeType extends Model
                 now()->addMinutes(30),
                 static function () {
                     return self::select('type')
+                        ->groupBy('type')
                         ->pluck('type')
                         ->toArray();
                 });
@@ -49,11 +52,33 @@ class MimeType extends Model
                 now()->addMinutes(30),
                 static function () {
                     return self::where('extension', '!=', '*')
+                        ->groupBy('extension')
                         ->pluck('extension')
                         ->toArray();
                 }
             );
 
         return self::$extensionList;
+    }
+
+    public static function transcode(): array
+    {
+        if (!empty(self::$transcodableMimeList)) {
+            return self::$transcodableMimeList;
+        }
+
+        self::$transcodableMimeList = Cache::tags('transcodable-list-of-mime-types')
+            ->remember(
+                md5(__CLASS__.__FUNCTION__),
+                now()->addMinutes(30),
+                static function () {
+                    return self::select('type')
+                        ->where('transcode', true)
+                        ->groupBy('type')
+                        ->pluck('type')
+                        ->toArray();
+                });
+
+        return self::$transcodableMimeList;
     }
 }

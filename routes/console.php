@@ -9,5 +9,5 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-Schedule::job(new ImportVideosJob(), 'ingestor')
+Schedule::job(new ImportVideosJob())
     ->twiceDaily(9, 21);

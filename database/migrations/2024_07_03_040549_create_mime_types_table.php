@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('extension', 10);
             $table->string('type', 150);
+            $table->boolean('transcode')->default(false);
         });
     }
 
