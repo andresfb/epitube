@@ -46,7 +46,7 @@ class Content extends Model implements HasMedia
         $this->addMediaConversion('thumb')
             ->format('jpg')
             ->withResponsiveImages()
-            ->extractVideoFrameAtSecond(20)
+            ->extractVideoFrameAtSecond(25)
             ->performOnCollections('videos', 'transcoded');
     }
 

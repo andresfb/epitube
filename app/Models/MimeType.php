@@ -16,6 +16,8 @@ class MimeType extends Model
 
     private static array $mimeList = [];
 
+    private static array $hlsMimeList = [];
+
     private static array $transcodableMimeList = [];
 
     private static array $extensionList = [];
@@ -80,5 +82,26 @@ class MimeType extends Model
                 });
 
         return self::$transcodableMimeList;
+    }
+
+    public static function canHls(): array
+    {
+        if (!empty(self::$hlsMimeList)) {
+            return self::$hlsMimeList;
+        }
+
+        self::$hlsMimeList = Cache::tags('hls-list-of-mime-types')
+            ->remember(
+                md5(__CLASS__.__FUNCTION__),
+                now()->addMinutes(30),
+                static function () {
+                    return self::select('type')
+                        ->where('transcode', false)
+                        ->groupBy('type')
+                        ->pluck('type')
+                        ->toArray();
+                });
+
+        return self::$hlsMimeList;
     }
 }

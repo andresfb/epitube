@@ -9,6 +9,7 @@ use FFMpeg\FFProbe;
 use FFMpeg\FFProbe\DataMapping\Stream;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\Process\Process;
 
 class TranscodeVideoService
 {
@@ -29,8 +30,7 @@ class TranscodeVideoService
     {
         Log::info('Starting '.__CLASS__.' execute');
 
-        $this->media = Media::where('id', $mediaId)
-            ->firstOrFail();
+        $this->media = Media::findOrFail($mediaId);
 
         try {
             $this->fullPath = $this->media->getPath();
@@ -39,16 +39,15 @@ class TranscodeVideoService
 
             Log::info("Checking for {$this->flag} file");
             if (Storage::disk(self::TRANSCODE_DISK)->exists($this->flag)) {
-                throw new \RuntimeException("{$this->media->model_id} | {$this->media->name} Video is being Transcoded");
+                throw new \RuntimeException("{$this->media->model_id} | {$this->media->name} Transcode process already running.");
             }
 
             Log::info("Creating $this->flag file");
-
             $this->createFlag();
 
             Log::info("Executing Transcoding process");
-
             $info = $this->transcode();
+
             $this->addNewMedia($info);
         } finally {
             $this->deleteFlag();
@@ -65,18 +64,22 @@ class TranscodeVideoService
             pathinfo($this->fullPath, PATHINFO_FILENAME)
         );
 
-        // TODO: test the transcode command manually on a wmv and avi videos
         $baseCmd = config('media-library.ffmpeg_path').' -y -v error -i "%s" -q:v 0 -ar 44100 -ab 128k "%s"';
         $cmd = sprintf($baseCmd, $this->fullPath, $outputFile);
 
         Log::info("Transcoding ffmpeg running command: $cmd");
 
-        shell_exec($cmd);
+        Process::fromShellCommandline($cmd)
+            ->setTimeout(0)
+            ->mustRun();
+
+        Log::info('Transcoding video finished');
 
         $this->checkEncodedFile($outputFile);
-        $height = $this->getVideoHeight();
+        [$width, $height] = $this->getVideoSize();
 
         return [
+            'width' => $width,
             'height'   => $height,
             'out_file' => $outputFile,
         ];
@@ -114,7 +117,7 @@ class TranscodeVideoService
 
         // comparing master and encoded durations with a 2% threshold
         $this->duration = (int) round($probe->format($file)->get('duration'));
-        $originalDuration = (int) $this->media->getCustomProperty('height');
+        $originalDuration = (int) $this->media->getCustomProperty('duration');
         $threshold = 0.05 * $originalDuration;
         $difference = abs($originalDuration - $this->duration);
         if ($difference > $threshold) {
@@ -133,7 +136,7 @@ class TranscodeVideoService
         throw new \RuntimeException("$fileType file is not a video");
     }
 
-    private function getVideoHeight(): int
+    private function getVideoSize(): array
     {
         $width = (int) $this->video->get('width', 1280);
         $height =  (int) $this->video->get('height', 720);
@@ -144,7 +147,7 @@ class TranscodeVideoService
             $height -= $width;
         }
 
-        return $height;
+        return [$width, $height];
     }
 
     /**
@@ -156,9 +159,12 @@ class TranscodeVideoService
             ->firstOrFail();
 
         $content->addMedia($info['out_file'])
+            ->withProperties(['name' => $this->media->name])
             ->withCustomProperties([
+                'width' => $info['width'],
                 'height' => $info['height'],
                 'duration' => $this->duration,
+                'owner_id' => $this->media->id,
             ])
             ->toMediaCollection('transcoded');
     }
@@ -171,5 +177,7 @@ class TranscodeVideoService
     private function deleteFlag(): void
     {
         Storage::disk(self::TRANSCODE_DISK)->delete($this->flag);
+
+        Storage::disk(self::TRANSCODE_DISK)->deleteDirectory($this->tempPath);
     }
 }

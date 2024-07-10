@@ -18,7 +18,7 @@ class ImportVideoService
             return;
         }
 
-        [$duration, $height] = $this->getVideoInfo($fileData['file']);
+        [$width, $height, $duration] = $this->getVideoInfo($fileData['file']);
 
         $fileInfo = pathinfo($fileData['file']);
         $fullName = $this->parseFileName($fileInfo);
@@ -38,6 +38,7 @@ class ImportVideoService
         // TODO: remove the ->preservingOriginal() flag
         $content->addMedia($fileData['file'])
             ->withCustomProperties([
+                'width' => $width,
                 'height' => $height,
                 'duration' => $duration,
             ])
@@ -61,13 +62,14 @@ class ImportVideoService
         }
 
         $height =  (int) $video->get('height', 720);
+        $width = (int) $video->get('width', 720);
         $duration = (int) round($probe->format($file)->get('duration'));
 
         if ($duration < 10) {
             throw new \RuntimeException("Video is too short");
         }
 
-        return [$height, $duration];
+        return [$width, $height, $duration];
     }
 
     private function parseFileName(array $fileInfo): string
