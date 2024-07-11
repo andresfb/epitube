@@ -30,7 +30,7 @@ class GenerateHlsVideosJob implements ShouldQueue
         try {
             $service->execute($this->mediaId);
         } catch (Exception $e) {
-            Log::error("Error transcoding file for Media Id: {$this->mediaId}: {$e->getMessage()}");
+            Log::error("HLS generation error for Media Id: {$this->mediaId}: {$e->getMessage()}");
 
             throw $e;
         }

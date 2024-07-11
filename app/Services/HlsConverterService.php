@@ -25,7 +25,6 @@ class HlsConverterService
 {
     public const RES_360P  =  '360p';
     public const RES_480P  =  '480p';
-    public const RES_540P  =  '540p';
     public const RES_720P  =  '720p';
     public const RES_1080P = '1080p';
     public const RES_1440P = '1440p';
@@ -36,7 +35,6 @@ class HlsConverterService
         // name => [width, height, video-bitrate, audio-bitrate]
         self::RES_360P =>  [-2,  360,   900,  96],
         self::RES_480P =>  [-2,  480,  1600, 128],
-        self::RES_540P =>  [-2,  540,  2500, 128],
         self::RES_720P =>  [-2,  720,  3200, 192],
         self::RES_1080P => [-2, 1080,  5300, 192],
         self::RES_1440P => [-2, 1440, 11000, 192],
@@ -79,7 +77,10 @@ class HlsConverterService
 
         $media->markAsConversionGenerated('hls');
 
-        $diskRelativePath = "/$this->filesystem->getConversionDirectory($media).'hls/playlist.m3u8'";
+        $diskRelativePath = "/{$this->filesystem->getConversionDirectory($media)}.'hls/playlist.m3u8'";
+
+        // todo: save the list of generated resolutions
+
         $media->setCustomProperty('hls', $diskRelativePath);
 
         unlink($copiedOriginalFile);
@@ -132,6 +133,8 @@ class HlsConverterService
             ->mustRun();
 
         Log::info('HLS conversion finished');
+
+        // todo: list the generated resolutions.
 
         return $output.'/playlist.m3u8';
     }

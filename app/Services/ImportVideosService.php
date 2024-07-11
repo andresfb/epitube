@@ -36,7 +36,7 @@ class ImportVideosService
                 'hash' => $hash,
                 'file' => $file,
             ])
-            ->onQueue('media')
+            ->onQueue('ingestor')
             ->delay(now()->addSeconds(15));
         }
     }
@@ -67,7 +67,7 @@ class ImportVideosService
             }
 
             $fullFile = $file->getFileInfo()->getPathname();
-            $hash = hash_file('md5', $fullFile);
+            $hash = hash('md5', $fullFile);
             if (array_key_exists($hash, $files)) {
                 continue;
             }

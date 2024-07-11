@@ -36,7 +36,7 @@ class ConvertToHlsListener implements ShouldQueue
             }
 
             GenerateHlsVideosJob::dispatch($media->id)
-                ->onQueue('media')
+                ->onQueue('hls')
                 ->delay(now()->addSeconds(15));
         } catch (Exception $e) {
             Log::error("Error transcoding Media Id: {$event->media->id}: {$e->getMessage()}");

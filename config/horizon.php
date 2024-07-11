@@ -203,7 +203,7 @@ return [
                 'balance' => 'auto',
                 'minProcesses' => 1,
                 'maxProcesses' => 5,
-                'tries' => 1,
+                'tries' => 2,
             ],
 
             'ingestor-supervisor' => [
@@ -225,6 +225,29 @@ return [
                 'timeout' => 900,
                 'tries' => 1,
             ],
+
+            'encoder-supervisor' => [
+                'connection' => 'redis',
+                'queue' => ['encode'],
+                'balance' => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
+                'memory' => 256,
+                'timeout' => 5400,
+                'tries' => 1,
+            ],
+
+            'hls-supervisor' => [
+                'connection' => 'redis',
+                'queue' => ['hls'],
+                'balance' => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
+                'memory' => 256,
+                'timeout' => 5400,
+                'tries' => 1,
+            ],
+
         ],
 
         'local' => [
@@ -234,7 +257,7 @@ return [
                 'balance' => 'auto',
                 'minProcesses' => 1,
                 'maxProcesses' => 2,
-                'tries' => 1,
+                'tries' => 2,
             ],
 
             'ingestor-supervisor' => [
@@ -254,6 +277,28 @@ return [
                 'minProcesses' => 1,
                 'maxProcesses' => 3,
                 'timeout' => 900,
+                'tries' => 1,
+            ],
+
+            'encoder-supervisor' => [
+                'connection' => 'redis',
+                'queue' => ['encode'],
+                'balance' => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
+                'memory' => 256,
+                'timeout' => 5400,
+                'tries' => 1,
+            ],
+
+            'hls-supervisor' => [
+                'connection' => 'redis',
+                'queue' => ['hls'],
+                'balance' => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
+                'memory' => 256,
+                'timeout' => 5400,
                 'tries' => 1,
             ],
 

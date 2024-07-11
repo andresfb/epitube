@@ -36,8 +36,7 @@ class TranscodeMediaListener implements ShouldQueue
             $media->setCustomProperty('transcode', true);
 
             TranscodeVideoJob::dispatch($media->id)
-                ->onConnection('encode')
-                ->onQueue('una')
+                ->onQueue('encode')
                 ->delay(now()->addSeconds(15));
         } catch (Exception $e) {
             Log::error("Error transcoding Media Id: {$event->media->id}: {$e->getMessage()}");
