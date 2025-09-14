@@ -32,6 +32,7 @@ class ImportVideosJob implements ShouldQueue
             $service->execute();
         } catch (Exception $e) {
             Log::error($e->getMessage());
+
             throw $e;
         }
     }

@@ -1,0 +1,21 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
+parameters:
+    checkModelProperties: false
+    reportUnmatchedIgnoredErrors: false
+    treatPhpDocTypesAsCertain: false
+
+    paths:
+        - app/
+
+    level: 6
+
+    ignoreErrors:
+        - identifier: missingType.generics
+        - identifier: missingType.iterableValue
+        - identifier: catch.neverThrown
+
+    excludePaths:
+        - ./configs/*.php

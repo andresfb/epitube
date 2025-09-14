@@ -47,12 +47,6 @@ return [
             'report' => false,
         ],
 
-        'media' => [
-            'driver' => 'local',
-            'root'   => env('MEDIA_STORAGE_PATH'),
-            'url'    => env('APP_URL').'/media',
-        ],
-
         'transcode' => [
             'driver' => 'local',
             'root' => storage_path('transcode'),

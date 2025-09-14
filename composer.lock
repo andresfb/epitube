@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ccd1771d7a4b2665bbc4c86ed94c78dc",
+    "content-hash": "a3dbbd6f6b9ea8105da3e956bfa25d35",
     "packages": [
         {
             "name": "brick/math",
@@ -7908,6 +7908,47 @@
             "time": "2025-04-30T06:54:44+00:00"
         },
         {
+            "name": "iamcal/sql-parser",
+            "version": "v0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iamcal/SQLParser.git",
+                "reference": "947083e2dca211a6f12fb1beb67a01e387de9b62"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/iamcal/SQLParser/zipball/947083e2dca211a6f12fb1beb67a01e387de9b62",
+                "reference": "947083e2dca211a6f12fb1beb67a01e387de9b62",
+                "shasum": ""
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^1.0",
+                "phpunit/phpunit": "^5|^6|^7|^8|^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "iamcal\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cal Henderson",
+                    "email": "cal@iamcal.com"
+                }
+            ],
+            "description": "MySQL schema parser",
+            "support": {
+                "issues": "https://github.com/iamcal/SQLParser/issues",
+                "source": "https://github.com/iamcal/SQLParser/tree/v0.6"
+            },
+            "time": "2025-03-17T16:59:46+00:00"
+        },
+        {
             "name": "jean85/pretty-package-versions",
             "version": "2.1.1",
             "source": {
@@ -7966,6 +8007,236 @@
                 "source": "https://github.com/Jean85/pretty-package-versions/tree/2.1.1"
             },
             "time": "2025-03-19T14:43:43+00:00"
+        },
+        {
+            "name": "laradumps/laradumps",
+            "version": "v4.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laradumps/laradumps.git",
+                "reference": "12c5862f4cb767e78b0e80a7795c6666b4a86334"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laradumps/laradumps/zipball/12c5862f4cb767e78b0e80a7795c6666b4a86334",
+                "reference": "12c5862f4cb767e78b0e80a7795c6666b4a86334",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/mail": "^10.0|^11.0|^12.0",
+                "illuminate/support": "^10.0|^11.0|^12.0",
+                "laradumps/laradumps-core": "^3.2.2",
+                "nunomaduro/termwind": "^1.15.1|^2.0.1",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "larastan/larastan": "^2.0|^3.0",
+                "laravel/framework": "^10.0|^11.0|^12.0",
+                "laravel/pint": "^1.17.2",
+                "livewire/livewire": "^3.5.6",
+                "mockery/mockery": "^1.6.12",
+                "orchestra/testbench-core": "^8.0|^9.4|^10.0",
+                "pestphp/pest": "^4.0.0|^3.7.0|^2.35.1",
+                "symfony/var-dumper": "^6.4.0|^7.1.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LaraDumps\\LaraDumps\\LaraDumpsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "LaraDumps\\LaraDumps\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Luan Freitas",
+                    "email": "luanfreitas10@protonmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "LaraDumps is a friendly app designed to boost your Laravel PHP coding and debugging experience.",
+            "homepage": "https://github.com/laradumps/laradumps",
+            "support": {
+                "issues": "https://github.com/laradumps/laradumps/issues",
+                "source": "https://github.com/laradumps/laradumps/tree/v4.5.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/luanfreitasdev",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-09-11T09:10:01+00:00"
+        },
+        {
+            "name": "laradumps/laradumps-core",
+            "version": "v3.2.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laradumps/laradumps-core.git",
+                "reference": "b5df14006570d16409f271db938a850f67ac78d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laradumps/laradumps-core/zipball/b5df14006570d16409f271db938a850f67ac78d7",
+                "reference": "b5df14006570d16409f271db938a850f67ac78d7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "nunomaduro/termwind": "^1.15|^2.0",
+                "php": "^8.1",
+                "ramsey/uuid": "^4.7.5",
+                "spatie/backtrace": "^1.5",
+                "symfony/console": "^5.4|^6.4|^7.0",
+                "symfony/finder": "^5.4|^6.4|^7.0",
+                "symfony/process": "^5.4|^6.4|^7.0",
+                "symfony/var-dumper": "^5.4|^6.4|^7.0",
+                "symfony/yaml": "^5.4|^6.4|^7.0"
+            },
+            "require-dev": {
+                "illuminate/support": "^10.46",
+                "laravel/pint": "^1.13.7",
+                "pestphp/pest": "^2.0|^3.0",
+                "phpstan/phpstan": "^1.10.50"
+            },
+            "bin": [
+                "bin/laradumps"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "LaraDumps\\LaraDumpsCore\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Luan Freitas",
+                    "email": "luanfreitas10@protonmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "LaraDumps is a friendly app designed to boost your Laravel / PHP coding and debugging experience.",
+            "homepage": "https://github.com/laradumps/laradumps-core",
+            "support": {
+                "issues": "https://github.com/laradumps/laradumps-core/issues",
+                "source": "https://github.com/laradumps/laradumps-core/tree/v3.2.6"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/luanfreitasdev",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-08-25T22:45:46+00:00"
+        },
+        {
+            "name": "larastan/larastan",
+            "version": "v3.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/larastan/larastan.git",
+                "reference": "2e653fd19585a825e283b42f38378b21ae481cc7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/larastan/larastan/zipball/2e653fd19585a825e283b42f38378b21ae481cc7",
+                "reference": "2e653fd19585a825e283b42f38378b21ae481cc7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "iamcal/sql-parser": "^0.6.0",
+                "illuminate/console": "^11.44.2 || ^12.4.1",
+                "illuminate/container": "^11.44.2 || ^12.4.1",
+                "illuminate/contracts": "^11.44.2 || ^12.4.1",
+                "illuminate/database": "^11.44.2 || ^12.4.1",
+                "illuminate/http": "^11.44.2 || ^12.4.1",
+                "illuminate/pipeline": "^11.44.2 || ^12.4.1",
+                "illuminate/support": "^11.44.2 || ^12.4.1",
+                "php": "^8.2",
+                "phpstan/phpstan": "^2.1.23"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^13",
+                "laravel/framework": "^11.44.2 || ^12.7.2",
+                "mockery/mockery": "^1.6.12",
+                "nikic/php-parser": "^5.4",
+                "orchestra/canvas": "^v9.2.2 || ^10.0.1",
+                "orchestra/testbench-core": "^9.12.0 || ^10.1",
+                "phpstan/phpstan-deprecation-rules": "^2.0.1",
+                "phpunit/phpunit": "^10.5.35 || ^11.5.15"
+            },
+            "suggest": {
+                "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
+            },
+            "type": "phpstan-extension",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "extension.neon"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Larastan\\Larastan\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Can Vural",
+                    "email": "can9119@gmail.com"
+                }
+            ],
+            "description": "Larastan - Discover bugs in your code without running it. A phpstan/phpstan extension for Laravel",
+            "keywords": [
+                "PHPStan",
+                "code analyse",
+                "code analysis",
+                "larastan",
+                "laravel",
+                "package",
+                "php",
+                "static analysis"
+            ],
+            "support": {
+                "issues": "https://github.com/larastan/larastan/issues",
+                "source": "https://github.com/larastan/larastan/tree/v3.7.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/canvural",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-09-10T19:42:11+00:00"
         },
         {
             "name": "laravel/boost",
@@ -9413,6 +9684,64 @@
             "time": "2025-08-30T15:50:23+00:00"
         },
         {
+            "name": "phpstan/phpstan",
+            "version": "2.1.25",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpstan.git",
+                "reference": "4087d28bd252895874e174d65e26b2c202ed893a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/4087d28bd252895874e174d65e26b2c202ed893a",
+                "reference": "4087d28bd252895874e174d65e26b2c202ed893a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan-shim": "*"
+            },
+            "bin": [
+                "phpstan",
+                "phpstan.phar"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPStan - PHP Static Analysis Tool",
+            "keywords": [
+                "dev",
+                "static analysis"
+            ],
+            "support": {
+                "docs": "https://phpstan.org/user-guide/getting-started",
+                "forum": "https://github.com/phpstan/phpstan/discussions",
+                "issues": "https://github.com/phpstan/phpstan/issues",
+                "security": "https://github.com/phpstan/phpstan/security/policy",
+                "source": "https://github.com/phpstan/phpstan-src"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/phpstan",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-09-12T14:26:42+00:00"
+        },
+        {
             "name": "phpunit/php-code-coverage",
             "version": "12.3.7",
             "source": {
@@ -9850,6 +10179,66 @@
                 }
             ],
             "time": "2025-09-03T06:25:17+00:00"
+        },
+        {
+            "name": "rector/rector",
+            "version": "2.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rectorphp/rector.git",
+                "reference": "c34cc07c4698f007a20dc5c99ff820089ae413ce"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/c34cc07c4698f007a20dc5c99ff820089ae413ce",
+                "reference": "c34cc07c4698f007a20dc5c99ff820089ae413ce",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0",
+                "phpstan/phpstan": "^2.1.18"
+            },
+            "conflict": {
+                "rector/rector-doctrine": "*",
+                "rector/rector-downgrade-php": "*",
+                "rector/rector-phpunit": "*",
+                "rector/rector-symfony": "*"
+            },
+            "suggest": {
+                "ext-dom": "To manipulate phpunit.xml via the custom-rule command"
+            },
+            "bin": [
+                "bin/rector"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Instant Upgrade and Automated Refactoring of any PHP code",
+            "homepage": "https://getrector.com/",
+            "keywords": [
+                "automation",
+                "dev",
+                "migration",
+                "refactoring"
+            ],
+            "support": {
+                "issues": "https://github.com/rectorphp/rector/issues",
+                "source": "https://github.com/rectorphp/rector/tree/2.1.7"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/tomasvotruba",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-09-10T11:13:58+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -10735,6 +11124,70 @@
                 }
             ],
             "time": "2025-02-07T05:00:38+00:00"
+        },
+        {
+            "name": "spatie/backtrace",
+            "version": "1.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/backtrace.git",
+                "reference": "8c0f16a59ae35ec8c62d85c3c17585158f430110"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/backtrace/zipball/8c0f16a59ae35ec8c62d85c3c17585158f430110",
+                "reference": "8c0f16a59ae35ec8c62d85c3c17585158f430110",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3 || ^8.0"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "laravel/serializable-closure": "^1.3 || ^2.0",
+                "phpunit/phpunit": "^9.3 || ^11.4.3",
+                "spatie/phpunit-snapshot-assertions": "^4.2 || ^5.1.6",
+                "symfony/var-dumper": "^5.1 || ^6.0 || ^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Backtrace\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van de Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A better backtrace",
+            "homepage": "https://github.com/spatie/backtrace",
+            "keywords": [
+                "Backtrace",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/backtrace/issues",
+                "source": "https://github.com/spatie/backtrace/tree/1.8.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/spatie",
+                    "type": "github"
+                },
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "other"
+                }
+            ],
+            "time": "2025-08-26T08:22:30+00:00"
         },
         {
             "name": "staabm/side-effects-detector",
