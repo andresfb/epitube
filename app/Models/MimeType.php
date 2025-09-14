@@ -32,7 +32,7 @@ class MimeType extends Model
             ->remember(
                 md5(__CLASS__.__FUNCTION__),
                 now()->addMinutes(30),
-                static function () {
+                static function (): array {
                     return self::select('type')
                         ->groupBy('type')
                         ->pluck('type')
@@ -52,7 +52,7 @@ class MimeType extends Model
             ->remember(
                 md5(__CLASS__.__FUNCTION__),
                 now()->addMinutes(30),
-                static function () {
+                static function (): array {
                     return self::where('extension', '!=', '*')
                         ->groupBy('extension')
                         ->pluck('extension')
@@ -73,7 +73,7 @@ class MimeType extends Model
             ->remember(
                 md5(__CLASS__.__FUNCTION__),
                 now()->addMinutes(30),
-                static function () {
+                static function (): array {
                     return self::select('type')
                         ->where('transcode', true)
                         ->groupBy('type')
@@ -94,7 +94,7 @@ class MimeType extends Model
             ->remember(
                 md5(__CLASS__.__FUNCTION__),
                 now()->addMinutes(30),
-                static function () {
+                static function (): array {
                     return self::select('type')
                         ->where('transcode', false)
                         ->groupBy('type')

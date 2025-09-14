@@ -1,2 +1,2 @@
 # Epicurus Tube
-A sel-hosted system to stream personal videos
+A self-hosted system to stream personal videos

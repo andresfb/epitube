@@ -41,9 +41,7 @@ class HlsConverterService
         self::RES_2160P => [-2, 2160, 18200, 192],
     ];
 
-    public function __construct(protected readonly Filesystem $filesystem)
-    {
-    }
+    public function __construct(protected readonly Filesystem $filesystem) {}
 
     /**
      * @throws Exception
