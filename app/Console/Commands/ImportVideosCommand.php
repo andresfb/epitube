@@ -5,6 +5,10 @@ namespace App\Console\Commands;
 use App\Services\ImportVideosService;
 use Exception;
 use Illuminate\Console\Command;
+use function Laravel\Prompts\clear;
+use function Laravel\Prompts\error;
+use function Laravel\Prompts\intro;
+use function Laravel\Prompts\outro;
 
 class ImportVideosCommand extends Command
 {
@@ -22,24 +26,18 @@ class ImportVideosCommand extends Command
      */
     protected $description = 'Scans the Content path and import the files into the Content Model';
 
-    public function handle(ImportVideosService $service): int
+    public function handle(ImportVideosService $service): void
     {
         try {
-            $this->info("Starting Import");
-            $this->newLine();
+            clear();
+            intro('Starting Import');
 
             $service->execute();
-
-            $this->newLine();
-            $this->info("Done");
-
-            return 0;
         } catch (Exception $e) {
-            $this->error("\nError found:\n");
-            $this->error($e->getMessage());
-            $this->info("");
-
-            return 1;
+            error($e->getMessage());
+        } finally {
+            $this->newLine();
+            outro('Done');
         }
     }
 }

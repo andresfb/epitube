@@ -7,6 +7,7 @@ use App\Models\Content;
 use App\Models\MimeType;
 use Exception;
 use FilesystemIterator;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -23,13 +24,13 @@ class ImportVideosService
      */
     public function execute(): void
     {
-        Log::info("Videos import started at " . now()->toDateTimeString());
+        Log::notice('Videos import started at ' . now()->toDateTimeString());
 
-        $this->maxFiles = config('content.max_files');
-
+        $this->maxFiles = Config::integer('content.max_files');
         $files = $this->scanFiles();
+
         if (empty($files)) {
-            throw new RuntimeException("No files found to import");
+            throw new RuntimeException('No files found to import');
         }
 
         foreach ($files as $hash => $file) {
@@ -39,6 +40,8 @@ class ImportVideosService
             ])
             ->delay(now()->addSeconds(15));
         }
+
+        Log::notice('Videos import ended at ' . now()->toDateTimeString());
     }
 
     private function scanFiles(): array
