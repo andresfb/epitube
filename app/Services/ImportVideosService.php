@@ -10,6 +10,7 @@ use FilesystemIterator;
 use Illuminate\Support\Facades\Log;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use RuntimeException;
 
 class ImportVideosService
 {
@@ -28,7 +29,7 @@ class ImportVideosService
 
         $files = $this->scanFiles();
         if (empty($files)) {
-            throw new \RuntimeException("No files found to import");
+            throw new RuntimeException("No files found to import");
         }
 
         foreach ($files as $hash => $file) {
@@ -36,7 +37,6 @@ class ImportVideosService
                 'hash' => $hash,
                 'file' => $file,
             ])
-            ->onQueue('ingestor')
             ->delay(now()->addSeconds(15));
         }
     }
@@ -52,22 +52,28 @@ class ImportVideosService
 
         $files = [];
         $extensions = MimeType::extensions();
+        $importedFiles = Content::getImported();
 
         foreach ($iterator as $file) {
             if ($this->scanned >= $this->maxFiles) {
                 break;
             }
 
-            if ($file->isDir() || !$file->isFile()) {
+            if ($file->isDir() || ! $file->isFile()) {
                 continue;
             }
 
-            if (!in_array($file->getExtension(), $extensions, true)) {
+            if (! in_array($file->getExtension(), $extensions, true)) {
                 continue;
             }
 
             $fullFile = $file->getFileInfo()->getPathname();
             $hash = hash('md5', $fullFile);
+
+            if (in_array($hash, $importedFiles, true)) {
+                continue;
+            }
+
             if (array_key_exists($hash, $files)) {
                 continue;
             }

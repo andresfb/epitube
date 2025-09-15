@@ -24,7 +24,7 @@ class MimeType extends Model
 
     public static function list(): array
     {
-        if (!empty(self::$mimeList)) {
+        if (! empty(self::$mimeList)) {
             return self::$mimeList;
         }
 
@@ -44,7 +44,7 @@ class MimeType extends Model
 
     public static function extensions(): array
     {
-        if (!empty(self::$extensionList)) {
+        if (! empty(self::$extensionList)) {
             return self::$extensionList;
         }
 
@@ -86,7 +86,7 @@ class MimeType extends Model
 
     public static function canHls(): array
     {
-        if (!empty(self::$hlsMimeList)) {
+        if (! empty(self::$hlsMimeList)) {
             return self::$hlsMimeList;
         }
 

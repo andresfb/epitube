@@ -18,9 +18,7 @@ class TranscodeVideoJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly int $mediaId)
-    {
-    }
+    public function __construct(private readonly int $mediaId) {}
 
     /**
      * @throws Exception
@@ -28,7 +26,15 @@ class TranscodeVideoJob implements ShouldQueue
     public function handle(TranscodeVideoService $service): void
     {
         try {
-            $service->execute($this->mediaId);
+            $newMediaId = $service->execute($this->mediaId);
+
+            GenerateHlsVideosJob::dispatch($newMediaId)
+                ->onQueue('hls')
+                ->delay(now()->addSeconds(15));
+
+            CreatePreviewsJob::dispatch($newMediaId)
+                ->onQueue('encode')
+                ->delay(now()->addSeconds(15));
         } catch (Exception $e) {
             Log::error("Error transcoding file for Media Id: {$this->mediaId}: {$e->getMessage()}");
 

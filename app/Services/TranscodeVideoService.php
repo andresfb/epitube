@@ -9,6 +9,7 @@ use FFMpeg\FFProbe;
 use FFMpeg\FFProbe\DataMapping\Stream;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 use Symfony\Component\Process\Process;
 
 class TranscodeVideoService
@@ -26,7 +27,7 @@ class TranscodeVideoService
     /**
      * @throws Exception
      */
-    public function execute(int $mediaId): void
+    public function execute(int $mediaId): int
     {
         Log::info('Starting '.__CLASS__.' execute');
 
@@ -39,7 +40,7 @@ class TranscodeVideoService
 
             Log::info("Checking for {$this->flag} file");
             if (Storage::disk(self::TRANSCODE_DISK)->exists($this->flag)) {
-                throw new \RuntimeException("{$this->media->model_id} | {$this->media->name} Transcode process already running.");
+                throw new RuntimeException("{$this->media->model_id} | {$this->media->name} Transcode process already running.");
             }
 
             Log::info("Creating $this->flag file");
@@ -48,7 +49,7 @@ class TranscodeVideoService
             Log::info("Executing Transcoding process");
             $info = $this->transcode();
 
-            $this->addNewMedia($info);
+            return $this->addNewMedia($info);
         } finally {
             $this->deleteFlag();
         }
@@ -89,12 +90,12 @@ class TranscodeVideoService
     {
         $fileType = 'Transcoding';
 
-        if (!file_exists($file)) {
-            throw new \RuntimeException("$fileType file not created");
+        if (! file_exists($file)) {
+            throw new RuntimeException("$fileType file not created");
         }
 
-        if (!filesize($file)) {
-            throw new \RuntimeException("$fileType file is empty");
+        if (! filesize($file)) {
+            throw new RuntimeException("$fileType file is empty");
         }
 
         try {
@@ -105,14 +106,14 @@ class TranscodeVideoService
 
         // has a duration greater than 0
         $probe = FFProbe::create();
-        if (!$probe->isValid($file)) {
-            throw new \RuntimeException("$fileType file is not valid");
+        if (! $probe->isValid($file)) {
+            throw new RuntimeException("$fileType file is not valid");
         }
 
         $streams = $probe->streams($file);
         $this->video = $streams->videos()->first();
         if ($this->video === null) {
-            throw new \RuntimeException("No valid video found");
+            throw new RuntimeException("No valid video found");
         }
 
         // comparing master and encoded durations with a 2% threshold
@@ -121,19 +122,19 @@ class TranscodeVideoService
         $threshold = 0.05 * $originalDuration;
         $difference = abs($originalDuration - $this->duration);
         if ($difference > $threshold) {
-            throw new \RuntimeException("$fileType file is not complete");
+            throw new RuntimeException("$fileType file is not complete");
         }
 
         // has a video stream
         foreach ($streams->videos() as $video) {
-            if (!$video->isVideo()) {
+            if (! $video->isVideo()) {
                 continue;
             }
 
             return;
         }
 
-        throw new \RuntimeException("$fileType file is not a video");
+        throw new RuntimeException("$fileType file is not a video");
     }
 
     private function getVideoSize(): array
@@ -153,12 +154,12 @@ class TranscodeVideoService
     /**
      * @throws Exception
      */
-    private function addNewMedia(array $info): void
+    private function addNewMedia(array $info): int
     {
         $content = Content::where('id', $this->media->model_id)
             ->firstOrFail();
 
-        $content->addMedia($info['out_file'])
+        $media = $content->addMedia($info['out_file'])
             ->withProperties(['name' => $this->media->name])
             ->withCustomProperties([
                 'width' => $info['width'],
@@ -167,6 +168,8 @@ class TranscodeVideoService
                 'owner_id' => $this->media->id,
             ])
             ->toMediaCollection('transcoded');
+
+        return $media->id;
     }
 
     private function createFlag(): void

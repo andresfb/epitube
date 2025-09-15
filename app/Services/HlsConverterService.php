@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Filesystem;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\TemporaryDirectory;
@@ -46,12 +47,10 @@ class HlsConverterService
     /**
      * @throws Exception
      */
-    public function execute(int $mediaId): void
+    public function execute(Media $media): void
     {
-        $media = Media::findOrFail($mediaId);
-
-        if (!$this->canConvert($media)) {
-            throw new \RuntimeException("Media not supported: $mediaId");
+        if (! $this->canConvert($media)) {
+            throw new RuntimeException("Media not supported: {$media->id}");
         }
 
         $temporaryDirectory = TemporaryDirectory::create()->deleteWhenDestroyed();
@@ -87,16 +86,16 @@ class HlsConverterService
     public function convert(string $file): string
     {
         $output = dirname($file).'/hls';
-        if (!mkdir($output, 0777, true) && !is_dir($output)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $output));
+        if (! mkdir($output, 0777, true) && ! is_dir($output)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $output));
         }
 
         $ffProbe = FFProbe::create([
             'ffprobe.binaries' => $this->ffProbe(),
         ]);
 
-        if (!$ffProbe->isValid($file)) {
-            throw new \RuntimeException("File: $file is not a valid video");
+        if (! $ffProbe->isValid($file)) {
+            throw new RuntimeException("File: $file is not a valid video");
         }
 
         $resolutions = $this->getResolutions(
@@ -139,7 +138,7 @@ class HlsConverterService
 
     protected function canConvert(Media $media): bool
     {
-        if (!$this->requirementsAreInstalled()) {
+        if (! $this->requirementsAreInstalled()) {
             return false;
         }
 

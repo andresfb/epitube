@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Models\Media;
+use App\Models\MimeType;
 use App\Services\HlsConverterService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -18,9 +20,7 @@ class GenerateHlsVideosJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly int $mediaId)
-    {
-    }
+    public function __construct(private readonly int $mediaId) {}
 
     /**
      * @throws Exception
@@ -28,7 +28,15 @@ class GenerateHlsVideosJob implements ShouldQueue
     public function handle(HlsConverterService $service): void
     {
         try {
-            $service->execute($this->mediaId);
+            $media = Media::where('id', $this->mediaId)
+                ->firstOrFail();
+
+            $transcodeMineTypes = MimeType::canHls();
+            if (! in_array($media->mime_type, $transcodeMineTypes, true)) {
+                return;
+            }
+
+            $service->execute($media);
         } catch (Exception $e) {
             Log::error("HLS generation error for Media Id: {$this->mediaId}: {$e->getMessage()}");
 

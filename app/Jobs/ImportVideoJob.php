@@ -20,6 +20,7 @@ class ImportVideoJob implements ShouldQueue
 
     public function __construct(private readonly array $fileData)
     {
+        $this->queue = 'ingestor';
     }
 
     /**
@@ -30,7 +31,7 @@ class ImportVideoJob implements ShouldQueue
         try {
             $service->execute($this->fileData);
         } catch (Exception $e) {
-            Log::error("Error imporing file: {$this->fileData['file']}: {$e->getMessage()}");
+            Log::error("Error importing file: {$this->fileData['file']}: {$e->getMessage()}");
 
             throw $e;
         }

@@ -2,52 +2,58 @@
 
 namespace App\Models;
 
+use Aliziodev\LaravelTaxonomy\Traits\HasTaxonomy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\Tags\HasTags;
 
 class Content extends Model implements HasMedia
 {
     use SoftDeletes;
     use InteractsWithMedia;
-    use HasTags;
+    use HasTaxonomy;
 
-    protected $fillable = [
-        'name_hash',
-        'file_hash',
-        'title',
-        'active',
-        'og_path',
-        'og_file',
-        'notes',
-    ];
+    protected $guarded = [];
 
     protected function casts(): array
     {
         return [
             'active' => 'bool',
+            'viewed' => 'bool',
+            'view_count' => 'int',
+            'liked_count' => 'int',
+            'added_at' => 'timestamp',
         ];
     }
 
     public function registerMediaCollections(): void
     {
+        $disk = config('media-library.disk_name');
+
         $this->addMediaCollection('videos')
             ->acceptsMimeTypes(MimeType::list())
             ->singleFile()
-            ->useDisk('media');
+            ->useDisk($disk);
 
         $this->addMediaCollection('transcoded')
             ->acceptsMimeTypes(['video/mp4'])
             ->singleFile()
-            ->useDisk('media');
+            ->useDisk($disk);
 
-        $this->addMediaConversion('thumb')
-            ->format('jpg')
+        $this->addMediaCollection('previews')
+            ->useDisk($disk);
+
+        $this->addMediaCollection('thumbnail')
             ->withResponsiveImages()
-            ->extractVideoFrameAtSecond(25)
-            ->performOnCollections('videos', 'transcoded');
+            ->acceptsMimeTypes([
+                'image/png',
+                'image/jpeg',
+            ])
+            ->singleFile()
+            ->useDisk($disk);
     }
 
     public static function found(string $hash): bool
@@ -55,5 +61,25 @@ class Content extends Model implements HasMedia
         return self::where('name_hash', $hash)
             ->orWhere('file_hash', $hash)
             ->exists();
+    }
+
+    public function views(): HasMany
+    {
+        return $this->hasMany(View::class);
+    }
+
+    public static function getImported(): array
+    {
+        return self::select('name_hash')
+            ->pluck('name_hash')
+            ->toArray();
+    }
+
+    protected function viewCount(): Attribute
+    {
+        return Attribute::make(
+            get: static fn($value) => $value / 1000,
+            set: static fn($value) => $value * 1000,
+        );
     }
 }
