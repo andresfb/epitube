@@ -8,6 +8,8 @@ class TitleParserLibrary
 {
     private string $title;
 
+    private string $rootDirectory = '';
+
     public function parseFileName(array $fileInfo): string
     {
         return $this->cleanString($fileInfo['filename'])
@@ -17,6 +19,11 @@ class TitleParserLibrary
             ->changeWords()
             ->removeStartingNumbers()
             ->removeSpaces();
+    }
+
+    public function getRootDirectory(): string
+    {
+        return $this->rootDirectory;
     }
 
     private function cleanString(string $value, string $replace = ' '): self
@@ -29,6 +36,7 @@ class TitleParserLibrary
             )
             ->replace(['|', '/'], '')
             ->replace(['(', ')'], ' - ')
+            ->replace('@', '')
             ->trim()
             ->toString();
 
@@ -53,6 +61,8 @@ class TitleParserLibrary
             ->map(fn ($item) => $this->cleanString($item, '')->removeSpaces())
             ->reject(fn ($item) => empty(trim($item)))
             ->toArray();
+
+        $this->rootDirectory = strtolower($dirArray[0]);
 
         $titled = $titled->replace($dirArray, '')
             ->replace(

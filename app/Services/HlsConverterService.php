@@ -24,15 +24,15 @@ use Symfony\Component\Process\Process;
  */
 class HlsConverterService
 {
-    public const RES_360P  =  '360p';
-    public const RES_480P  =  '480p';
-    public const RES_720P  =  '720p';
-    public const RES_1080P = '1080p';
-    public const RES_1440P = '1440p';
-    public const RES_2160P = '2160p';
+    public const string RES_360P  =  '360p';
+    public const string RES_480P  =  '480p';
+    public const string RES_720P  =  '720p';
+    public const string RES_1080P = '1080p';
+    public const string RES_1440P = '1440p';
+    public const string RES_2160P = '2160p';
 
     // https://medium.com/@peer5/creating-a-production-ready-multi-bitrate-hls-vod-stream-dff1e2f1612c
-    public const RESOLUTIONS = [
+    public const array RESOLUTIONS = [
         // name => [width, height, video-bitrate, audio-bitrate]
         self::RES_360P =>  [-2,  360,   900,  96],
         self::RES_480P =>  [-2,  480,  1600, 128],

@@ -165,6 +165,7 @@ class TranscodeVideoService
                 'width' => $info['width'],
                 'height' => $info['height'],
                 'duration' => $this->duration,
+                'is_video' => true,
                 'owner_id' => $this->media->id,
             ])
             ->toMediaCollection('transcoded');

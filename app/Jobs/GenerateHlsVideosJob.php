@@ -20,7 +20,11 @@ class GenerateHlsVideosJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly int $mediaId) {}
+    public function __construct(private readonly int $mediaId)
+    {
+        $this->queue = 'hls';
+        $this->delay = now()->addSeconds(15);
+    }
 
     /**
      * @throws Exception

@@ -44,15 +44,18 @@ class Content extends Model implements HasMedia
             ->useDisk($disk);
 
         $this->addMediaCollection('previews')
+            ->acceptsMimeTypes([
+                'video/mp4',
+                'video/webm',
+            ])
             ->useDisk($disk);
 
-        $this->addMediaCollection('thumbnail')
+        $this->addMediaCollection('thumbnails')
             ->withResponsiveImages()
             ->acceptsMimeTypes([
                 'image/png',
                 'image/jpeg',
             ])
-            ->singleFile()
             ->useDisk($disk);
     }
 

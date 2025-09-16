@@ -37,8 +37,7 @@ class ImportVideosService
             ImportVideoJob::dispatch([
                 'hash' => $hash,
                 'file' => $file,
-            ])
-            ->delay(now()->addSeconds(15));
+            ]);
         }
 
         Log::notice('Videos import ended at ' . now()->toDateTimeString());

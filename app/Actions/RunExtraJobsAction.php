@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Jobs\CreatePreviewsJob;
+use App\Jobs\ExtractThumbnailsJob;
+use App\Jobs\GenerateHlsVideosJob;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
+
+final readonly class RunExtraJobsAction
+{
+    public function handle(int $mediaId): void
+    {
+        if (! Config::boolean('constants.enable_encode_jobs')) {
+            Log::notice('@RunExtraJobsAction.handle: Encode jobs disabled.');
+
+            return;
+        }
+
+        ExtractThumbnailsJob::dispatch($mediaId);
+
+        CreatePreviewsJob::dispatch($mediaId);
+
+        GenerateHlsVideosJob::dispatch($mediaId);
+    }
+}

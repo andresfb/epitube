@@ -62,6 +62,21 @@ return [
             ],
         ],
 
+        'processing' => [
+            'driver' => 'local',
+            'root' => storage_path('processing'),
+            'permissions' => [
+                'file' => [
+                    'public' => 0777,
+                    'private' => 0777,
+                ],
+                'dir' => [
+                    'public' => 0777,
+                    'private' => 0777,
+                ],
+            ],
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

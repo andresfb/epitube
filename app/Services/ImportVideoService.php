@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Actions\TranscodeMediaAction;
-use App\Jobs\ExtractThumbnailJob;
 use App\Jobs\ParseTagsJob;
 use App\Libraries\TitleParserLibrary;
 use App\Models\Content;
@@ -49,22 +48,23 @@ readonly class ImportVideoService
 
         ParseTagsJob::dispatch($content->id, $fileInfo);
 
-        $content->attachTaxonomies([
-            Str::of(Config::string('constants.main_category'))
-                ->slug()
-        ]);
+        $category = $this->parserLibrary->getRootDirectory() === Config::string('constants.alt_category')
+            ? Str::of(Config::string('constants.alt_category'))->slug()
+            : Str::of(Config::string('constants.main_category'))->slug();
+
+        $content->attachTaxonomies([$category]);
 
         $media = $content->addMedia($fileData['file'])
             ->withCustomProperties([
                 'width' => $width,
                 'height' => $height,
                 'duration' => $duration,
+                'is_video' => true,
             ])
             ->preservingOriginal()
             ->toMediaCollection('videos');
 
         $this->transcodeAction->handle($media);
-        $this->processThumbnail($content, $fileData['file']);
     }
 
     private function getVideoInfo(mixed $file): array
@@ -82,7 +82,7 @@ readonly class ImportVideoService
             throw new RuntimeException("No valid video found");
         }
 
-        $height =  (int) $video->get('height', 720);
+        $height = (int) $video->get('height', 720);
         $width = (int) $video->get('width', 720);
         $duration = (int) round($probe->format($file)->get('duration'));
 
@@ -91,28 +91,5 @@ readonly class ImportVideoService
         }
 
         return [$width, $height, $duration];
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function processThumbnail(Content $content, string $file): void
-    {
-        $fileInfo = pathinfo($file);
-        $image = Str::of($file)
-            ->replace($fileInfo['extension'], 'jpg')
-            ->toString();
-
-        if (! file_exists($image)) {
-            ExtractThumbnailJob::dispatch($content->id)
-                ->onQueue('encode')
-                ->delay(now()->addSeconds(10));
-
-            return;
-        }
-
-        $content->addMedia($file)
-            ->preservingOriginal()
-            ->toMediaCollection('thumbnail');
     }
 }
