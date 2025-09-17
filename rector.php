@@ -10,15 +10,12 @@ use Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector;
 try {
     return RectorConfig::configure()
         ->withPaths([
-            __DIR__.'/',
+            __DIR__.'/app',
+            __DIR__.'/bootstrap/app.php',
+            __DIR__.'/database',
+            __DIR__.'/public',
         ])
         ->withSkip([
-            __DIR__.'/bootstrap/cache',
-            __DIR__.'/storage',
-            __DIR__.'/node_modules',
-            __DIR__.'/vendor',
-            __DIR__.'/deploy.php',
-            __DIR__.'/rector.php',
             AddOverrideAttributeToOverriddenMethodsRector::class,
             DisallowedEmptyRuleFixerRector::class,
         ])
@@ -30,9 +27,7 @@ try {
             earlyReturn: true,
             strictBooleans: true,
         )
-        ->withPhpSets(
-            php83: true,
-        );
+        ->withPhpSets();
 } catch (InvalidConfigurationException $e) {
     echo 'Invalid configuration: '.$e->getMessage();
 }
