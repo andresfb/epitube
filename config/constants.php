@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
     'main_category' => env('MAIN_CATEGORY', ''),

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dtos;
 
 use App\Libraries\MediaNamesLibrary;
@@ -34,7 +36,7 @@ final class ContentItem extends Data
             if ($media->collection_name === MediaNamesLibrary::thumbnails()) {
                 $contentArray[$media->collection_name][] = [
                     'urls' => $media->getResponsiveImageUrls(),
-                    'srcset' => $media->getSrcset()
+                    'srcset' => $media->getSrcset(),
                 ];
 
                 return;

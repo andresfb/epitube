@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Libraries\MasterVideoLibrary;
@@ -14,7 +16,7 @@ use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-readonly class ExtractThumbnailsService
+final readonly class ExtractThumbnailsService
 {
     public function __construct(private MasterVideoLibrary $videoLibrary) {}
 
@@ -71,7 +73,7 @@ readonly class ExtractThumbnailsService
             $image = sprintf(
                 '%s/%s.png',
                 $this->videoLibrary->getTempPath(),
-                str_pad((string) $i, 2, '0', STR_PAD_LEFT)
+                mb_str_pad((string) $i, 2, '0', STR_PAD_LEFT)
             );
 
             $time = TimeCode::fromSeconds($timeCode * $i);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Libraries\MediaNamesLibrary;
@@ -13,16 +15,20 @@ use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
-class TranscodeVideoService
+final class TranscodeVideoService
 {
     private const string TRANSCODE_DISK = 'transcode';
 
     private int $duration = 0;
+
     private string $flag = '';
+
     private string $tempPath = '';
+
     private string $fullPath = '';
 
     private Media $media;
+
     private ?Stream $video = null;
 
     /**
@@ -49,45 +55,13 @@ class TranscodeVideoService
             Log::info("Creating $this->flag file");
             $this->createFlag();
 
-            Log::info("Executing Transcoding process");
+            Log::info('Executing Transcoding process');
             $info = $this->transcode();
 
             return $this->addNewMedia($info);
         } finally {
             $this->deleteFlag();
         }
-    }
-
-    private function transcode(): array
-    {
-        Log::info("Transcoding video: {$this->media->model_id} | {$this->media->name}");
-
-        $outputFile = sprintf(
-            '%s%s/%s.mp4',
-            Storage::disk(self::TRANSCODE_DISK)->path(''),
-            $this->tempPath,
-            pathinfo($this->fullPath, PATHINFO_FILENAME)
-        );
-
-        $baseCmd = config('media-library.ffmpeg_path').' -y -v error -i "%s" -q:v 0 -ar 44100 -ab 128k "%s"';
-        $cmd = sprintf($baseCmd, $this->fullPath, $outputFile);
-
-        Log::info("Transcoding ffmpeg running command: $cmd");
-
-        Process::fromShellCommandline($cmd)
-            ->setTimeout(0)
-            ->mustRun();
-
-        Log::info('Transcoding video finished');
-
-        $this->checkEncodedFile($outputFile);
-        [$width, $height] = $this->getVideoSize();
-
-        return [
-            'width' => $width,
-            'height'   => $height,
-            'out_file' => $outputFile,
-        ];
     }
 
     protected function checkEncodedFile(string $file): void
@@ -117,7 +91,7 @@ class TranscodeVideoService
         $streams = $probe->streams($file);
         $this->video = $streams->videos()->first();
         if ($this->video === null) {
-            throw new RuntimeException("No valid video found");
+            throw new RuntimeException('No valid video found');
         }
 
         // comparing master and encoded durations with a 2% threshold
@@ -141,10 +115,42 @@ class TranscodeVideoService
         throw new RuntimeException("$fileType file is not a video");
     }
 
+    private function transcode(): array
+    {
+        Log::info("Transcoding video: {$this->media->model_id} | {$this->media->name}");
+
+        $outputFile = sprintf(
+            '%s%s/%s.mp4',
+            Storage::disk(self::TRANSCODE_DISK)->path(''),
+            $this->tempPath,
+            pathinfo($this->fullPath, PATHINFO_FILENAME)
+        );
+
+        $baseCmd = config('media-library.ffmpeg_path').' -y -v error -i "%s" -q:v 0 -ar 44100 -ab 128k "%s"';
+        $cmd = sprintf($baseCmd, $this->fullPath, $outputFile);
+
+        Log::info("Transcoding ffmpeg running command: $cmd");
+
+        Process::fromShellCommandline($cmd)
+            ->setTimeout(0)
+            ->mustRun();
+
+        Log::info('Transcoding video finished');
+
+        $this->checkEncodedFile($outputFile);
+        [$width, $height] = $this->getVideoSize();
+
+        return [
+            'width' => $width,
+            'height' => $height,
+            'out_file' => $outputFile,
+        ];
+    }
+
     private function getVideoSize(): array
     {
         $width = (int) $this->video->get('width', 1280);
-        $height =  (int) $this->video->get('height', 720);
+        $height = (int) $this->video->get('height', 720);
 
         if ($height > $width) {
             $height += $width;

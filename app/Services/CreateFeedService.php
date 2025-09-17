@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Dtos\ContentItem;
@@ -7,7 +9,7 @@ use App\Models\Content;
 use App\Models\Feed;
 use Illuminate\Support\Facades\Log;
 
-class CreateFeedService
+final class CreateFeedService
 {
     public function execute(): void
     {

@@ -1,16 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Services\ImportVideosService;
 use Exception;
 use Illuminate\Console\Command;
+
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class ImportVideosCommand extends Command
+final class ImportVideosCommand extends Command
 {
     /**
      * The name and signature of the console command.

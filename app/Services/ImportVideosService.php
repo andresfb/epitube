@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Jobs\ImportVideoJob;
@@ -13,7 +15,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
 
-class ImportVideosService
+final class ImportVideosService
 {
     private int $maxFiles = 0;
 
@@ -24,7 +26,7 @@ class ImportVideosService
      */
     public function execute(): void
     {
-        Log::notice('Videos import started at ' . now()->toDateTimeString());
+        Log::notice('Videos import started at '.now()->toDateTimeString());
 
         $this->maxFiles = Config::integer('content.max_files');
         $files = $this->scanFiles();
@@ -40,7 +42,7 @@ class ImportVideosService
             ]);
         }
 
-        Log::notice('Videos import ended at ' . now()->toDateTimeString());
+        Log::notice('Videos import ended at '.now()->toDateTimeString());
     }
 
     private function scanFiles(): array

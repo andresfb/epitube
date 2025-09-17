@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Libraries\MediaFileNamer;
 use App\Libraries\MediaPathGenerator;
 use App\Models\Media;
@@ -16,7 +18,7 @@ return [
      * The maximum file size of an item in bytes.
      * Adding a larger file will result in an exception.
      */
-    'max_file_size' => 1024*1024*1024*25, // 25GB
+    'max_file_size' => 1024 * 1024 * 1024 * 25, // 25GB
 
     /*
      * This queue connection will be used to generate derived and responsive images.

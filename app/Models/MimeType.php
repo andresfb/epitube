@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
-class MimeType extends Model
+final class MimeType extends Model
 {
     public $timestamps = false;
 
@@ -32,7 +34,7 @@ class MimeType extends Model
             ->remember(
                 md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static fn(): array => self::select('type')
+                static fn (): array => self::select('type')
                     ->groupBy('type')
                     ->pluck('type')
                     ->toArray());
@@ -50,7 +52,7 @@ class MimeType extends Model
             ->remember(
                 md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static fn(): array => self::where('extension', '!=', '*')
+                static fn (): array => self::where('extension', '!=', '*')
                     ->groupBy('extension')
                     ->pluck('extension')
                     ->toArray()
@@ -69,7 +71,7 @@ class MimeType extends Model
             ->remember(
                 md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static fn(): array => self::select('type')
+                static fn (): array => self::select('type')
                     ->where('transcode', true)
                     ->groupBy('type')
                     ->pluck('type')
@@ -88,7 +90,7 @@ class MimeType extends Model
             ->remember(
                 md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static fn(): array => self::select('type')
+                static fn (): array => self::select('type')
                     ->where('transcode', false)
                     ->groupBy('type')
                     ->pluck('type')

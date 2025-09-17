@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Libraries\MasterVideoLibrary;
@@ -15,7 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
-readonly class CreatePreviewsService
+final readonly class CreatePreviewsService
 {
     public function __construct(private MasterVideoLibrary $videoLibrary) {}
 
@@ -85,7 +87,10 @@ readonly class CreatePreviewsService
             ->open($this->videoLibrary->getRelativeVideoPath());
 
         for ($i = 0; $i < $sections; $i++) {
-            $tmpFile = sprintf($tmpFileTemplate, str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT));
+            $tmpFile = sprintf(
+                $tmpFileTemplate,
+                mb_str_pad((string)($i + 1), 2, '0', STR_PAD_LEFT)
+            );
 
             $video->export()
                 ->addFilter(function (VideoFilters $filters) use ($startTime): void {

@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Libraries;
 
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\FileNamer\DefaultFileNamer;
 
-class MediaFileNamer extends DefaultFileNamer
+final class MediaFileNamer extends DefaultFileNamer
 {
     /**
      * originalFileName Method.
      */
     public function originalFileName(string $fileName): string
     {
-        return hash('md5', sprintf("%s-%s", $fileName, time()));
+        return hash('md5', sprintf('%s-%s', $fileName, time()));
     }
 
     /**
@@ -20,7 +22,7 @@ class MediaFileNamer extends DefaultFileNamer
      */
     public function extensionFromBaseImage(string $baseImage): string
     {
-        return strtolower(pathinfo($baseImage, PATHINFO_EXTENSION));
+        return mb_strtolower(pathinfo($baseImage, PATHINFO_EXTENSION));
     }
 
     /**
@@ -28,6 +30,6 @@ class MediaFileNamer extends DefaultFileNamer
      */
     public function temporaryFileName(Media $media, string $extension): string
     {
-        return "{$this->responsiveFileName($media->file_name)}." . strtolower($extension);
+        return "{$this->responsiveFileName($media->file_name)}.".mb_strtolower($extension);
     }
 }

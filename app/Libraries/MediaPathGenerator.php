@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Libraries;
 
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\PathGenerator\PathGenerator;
 
-class MediaPathGenerator implements PathGenerator
+final class MediaPathGenerator implements PathGenerator
 {
     /**
      * getPath Method.
@@ -37,16 +39,17 @@ class MediaPathGenerator implements PathGenerator
      */
     private function getBasePath(Media $media): string
     {
-        $contentId = str_pad((string) $media->model_id, 12, "0", STR_PAD_LEFT);
+        $contentId = mb_str_pad((string) $media->model_id, 12, '0', STR_PAD_LEFT);
+
         return Str::of(
-            collect(str_split($contentId, 3))
+            collect(mb_str_split($contentId, 3))
                 ->reverse()
-                ->implode("/")
+                ->implode('/')
         )
-        ->append("/")
-        ->append($media->collection_name)
-        ->append("/")
-        ->append((string) $media->id)
-        ->toString();
+            ->append('/')
+            ->append($media->collection_name)
+            ->append('/')
+            ->append((string) $media->id)
+            ->toString();
     }
 }

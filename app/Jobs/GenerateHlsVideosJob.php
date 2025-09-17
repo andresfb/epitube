@@ -1,9 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
-use App\Models\Media;
-use App\Models\MimeType;
 use App\Services\HlsConverterService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -13,7 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class GenerateHlsVideosJob implements ShouldQueue
+final class GenerateHlsVideosJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

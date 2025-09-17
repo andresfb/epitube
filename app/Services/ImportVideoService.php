@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Actions\TranscodeMediaAction;
@@ -14,7 +16,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
-readonly class ImportVideoService
+final readonly class ImportVideoService
 {
     public function __construct(
         private TitleParserLibrary $parserLibrary,
@@ -87,7 +89,7 @@ readonly class ImportVideoService
             ->first();
 
         if ($video === null) {
-            throw new RuntimeException("No valid video found");
+            throw new RuntimeException('No valid video found');
         }
 
         $height = (int) $video->get('height', 720);
@@ -95,7 +97,7 @@ readonly class ImportVideoService
         $duration = (int) round($probe->format($file)->get('duration'));
 
         if ($duration < 10) {
-            throw new RuntimeException("Video is too short");
+            throw new RuntimeException('Video is too short');
         }
 
         return [$width, $height, $duration];
@@ -126,14 +128,14 @@ readonly class ImportVideoService
             ->replace('  ', ' ')
             ->explode('/')
             ->map(fn ($tag): string => trim((string) $tag))
-            ->reject(fn(string $part): bool => empty($part));
+            ->reject(fn (string $part): bool => empty($part));
 
         $tags = collect();
         foreach ($sections as $section) {
             $tags = $tags->merge(
                 str($section)->explode(' ')
                     ->map(fn ($tag): string => trim((string) $tag))
-                    ->reject(fn(string $part): bool => empty($part))
+                    ->reject(fn (string $part): bool => empty($part))
             );
         }
 

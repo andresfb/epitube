@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Actions\RunExtraJobsAction;
@@ -12,7 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class TranscodeVideoJob implements ShouldQueue
+final class TranscodeVideoJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

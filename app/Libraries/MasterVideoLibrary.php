@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Libraries;
 
 use App\Models\Media;
@@ -9,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use RuntimeException;
 
-class MasterVideoLibrary
+final class MasterVideoLibrary
 {
     private int $contentId = 0;
 
@@ -78,11 +80,11 @@ class MasterVideoLibrary
         }
 
         // prepare local file name
-        $videoFileName = pathinfo((string) $media->file_name, PATHINFO_BASENAME);
-        $this->localFilePath = sprintf("%s%s%s", $this->processingPath, DIRECTORY_SEPARATOR, $videoFileName);
-        $this->relativeVideoPath = sprintf("%s%s%s", $this->tempPath, DIRECTORY_SEPARATOR, $videoFileName);
+        $videoFileName = pathinfo($media->file_name, PATHINFO_BASENAME);
+        $this->localFilePath = sprintf('%s%s%s', $this->processingPath, DIRECTORY_SEPARATOR, $videoFileName);
+        $this->relativeVideoPath = sprintf('%s%s%s', $this->tempPath, DIRECTORY_SEPARATOR, $videoFileName);
 
-        // download the video to processing folder
+        // download the video to the processing folder
         $fileContent = Storage::disk('s3')->get($media->getPathRelativeToRoot());
         file_put_contents($this->localFilePath, $fileContent);
 

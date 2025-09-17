@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Services\ImportVideosService;
@@ -11,7 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ImportVideosJob implements ShouldQueue
+final class ImportVideosJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

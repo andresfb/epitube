@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Libraries;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
-class TitleParserLibrary
+final class TitleParserLibrary
 {
     private string $title;
 
@@ -80,11 +82,11 @@ class TitleParserLibrary
 
         $dirList = Str::of($directory)
             ->explode('/')
-            ->map(fn ($item): \Illuminate\Support\Stringable => $this->cleanString($item, '')->removeSpaces())
+            ->map(fn ($item): Stringable => $this->cleanString($item, '')->removeSpaces())
             ->reject(fn ($item): bool => empty(trim((string) $item)));
 
         $dirList->shift();
-        $this->rootDirectory = strtolower($dirList->first());
+        $this->rootDirectory = mb_strtolower($dirList->first());
 
         $titled = $titled->replace($dirList, '')
             ->replace(
@@ -188,7 +190,7 @@ class TitleParserLibrary
             'nephew' => $this->getBoyGeneric(),
             'cousin' => $this->getGeneric(),
             'in-law' => $this->getGeneric(),
-            'family' => ['group', 'friends', 'pals']
+            'family' => ['group', 'friends', 'pals'],
         ];
     }
 

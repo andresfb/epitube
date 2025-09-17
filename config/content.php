@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
     'data_path' => env('CONTENT_DATA_PATH', '/content'),
@@ -17,7 +19,7 @@ return [
         // video resolution => bitrate
         'sizes' => [
             480 => 1000,
-            180 => 500
+            180 => 500,
         ],
 
         'extensions' => ['mp4', 'webm'],
