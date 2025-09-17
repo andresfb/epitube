@@ -24,40 +24,36 @@ class MimeType extends Model
 
     public static function list(): array
     {
-        if (! empty(self::$mimeList)) {
+        if (self::$mimeList !== []) {
             return self::$mimeList;
         }
 
         self::$mimeList = Cache::tags('list-of-mime-types')
             ->remember(
-                md5(__CLASS__.__FUNCTION__),
+                md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static function (): array {
-                    return self::select('type')
-                        ->groupBy('type')
-                        ->pluck('type')
-                        ->toArray();
-                });
+                static fn(): array => self::select('type')
+                    ->groupBy('type')
+                    ->pluck('type')
+                    ->toArray());
 
         return self::$mimeList;
     }
 
     public static function extensions(): array
     {
-        if (! empty(self::$extensionList)) {
+        if (self::$extensionList !== []) {
             return self::$extensionList;
         }
 
         self::$extensionList = Cache::tags('list-of-mime-extensions')
             ->remember(
-                md5(__CLASS__.__FUNCTION__),
+                md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static function (): array {
-                    return self::where('extension', '!=', '*')
-                        ->groupBy('extension')
-                        ->pluck('extension')
-                        ->toArray();
-                }
+                static fn(): array => self::where('extension', '!=', '*')
+                    ->groupBy('extension')
+                    ->pluck('extension')
+                    ->toArray()
             );
 
         return self::$extensionList;
@@ -65,42 +61,38 @@ class MimeType extends Model
 
     public static function transcode(): array
     {
-        if (!empty(self::$transcodableMimeList)) {
+        if (self::$transcodableMimeList !== []) {
             return self::$transcodableMimeList;
         }
 
         self::$transcodableMimeList = Cache::tags('transcodable-list-of-mime-types')
             ->remember(
-                md5(__CLASS__.__FUNCTION__),
+                md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static function (): array {
-                    return self::select('type')
-                        ->where('transcode', true)
-                        ->groupBy('type')
-                        ->pluck('type')
-                        ->toArray();
-                });
+                static fn(): array => self::select('type')
+                    ->where('transcode', true)
+                    ->groupBy('type')
+                    ->pluck('type')
+                    ->toArray());
 
         return self::$transcodableMimeList;
     }
 
     public static function canHls(): array
     {
-        if (! empty(self::$hlsMimeList)) {
+        if (self::$hlsMimeList !== []) {
             return self::$hlsMimeList;
         }
 
         self::$hlsMimeList = Cache::tags('hls-list-of-mime-types')
             ->remember(
-                md5(__CLASS__.__FUNCTION__),
+                md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static function (): array {
-                    return self::select('type')
-                        ->where('transcode', false)
-                        ->groupBy('type')
-                        ->pluck('type')
-                        ->toArray();
-                });
+                static fn(): array => self::select('type')
+                    ->where('transcode', false)
+                    ->groupBy('type')
+                    ->pluck('type')
+                    ->toArray());
 
         return self::$hlsMimeList;
     }

@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('mime_types', static function (Blueprint $table) {
+        Schema::create('mime_types', static function (Blueprint $table): void {
             $table->id();
             $table->string('extension', 10);
             $table->string('type', 150);

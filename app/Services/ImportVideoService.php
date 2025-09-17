@@ -3,18 +3,15 @@
 namespace App\Services;
 
 use App\Actions\TranscodeMediaAction;
-use App\Jobs\ParseTagsJob;
 use App\Libraries\TitleParserLibrary;
 use App\Models\Category;
 use App\Models\Content;
 use Exception;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use RuntimeException;
 
 readonly class ImportVideoService
@@ -31,7 +28,7 @@ readonly class ImportVideoService
     {
         Log::notice("Importing video for file: {$fileData['file']}");
 
-        $fileInfo = pathinfo($fileData['file']);
+        $fileInfo = pathinfo((string) $fileData['file']);
         $fileHash = File::hash($fileData['file']);
 
         if (Content::foundFileHash($fileHash)) {
@@ -61,19 +58,19 @@ readonly class ImportVideoService
 
         $this->parseTags($content, $fileInfo);
 
-//        [$width, $height, $duration] = $this->getVideoInfo($fileData['file']);
-//
-//        $media = $content->addMedia($fileData['file'])
-//            ->withCustomProperties([
-//                'width' => $width,
-//                'height' => $height,
-//                'duration' => $duration,
-//                'is_video' => true,
-//            ])
-//            ->preservingOriginal()
-//            ->toMediaCollection('videos');
-//
-//        $this->transcodeAction->handle($media);
+        [$width, $height, $duration] = $this->getVideoInfo($fileData['file']);
+
+        $media = $content->addMedia($fileData['file'])
+            ->withCustomProperties([
+                'width' => $width,
+                'height' => $height,
+                'duration' => $duration,
+                'is_video' => true,
+            ])
+            ->preservingOriginal()
+            ->toMediaCollection('videos');
+
+        $this->transcodeAction->handle($media);
 
         Log::notice('Done importing video');
     }
@@ -128,15 +125,15 @@ readonly class ImportVideoService
             ->replace('   ', ' ')
             ->replace('  ', ' ')
             ->explode('/')
-            ->map(fn ($tag) => trim($tag))
-            ->reject(fn(string $part) => empty($part));
+            ->map(fn ($tag): string => trim((string) $tag))
+            ->reject(fn(string $part): bool => empty($part));
 
         $tags = collect();
         foreach ($sections as $section) {
             $tags = $tags->merge(
                 str($section)->explode(' ')
-                    ->map(fn ($tag) => trim($tag))
-                    ->reject(fn(string $part) => empty($part))
+                    ->map(fn ($tag): string => trim((string) $tag))
+                    ->reject(fn(string $part): bool => empty($part))
             );
         }
 

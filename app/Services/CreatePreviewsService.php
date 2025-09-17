@@ -25,7 +25,7 @@ readonly class CreatePreviewsService
     public function execute(int $mediaId): void
     {
         Log::notice("Starting creating Preview videos for: $mediaId");
-        $this->videoLibrary->prepare($mediaId, __CLASS__);
+        $this->videoLibrary->prepare($mediaId, self::class);
 
         $this->generate(
             Content::where('id', $this->videoLibrary->getContentId())
@@ -88,7 +88,7 @@ readonly class CreatePreviewsService
             $tmpFile = sprintf($tmpFileTemplate, str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT));
 
             $video->export()
-                ->addFilter(function (VideoFilters $filters) use ($startTime) {
+                ->addFilter(function (VideoFilters $filters) use ($startTime): void {
                     $filters->clip(
                         TimeCode::fromSeconds($startTime),
                         TimeCode::fromSeconds(config('previews.section_length'))
@@ -96,7 +96,7 @@ readonly class CreatePreviewsService
                 })
                 ->addFilter('-crf', 15)
                 ->addFilter('-an')
-                ->addFilter(function (VideoFilters $filters) use ($size) {
+                ->addFilter(function (VideoFilters $filters) use ($size): void {
                     $filters->custom("fps=10,scale=-2:$size:flags=lanczos");
                 })
                 ->toDisk($this->videoLibrary->getProcessingDisk())

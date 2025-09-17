@@ -29,7 +29,7 @@ class ImportVideosService
         $this->maxFiles = Config::integer('content.max_files');
         $files = $this->scanFiles();
 
-        if (empty($files)) {
+        if ($files === []) {
             throw new RuntimeException('No files found to import');
         }
 
@@ -60,8 +60,11 @@ class ImportVideosService
             if ($this->scanned >= $this->maxFiles) {
                 break;
             }
+            if ($file->isDir()) {
+                continue;
+            }
 
-            if ($file->isDir() || ! $file->isFile()) {
+            if (! $file->isFile()) {
                 continue;
             }
 
@@ -70,7 +73,7 @@ class ImportVideosService
             }
 
             $fullFile = $file->getFileInfo()->getPathname();
-            $hash = hash('md5', $fullFile);
+            $hash = hash('md5', (string) $fullFile);
 
             if (in_array($hash, $importedFiles, true)) {
                 continue;

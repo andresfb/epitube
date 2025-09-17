@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('categories', static function (Blueprint $table) {
+        Schema::create('categories', static function (Blueprint $table): void {
             $table->id();
             $table->string('slug')->index();
             $table->string('name');
@@ -20,14 +20,14 @@ return new class extends Migration
         DB::table('categories')->insert([
             [
                'slug' => config('constants.main_category'),
-               'name' => ucfirst(config('constants.main_category')),
+               'name' => ucfirst((string) config('constants.main_category')),
                'main' => true,
                'created_at' => now(),
                'updated_at' => now()
            ],
            [
                'slug' => config('constants.alt_category'),
-               'name' => ucfirst(config('constants.alt_category')),
+               'name' => ucfirst((string) config('constants.alt_category')),
                'main' => false,
                'created_at' => now(),
                'updated_at' => now()

@@ -24,7 +24,7 @@ readonly class ExtractThumbnailsService
     public function execute(int $mediaId): void
     {
         Log::notice("Starting extracting thumbnails for: $mediaId");
-        $this->videoLibrary->prepare($mediaId, __CLASS__);
+        $this->videoLibrary->prepare($mediaId, self::class);
 
         $this->generate(
             Content::where('id', $this->videoLibrary->getContentId())

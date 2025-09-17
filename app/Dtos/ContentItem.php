@@ -30,7 +30,7 @@ final class ContentItem extends Data
     {
         $contentArray = $content->toSearchableArray();
 
-        $content->media()->each(function (Media $media) use (&$contentArray) {
+        $content->media()->each(function (Media $media) use (&$contentArray): void {
             if ($media->collection_name === MediaNamesLibrary::thumbnails()) {
                 $contentArray[$media->collection_name][] = [
                     'urls' => $media->getResponsiveImageUrls(),

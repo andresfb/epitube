@@ -113,16 +113,16 @@ class HlsConverterService
         $command = implode(' ', [
             $this->ffMpeg(),
             "-n -i \"{$file}\"",
-            $resolutions->map(fn() => '-map 0:v:0 -map 0:a:0')->implode(' '),
+            $resolutions->map(fn(): string => '-map 0:v:0 -map 0:a:0')->implode(' '),
             '-c:v h264 -crf 20 -c:a aac -ar 48000',
             $resolutions
                 ->values()
-                ->map(fn(array $r, int $i) => "-filter:v:{$i} scale=w={$r[0]}:h={$r[1]}:force_original_aspect_ratio=decrease -maxrate:v:{$i} {$r[2]}k -b:a:{$i} {$r[3]}k")
+                ->map(fn(array $r, int $i): string => "-filter:v:{$i} scale=w={$r[0]}:h={$r[1]}:force_original_aspect_ratio=decrease -maxrate:v:{$i} {$r[2]}k -b:a:{$i} {$r[3]}k")
                 ->implode(' '),
             Str::of(
                 $resolutions
                     ->keys()
-                    ->map(fn(string $name, int $i) => "v:{$i},a:{$i},name:{$name}")
+                    ->map(fn(string $name, int $i): string => "v:{$i},a:{$i},name:{$name}")
                     ->implode(' ')
             )->prepend('-var_stream_map "')->append('"'),
             '-preset slow -hls_list_size 0 -threads 0 -f hls -hls_playlist_type event -hls_time 4 -hls_flags independent_segments -master_pl_name "playlist.m3u8"',

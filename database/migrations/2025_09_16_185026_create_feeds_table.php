@@ -9,7 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('feeds', static function (Blueprint $table) {
+        Schema::create('feeds', static function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(Content::class)
                 ->constrained('contents')

@@ -23,15 +23,11 @@ class Category extends Model
 
     public static function getMain(): self
     {
-        return Cache::remember('MAIN:CATEGORY', now()->addDay(), static function () {
-            return self::where('main', true)->firstOrFail();
-        });
+        return Cache::remember('MAIN:CATEGORY', now()->addDay(), static fn() => self::where('main', true)->firstOrFail());
     }
 
     public static function getId(string $slug): int
     {
-        return Cache::remember("CATEGORY:ID:$slug", now()->addDay(), static function () use ($slug): int {
-            return self::where('slug', $slug)->firstOrFail()->id;
-        });
+        return Cache::remember("CATEGORY:ID:$slug", now()->addDay(), static fn(): int => self::where('slug', $slug)->firstOrFail()->id);
     }
 }

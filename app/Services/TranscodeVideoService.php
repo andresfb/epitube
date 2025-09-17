@@ -98,7 +98,7 @@ class TranscodeVideoService
             throw new RuntimeException("$fileType file not created");
         }
 
-        if (! filesize($file)) {
+        if (in_array(filesize($file), [0, false], true)) {
             throw new RuntimeException("$fileType file is empty");
         }
 

@@ -10,9 +10,6 @@ class MediaPathGenerator implements PathGenerator
 {
     /**
      * getPath Method.
-     *
-     * @param Media $media
-     * @return string
      */
     public function getPath(Media $media): string
     {
@@ -21,9 +18,6 @@ class MediaPathGenerator implements PathGenerator
 
     /**
      * getPathForConversions Method.
-     *
-     * @param Media $media
-     * @return string
      */
     public function getPathForConversions(Media $media): string
     {
@@ -32,9 +26,6 @@ class MediaPathGenerator implements PathGenerator
 
     /**
      * getPathForResponsiveImages Method.
-     *
-     * @param Media $media
-     * @return string
      */
     public function getPathForResponsiveImages(Media $media): string
     {
@@ -43,9 +34,6 @@ class MediaPathGenerator implements PathGenerator
 
     /**
      * getBasePath Method.
-     *
-     * @param Media $media
-     * @return string
      */
     private function getBasePath(Media $media): string
     {

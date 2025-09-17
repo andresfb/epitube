@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('media', static function (Blueprint $table) {
+        Schema::create('media', static function (Blueprint $table): void {
             $table->id();
             $table->morphs('model');
             $table->uuid()->nullable()->unique();

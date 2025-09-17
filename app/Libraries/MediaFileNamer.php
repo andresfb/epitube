@@ -9,9 +9,6 @@ class MediaFileNamer extends DefaultFileNamer
 {
     /**
      * originalFileName Method.
-     *
-     * @param string $fileName
-     * @return string
      */
     public function originalFileName(string $fileName): string
     {
@@ -20,9 +17,6 @@ class MediaFileNamer extends DefaultFileNamer
 
     /**
      * extensionFromBaseImage Method.
-     *
-     * @param string $baseImage
-     * @return string
      */
     public function extensionFromBaseImage(string $baseImage): string
     {
@@ -31,10 +25,6 @@ class MediaFileNamer extends DefaultFileNamer
 
     /**
      * temporaryFileName Method.
-     *
-     * @param Media $media
-     * @param string $extension
-     * @return string
      */
     public function temporaryFileName(Media $media, string $extension): string
     {

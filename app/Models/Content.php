@@ -98,7 +98,7 @@ class Content extends Model implements HasMedia
 
     public function scopeHasThumbnails(Builder $query): Builder
     {
-        return $query->whereHas('media', function (Builder $query) {
+        return $query->whereHas('media', function (Builder $query): void {
             $query->where('collection_name', MediaNamesLibrary::thumbnails());
         });
     }
@@ -129,8 +129,8 @@ class Content extends Model implements HasMedia
     protected function viewCount(): Attribute
     {
         return Attribute::make(
-            get: static fn($value) => $value / 1000,
-            set: static fn($value) => $value * 1000,
+            get: static fn($value): int|float => $value / 1000,
+            set: static fn($value): int|float => $value * 1000,
         );
     }
 }

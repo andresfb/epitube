@@ -33,11 +33,7 @@ class TitleParserLibrary
 
     public function replaceWords(Stringable|string $source): string
     {
-        if ($source instanceof Stringable) {
-            $titled = $source;
-        } else {
-            $titled = Str::of($source);
-        }
+        $titled = $source instanceof Stringable ? $source : Str::of($source);
 
         foreach ($this->getWordMatrix() as $word => $replacements) {
             if (! $titled->contains($word)) {
@@ -73,7 +69,7 @@ class TitleParserLibrary
     {
         // replace dashes that are presided by words (i.e. solo-company = solo company)
         $titled = preg_replace('/(?<=\w)-(?=\w)/', ' ', $this->title);
-        $this->title = trim($titled);
+        $this->title = trim((string) $titled);
 
         return $this;
     }
@@ -84,15 +80,15 @@ class TitleParserLibrary
 
         $dirList = Str::of($directory)
             ->explode('/')
-            ->map(fn ($item) => $this->cleanString($item, '')->removeSpaces())
-            ->reject(fn ($item) => empty(trim($item)));
+            ->map(fn ($item): \Illuminate\Support\Stringable => $this->cleanString($item, '')->removeSpaces())
+            ->reject(fn ($item): bool => empty(trim((string) $item)));
 
         $dirList->shift();
         $this->rootDirectory = strtolower($dirList->first());
 
         $titled = $titled->replace($dirList, '')
             ->replace(
-                array_map(static fn ($item) => str_replace(' ', '', $item), $dirList->toArray()),
+                array_map(static fn ($item): string|array => str_replace(' ', '', $item), $dirList->toArray()),
                 ''
             )
             ->trim()
@@ -116,13 +112,13 @@ class TitleParserLibrary
         $str = preg_replace('/\[[^]]*]/', '', $str);
 
         // 2. Collapse multiple spaces into one
-        $str = preg_replace('/\s+/', ' ', $str);
+        $str = preg_replace('/\s+/', ' ', (string) $str);
 
         // 3. Remove any space that ends up before the file extension
-        $str = preg_replace('/\s+\./', '.', $str);
+        $str = preg_replace('/\s+\./', '.', (string) $str);
 
         // 4. Trim leading / trailing spaces
-        $this->title = trim($str);
+        $this->title = trim((string) $str);
 
         return $this;
     }
@@ -242,7 +238,7 @@ class TitleParserLibrary
     private function removeStartingNumbers(): self
     {
         $pattern = '/\b(\d{2})\s+(\d{2})\s+(\d{2})\b/';
-        if (! preg_match($pattern, $this->title, $matches)) {
+        if (in_array(preg_match($pattern, $this->title, $matches), [0, false], true)) {
             return $this;
         }
 
@@ -256,7 +252,7 @@ class TitleParserLibrary
     private function removeFormatedDates(): self
     {
         $pattern = '/\((\d{2}[.\s]\d{2}[.\s]\d{4})\)/';
-        if (! preg_match($pattern, $this->title, $matches)) {
+        if (in_array(preg_match($pattern, $this->title, $matches), [0, false], true)) {
             return $this;
         }
 
