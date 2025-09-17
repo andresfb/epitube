@@ -25,7 +25,7 @@ use Symfony\Component\Process\Process;
  *
  * Based on https://github.com/Astrotomic/laravel-medialibrary-hls/tree/main
  */
-final class HlsConverterService
+final readonly class HlsConverterService
 {
     public const string RES_360P = '360p';
 
@@ -50,7 +50,7 @@ final class HlsConverterService
         self::RES_2160P => [-2, 2160, 18200, 192],
     ];
 
-    public function __construct(protected readonly Filesystem $filesystem) {}
+    public function __construct(private Filesystem $filesystem) {}
 
     /**
      * @throws Exception
@@ -150,7 +150,7 @@ final class HlsConverterService
         return $output.'/playlist.m3u8';
     }
 
-    protected function canConvert(Media $media): bool
+    private function canConvert(Media $media): bool
     {
         if (! $this->requirementsAreInstalled()) {
             return false;
@@ -159,29 +159,29 @@ final class HlsConverterService
         return $this->canHandleMimeType(Str::lower($media->mime_type));
     }
 
-    protected function canHandleMimeType(string $mime): bool
+    private function canHandleMimeType(string $mime): bool
     {
         return collect(MimeType::canHls())->contains($mime);
     }
 
-    protected function requirementsAreInstalled(): bool
+    private function requirementsAreInstalled(): bool
     {
         return class_exists(FFProbe::class)
             && file_exists($this->ffProbe())
             && file_exists($this->ffMpeg());
     }
 
-    protected function ffMpeg(): string
+    private function ffMpeg(): string
     {
         return (new ExecutableFinder)->find('ffmpeg', config('media-library.ffmpeg_path', 'ffmpeg'));
     }
 
-    protected function ffProbe(): string
+    private function ffProbe(): string
     {
         return (new ExecutableFinder)->find('ffprobe', config('media-library.ffprobe_path', 'ffprobe'));
     }
 
-    protected function getResolutions(Dimension $dimensions): Collection
+    private function getResolutions(Dimension $dimensions): Collection
     {
         return collect(self::RESOLUTIONS)
             ->filter(fn (array $resolution): bool => $resolution[1] <= $dimensions->getHeight());

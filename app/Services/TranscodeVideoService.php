@@ -64,7 +64,7 @@ final class TranscodeVideoService
         }
     }
 
-    protected function checkEncodedFile(string $file): void
+    private function checkEncodedFile(string $file): void
     {
         $fileType = 'Transcoding';
 

@@ -127,14 +127,14 @@ final readonly class ImportVideoService
             ->replace('   ', ' ')
             ->replace('  ', ' ')
             ->explode('/')
-            ->map(fn ($tag): string => trim((string) $tag))
+            ->map(fn ($tag): string => trim($tag))
             ->reject(fn (string $part): bool => empty($part));
 
         $tags = collect();
         foreach ($sections as $section) {
             $tags = $tags->merge(
                 str($section)->explode(' ')
-                    ->map(fn ($tag): string => trim((string) $tag))
+                    ->map(fn ($tag): string => trim($tag))
                     ->reject(fn (string $part): bool => empty($part))
             );
         }

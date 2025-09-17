@@ -80,7 +80,7 @@ final class MasterVideoLibrary
         }
 
         // prepare local file name
-        $videoFileName = pathinfo($media->file_name, PATHINFO_BASENAME);
+        $videoFileName = pathinfo((string) $media->file_name, PATHINFO_BASENAME);
         $this->localFilePath = sprintf('%s%s%s', $this->processingPath, DIRECTORY_SEPARATOR, $videoFileName);
         $this->relativeVideoPath = sprintf('%s%s%s', $this->tempPath, DIRECTORY_SEPARATOR, $videoFileName);
 
