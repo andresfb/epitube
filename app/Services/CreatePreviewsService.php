@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Libraries\MasterVideoLibrary;
+use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
 use Exception;
 use FFMpeg\Coordinate\TimeCode;
@@ -23,7 +24,7 @@ readonly class CreatePreviewsService
      */
     public function execute(int $mediaId): void
     {
-        Log::notice('Starting creating Preview videos');
+        Log::notice("Starting creating Preview videos for: $mediaId");
         $this->videoLibrary->prepare($mediaId, __CLASS__);
 
         $this->generate(
@@ -50,9 +51,11 @@ readonly class CreatePreviewsService
                         'extension' => $extension,
                         'is_video' => true,
                     ])
-                    ->toMediaCollection('previews');
+                    ->toMediaCollection(MediaNamesLibrary::previews());
             }
         }
+
+        $content->touch();
     }
 
     private function createClipFile(int $size, int $bitRate, string $extension): string

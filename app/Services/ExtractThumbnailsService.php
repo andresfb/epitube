@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Libraries\MasterVideoLibrary;
+use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
 use Exception;
 use FFMpeg\Coordinate\TimeCode;
@@ -22,7 +23,7 @@ readonly class ExtractThumbnailsService
      */
     public function execute(int $mediaId): void
     {
-        Log::notice('Starting extracting thumbnails');
+        Log::notice("Starting extracting thumbnails for: $mediaId");
         $this->videoLibrary->prepare($mediaId, __CLASS__);
 
         $this->generate(
@@ -46,8 +47,10 @@ readonly class ExtractThumbnailsService
                 ->withCustomProperties([
                     'is_video' => false,
                 ])
-                ->toMediaCollection('thumbnails');
+                ->toMediaCollection(MediaNamesLibrary::thumbnails());
         }
+
+        $content->touch();
     }
 
     /**

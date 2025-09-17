@@ -80,14 +80,12 @@ class ImportVideosService
                 continue;
             }
 
-            if (Content::found($hash)) {
+            if (Content::foundNameHash($hash)) {
                 continue;
             }
 
             $files[$hash] = $fullFile;
             $this->scanned++;
-
-            echo '.';
         }
 
         return $files;

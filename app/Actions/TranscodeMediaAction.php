@@ -21,8 +21,9 @@ final readonly class TranscodeMediaAction
     public function handle(Media $media): void
     {
         try {
-            $transcodeMineTypes = MimeType::transcode();
+            Log::notice("Check if video needs transcoding: $media->id");
 
+            $transcodeMineTypes = MimeType::transcode();
             if (! in_array($media->mime_type, $transcodeMineTypes, true)) {
                 Log::notice("Media: $media->id of type $media->mime_type doesn't need transcoding");
                 $this->jobsAction->handle($media->id);

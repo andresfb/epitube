@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Libraries\TitleParserLibrary;
 use Exception;
 use Illuminate\Console\Command;
 use function Laravel\Prompts\clear;
@@ -16,18 +15,11 @@ class TestAppCommand extends Command
 
     protected $description = 'Test app command';
 
-    public function handle(TitleParserLibrary $library): void
+    public function handle(): void
     {
         try {
             clear();
             intro('Starting test');
-
-            $files = collect($this->getRawData());
-            $fileInfo = pathinfo($files->random());
-            $title = $library->parseFileName($fileInfo);
-
-            $this->line("\n");
-            dump($fileInfo, str($title)->title()->toString());
 
         } catch (Exception $e) {
             error($e->getMessage());
@@ -35,10 +27,5 @@ class TestAppCommand extends Command
             $this->newLine();
             outro('Done');
         }
-    }
-
-    private function getRawData(): array
-    {
-        return [];
     }
 }

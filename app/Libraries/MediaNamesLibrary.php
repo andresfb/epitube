@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Libraries;
+
+final readonly class MediaNamesLibrary
+{
+    public static function videos(): string
+    {
+        return 'videos';
+    }
+
+    public static function transcoded(): string
+    {
+        return 'transcoded';
+    }
+
+    public static function previews(): string
+    {
+        return 'previews';
+    }
+
+    public static function thumbnails(): string
+    {
+        return 'thumbnails';
+    }
+}

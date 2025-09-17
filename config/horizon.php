@@ -208,7 +208,7 @@ return [
                 'balance' => 'auto',
                 'minProcesses' => 1,
                 'maxProcesses' => 5,
-                'timeout' => 900,
+                'timeout' => 3700,
                 'tries' => 1,
             ],
 

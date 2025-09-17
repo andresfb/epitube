@@ -123,12 +123,15 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/framework (LARAVEL) - v12
 - laravel/horizon (HORIZON) - v5
 - laravel/prompts (PROMPTS) - v0
+- laravel/scout (SCOUT) - v10
 - livewire/livewire (LIVEWIRE) - v3
 - livewire/volt (VOLT) - v1
+- larastan/larastan (LARASTAN) - v3
 - laravel/pint (PINT) - v1
 - laravel/sail (SAIL) - v1
 - pestphp/pest (PEST) - v4
 - phpunit/phpunit (PHPUNIT) - v12
+- rector/rector (RECTOR) - v2
 - tailwindcss (TAILWINDCSS) - v4
 
 

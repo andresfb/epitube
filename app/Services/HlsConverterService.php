@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Content;
 use App\Models\MimeType;
 use Exception;
 use FFMpeg\Coordinate\Dimension;
@@ -47,14 +48,17 @@ class HlsConverterService
     /**
      * @throws Exception
      */
-    public function execute(Media $media): void
+    public function execute(int $mediaId): void
     {
+        Log::notice("Starting creating HLS playlist for: $mediaId");
+        $media = Media::where('id', $mediaId)
+            ->firstOrFail();
+
         if (! $this->canConvert($media)) {
             throw new RuntimeException("Media not supported: {$media->id}");
         }
 
         $temporaryDirectory = TemporaryDirectory::create()->deleteWhenDestroyed();
-
         $copiedOriginalFile = $this->filesystem->copyFromMediaLibrary(
             $media,
             $temporaryDirectory->path(Str::random(32) . '.' . $media->extension)
@@ -79,8 +83,11 @@ class HlsConverterService
         // todo: save the list of generated resolutions
 
         $media->setCustomProperty('hls', $diskRelativePath);
+        $content = Content::where('id', $media->model_id)->first();
+        $content?->touch();
 
         unlink($copiedOriginalFile);
+        Log::notice('Done creating HLS playlist');
     }
 
     public function convert(string $file): string

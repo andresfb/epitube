@@ -2,21 +2,29 @@
 
 namespace App\Models;
 
-use Aliziodev\LaravelTaxonomy\Traits\HasTaxonomy;
+use App\Libraries\MediaNamesLibrary;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Config;
+use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Tags\HasTags;
 
 class Content extends Model implements HasMedia
 {
     use SoftDeletes;
     use InteractsWithMedia;
-    use HasTaxonomy;
+    use Searchable;
+    use HasTags;
 
     protected $guarded = [];
+
+    protected $with = ['category', 'tags', 'media'];
 
     protected function casts(): array
     {
@@ -29,21 +37,26 @@ class Content extends Model implements HasMedia
         ];
     }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     public function registerMediaCollections(): void
     {
         $disk = config('media-library.disk_name');
 
-        $this->addMediaCollection('videos')
+        $this->addMediaCollection(MediaNamesLibrary::videos())
             ->acceptsMimeTypes(MimeType::list())
             ->singleFile()
             ->useDisk($disk);
 
-        $this->addMediaCollection('transcoded')
+        $this->addMediaCollection(MediaNamesLibrary::transcoded())
             ->acceptsMimeTypes(['video/mp4'])
             ->singleFile()
             ->useDisk($disk);
 
-        $this->addMediaCollection('previews')
+        $this->addMediaCollection(MediaNamesLibrary::previews())
             ->acceptsMimeTypes([
                 'video/mp4',
                 'video/webm',
@@ -59,10 +72,15 @@ class Content extends Model implements HasMedia
             ->useDisk($disk);
     }
 
-    public static function found(string $hash): bool
+    public static function foundNameHash(string $hash): bool
     {
         return self::where('name_hash', $hash)
-            ->orWhere('file_hash', $hash)
+            ->exists();
+    }
+
+    public static function foundFileHash(string $hash): bool
+    {
+        return self::where('file_hash', $hash)
             ->exists();
     }
 
@@ -76,6 +94,36 @@ class Content extends Model implements HasMedia
         return self::select('name_hash')
             ->pluck('name_hash')
             ->toArray();
+    }
+
+    public function scopeHasThumbnails(Builder $query): Builder
+    {
+        return $query->whereHas('media', function (Builder $query) {
+            $query->where('collection_name', MediaNamesLibrary::thumbnails());
+        });
+    }
+
+    public function scopeInMainCategory(Builder $query): Builder
+    {
+        return $query->where('category_id', Category::getMain()->id);
+    }
+
+    public function searchableAs(): string
+    {
+        return 'epitube_content_index';
+    }
+
+    public function toSearchableArray(): array|null
+    {
+        $content = $this->except([
+            'name_hash',
+            'file_hash',
+        ]);
+
+        $content['category'] = $this->category->name;
+        $content['tags'] = $this->tags->pluck('name')->toArray();
+
+        return $content;
     }
 
     protected function viewCount(): Attribute

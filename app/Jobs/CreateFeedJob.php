@@ -2,9 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Media;
-use App\Models\MimeType;
-use App\Services\HlsConverterService;
+use App\Services\CreateFeedService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,28 +11,22 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class GenerateHlsVideosJob implements ShouldQueue
+class CreateFeedJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly int $mediaId)
-    {
-        $this->queue = 'hls';
-        $this->delay = now()->addSeconds(15);
-    }
-
     /**
      * @throws Exception
      */
-    public function handle(HlsConverterService $service): void
+    public function handle(CreateFeedService $service): void
     {
         try {
-            $service->execute($this->mediaId);
+            $service->execute();
         } catch (Exception $e) {
-            Log::error("HLS generation error for Media Id: {$this->mediaId}: {$e->getMessage()}");
+            Log::error($e->getMessage());
 
             throw $e;
         }

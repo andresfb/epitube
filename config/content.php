@@ -9,12 +9,10 @@ return [
     'minimum_duration' => (int) env('MINIMUM_VIDEO_DURATION', 60),
 
     'thumbnails' => [
-
         'total' => (int) env('POSTERS_NUMBER_THUMBNAILS', 6),
     ],
 
     'preview_options' => [
-
 
         // video resolution => bitrate
         'sizes' => [

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
 use App\Models\Media;
 use Exception;
@@ -14,7 +15,7 @@ use Symfony\Component\Process\Process;
 
 class TranscodeVideoService
 {
-    private const TRANSCODE_DISK = 'transcode';
+    private const string TRANSCODE_DISK = 'transcode';
 
     private int $duration = 0;
     private string $flag = '';
@@ -29,7 +30,7 @@ class TranscodeVideoService
      */
     public function execute(int $mediaId): int
     {
-        Log::info('Starting '.__CLASS__.' execute');
+        Log::info("Starting transcoding for video: $mediaId");
 
         $this->media = Media::findOrFail($mediaId);
 
@@ -40,7 +41,9 @@ class TranscodeVideoService
 
             Log::info("Checking for {$this->flag} file");
             if (Storage::disk(self::TRANSCODE_DISK)->exists($this->flag)) {
-                throw new RuntimeException("{$this->media->model_id} | {$this->media->name} Transcode process already running.");
+                throw new RuntimeException(
+                    "{$this->media->model_id} | {$this->media->name} Transcode process already running."
+                );
             }
 
             Log::info("Creating $this->flag file");
@@ -58,6 +61,7 @@ class TranscodeVideoService
     private function transcode(): array
     {
         Log::info("Transcoding video: {$this->media->model_id} | {$this->media->name}");
+
         $outputFile = sprintf(
             '%s%s/%s.mp4',
             Storage::disk(self::TRANSCODE_DISK)->path(''),
@@ -165,10 +169,12 @@ class TranscodeVideoService
                 'width' => $info['width'],
                 'height' => $info['height'],
                 'duration' => $this->duration,
-                'is_video' => true,
                 'owner_id' => $this->media->id,
+                'is_video' => true,
             ])
-            ->toMediaCollection('transcoded');
+            ->toMediaCollection(MediaNamesLibrary::transcoded());
+
+        $content->touch();
 
         return $media->id;
     }

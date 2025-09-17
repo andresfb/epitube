@@ -2,7 +2,9 @@
 
 namespace App\Libraries;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 class TitleParserLibrary
 {
@@ -10,20 +12,45 @@ class TitleParserLibrary
 
     private string $rootDirectory = '';
 
-    public function parseFileName(array $fileInfo): string
+    public function parseFileName(array $fileInfo): Stringable
     {
+        Log::notice("Parsing Title for file: {$fileInfo['filename']}");
+
         return $this->cleanString($fileInfo['filename'])
             ->removeDashes()
             ->stripBrackets()
             ->addDirectoriesToTitle($fileInfo['dirname'])
             ->changeWords()
             ->removeStartingNumbers()
+            ->removeFormatedDates()
             ->removeSpaces();
     }
 
     public function getRootDirectory(): string
     {
         return $this->rootDirectory;
+    }
+
+    public function replaceWords(Stringable|string $source): string
+    {
+        if ($source instanceof Stringable) {
+            $titled = $source;
+        } else {
+            $titled = Str::of($source);
+        }
+
+        foreach ($this->getWordMatrix() as $word => $replacements) {
+            if (! $titled->contains($word)) {
+                continue;
+            }
+
+            $titled = $titled->replace(
+                $word,
+                collect($replacements)->random(),
+            );
+        }
+
+        return $titled->toString();
     }
 
     private function cleanString(string $value, string $replace = ' '): self
@@ -35,7 +62,6 @@ class TitleParserLibrary
                 $replace
             )
             ->replace(['|', '/'], '')
-            ->replace(['(', ')'], ' - ')
             ->replace('@', '')
             ->trim()
             ->toString();
@@ -56,24 +82,24 @@ class TitleParserLibrary
     {
         $titled = Str::of($this->title);
 
-        $dirArray = Str::of($directory)
+        $dirList = Str::of($directory)
             ->explode('/')
             ->map(fn ($item) => $this->cleanString($item, '')->removeSpaces())
-            ->reject(fn ($item) => empty(trim($item)))
-            ->toArray();
+            ->reject(fn ($item) => empty(trim($item)));
 
-        $this->rootDirectory = strtolower($dirArray[0]);
+        $dirList->shift();
+        $this->rootDirectory = strtolower($dirList->first());
 
-        $titled = $titled->replace($dirArray, '')
+        $titled = $titled->replace($dirList, '')
             ->replace(
-                array_map(static fn ($item) => str_replace(' ', '', $item), $dirArray),
+                array_map(static fn ($item) => str_replace(' ', '', $item), $dirList->toArray()),
                 ''
             )
             ->trim()
             ->ltrim('-')
             ->trim();
 
-        foreach (collect($dirArray)->reverse() as $item) {
+        foreach ($dirList->reverse() as $item) {
             $titled = $titled->prepend("$item - ");
         }
 
@@ -118,7 +144,8 @@ class TitleParserLibrary
                     'x265',
                     'mp4',
                     'wrb',
-                    'wr',
+                    '-wr',
+                    ' rq',
                     'internal',
                     'vsex',
                     'prt',
@@ -138,18 +165,7 @@ class TitleParserLibrary
             ->rtrim('v')
             ->rtrim('-');
 
-        foreach ($this->getWordMatrix() as $word => $replacements) {
-            if (! $titled->contains($word)) {
-                continue;
-            }
-
-            $titled = $titled->replace(
-                $word,
-                collect($replacements)->random(),
-            );
-        }
-
-        $this->title = $titled->trim()->toString();
+        $this->title = $this->replaceWords($titled);
 
         return $this;
     }
@@ -184,7 +200,7 @@ class TitleParserLibrary
     {
         return [
             'friend',
-            'college',
+            'colleague',
             'boss',
             'stranger',
             'pal',
@@ -225,22 +241,40 @@ class TitleParserLibrary
 
     private function removeStartingNumbers(): self
     {
-        // Remove the number groups that directly follow the starting words
-        // i.e. "collaborate 01 02 25 in the code 1080p" = "collaborate in the code 1080p"
-        $titled = preg_replace('/^(.+?)\s+(?:\d+\s+)+/', '$1 ', $this->title);
-        $this->title = trim($titled);
+        $pattern = '/\b(\d{2})\s+(\d{2})\s+(\d{2})\b/';
+        if (! preg_match($pattern, $this->title, $matches)) {
+            return $this;
+        }
+
+        $this->title = trim(
+            str_replace($matches[0], '', $this->title)
+        );
 
         return $this;
     }
 
-    private function removeSpaces(): string
+    private function removeFormatedDates(): self
+    {
+        $pattern = '/\((\d{2}[.\s]\d{2}[.\s]\d{4})\)/';
+        if (! preg_match($pattern, $this->title, $matches)) {
+            return $this;
+        }
+
+        $this->title = trim(
+            str_replace($matches[0], '', $this->title)
+        );
+
+        return $this;
+    }
+
+    private function removeSpaces(): Stringable
     {
         return Str::of($this->title)
+            ->replace(['(', ')'], ' - ')
             ->replace('    ', ' ') // Quadruple space
             ->replace('   ', ' ') // Triple space
             ->replace('  ', ' ') // Double space
             ->replace('- -', '-')
-            ->trim()
-            ->toString();
+            ->trim();
     }
 }
