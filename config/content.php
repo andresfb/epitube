@@ -32,4 +32,11 @@ return [
 
     ],
 
+    'banded_tags' => explode(
+        ',',
+        env(
+            'CONTENT_BANDED_TAGS',
+            'a,an,i,he,she,they,them,his,hers,theirs,that,this,then,where,to,me,the,has,have,are,is,of'
+        )
+    ),
 ];

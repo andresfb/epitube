@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Dtos\VideoItem;
 use App\Services\ImportVideoService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -20,7 +21,7 @@ final class ImportVideoJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly array $fileData)
+    public function __construct(private readonly VideoItem $videoItem)
     {
         $this->queue = 'ingestor';
         $this->delay = now()->addSeconds(15);
@@ -32,9 +33,9 @@ final class ImportVideoJob implements ShouldQueue
     public function handle(ImportVideoService $service): void
     {
         try {
-            $service->execute($this->fileData);
+            $service->execute($this->videoItem);
         } catch (Exception $e) {
-            Log::error("Error importing file: {$this->fileData['file']}: {$e->getMessage()}");
+            Log::error("Error importing file: {$this->videoItem->Path}: {$e->getMessage()}");
 
             throw $e;
         }

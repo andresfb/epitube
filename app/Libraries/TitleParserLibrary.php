@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Libraries;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
@@ -80,25 +81,29 @@ final class TitleParserLibrary
     {
         $titled = Str::of($this->title);
 
+        /** @var Collection<Stringable> $dirList */
         $dirList = Str::of($directory)
             ->explode('/')
             ->map(fn ($item): Stringable => $this->cleanString($item, '')->removeSpaces())
             ->reject(fn ($item): bool => empty(trim((string) $item)));
 
         $dirList->shift();
-        $this->rootDirectory = mb_strtolower($dirList->first());
+        $this->rootDirectory = str($dirList->first())->lower()->toString();
 
         $titled = $titled->replace($dirList, '')
             ->replace(
-                array_map(static fn ($item): string|array => str_replace(' ', '', $item), $dirList->toArray()),
+                $dirList->map(function (Stringable $item): string {
+                    return $item->replace(' ', '')->toString();
+                })->toArray(),
                 ''
             )
             ->trim()
             ->ltrim('-')
             ->trim();
 
+        /** @var Stringable $item */
         foreach ($dirList->reverse() as $item) {
-            $titled = $titled->prepend("$item - ");
+            $titled = $titled->prepend("{$item->toString()} - ");
         }
 
         $this->title = $titled->trim()->toString();
@@ -267,12 +272,25 @@ final class TitleParserLibrary
 
     private function removeSpaces(): Stringable
     {
+        $spaces = [
+            '     ',
+            '    ',
+            '   ',
+            '  ',
+        ];
+
         return Str::of($this->title)
             ->replace(['(', ')'], ' - ')
-            ->replace('    ', ' ') // Quadruple space
-            ->replace('   ', ' ') // Triple space
-            ->replace('  ', ' ') // Double space
+            ->replace($spaces, ' ')
+            ->replace('- - - -', '-')
+            ->replace('- - -', '-')
             ->replace('- -', '-')
+            ->replace('---', '-')
+            ->replace('--', '-')
+            ->replace('-', '- ')
+            ->replace($spaces, ' ')
+            ->rtrim('- ', '')
+            ->rtrim('-', '')
             ->trim();
     }
 }

@@ -27,12 +27,6 @@ final class Content extends Model implements HasMedia
 
     protected $with = ['category', 'tags', 'media'];
 
-    public static function foundNameHash(string $hash): bool
-    {
-        return self::where('name_hash', $hash)
-            ->exists();
-    }
-
     public static function foundFileHash(string $hash): bool
     {
         return self::where('file_hash', $hash)
@@ -41,8 +35,8 @@ final class Content extends Model implements HasMedia
 
     public static function getImported(): array
     {
-        return self::select('name_hash')
-            ->pluck('name_hash')
+        return self::select('item_id')
+            ->pluck('item_id')
             ->toArray();
     }
 
@@ -106,7 +100,7 @@ final class Content extends Model implements HasMedia
     public function toSearchableArray(): ?array
     {
         $content = $this->except([
-            'name_hash',
+            'item_id',
             'file_hash',
         ]);
 

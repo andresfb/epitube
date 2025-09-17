@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Dtos\VideoItem;
 use App\Jobs\ImportVideoJob;
 use App\Models\Content;
 use App\Models\MimeType;
 use Exception;
-use FilesystemIterator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
+use Modules\JellyfinApi\Facades\Jellyfin;
 use RuntimeException;
+use Throwable;
 
 final class ImportVideosService
 {
@@ -29,70 +31,96 @@ final class ImportVideosService
         Log::notice('Videos import started at '.now()->toDateTimeString());
 
         $this->maxFiles = Config::integer('content.max_files');
-        $files = $this->scanFiles();
+        $videos = $this->getServiceItems();
 
-        if ($files === []) {
-            throw new RuntimeException('No files found to import');
-        }
-
-        foreach ($files as $hash => $file) {
-            ImportVideoJob::dispatch([
-                'hash' => $hash,
-                'file' => $file,
-            ]);
-        }
+        $videos->each(function (VideoItem $videoItem) {
+            ImportVideoJob::dispatch($videoItem);
+        });
 
         Log::notice('Videos import ended at '.now()->toDateTimeString());
     }
 
-    private function scanFiles(): array
+    /**
+     * @return Collection<VideoItem>
+     */
+    private function getServiceItems(): Collection
     {
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(
-                config('content.data_path'),
-                FilesystemIterator::SKIP_DOTS
-            )
-        );
+        $items = $this->loadFromAPI();
+        if ($items === []) {
+            throw new RuntimeException('No videos found to import');
+        }
 
-        $files = [];
+        $videos = collect();
         $extensions = MimeType::extensions();
         $importedFiles = Content::getImported();
 
-        foreach ($iterator as $file) {
+        foreach ($items as $item) {
             if ($this->scanned >= $this->maxFiles) {
                 break;
             }
-            if ($file->isDir()) {
+
+            if (! file_exists($item['Path'])) {
                 continue;
             }
 
-            if (! $file->isFile()) {
+            if (in_array($item['Id'], $importedFiles, true)) {
                 continue;
             }
 
-            if (! in_array($file->getExtension(), $extensions, true)) {
+            $fileInfo = pathinfo($item['Path']);
+            if (! in_array($fileInfo['extension'], $extensions, true)) {
                 continue;
             }
 
-            $fullFile = $file->getFileInfo()->getPathname();
-            $hash = hash('md5', (string) $fullFile);
+            $videos->add(
+                new VideoItem(
+                    Id: $item['Id'],
+                    Name: $fileInfo['filename'],
+                    Path: $item['Path'],
+                    RunTimeTicks: (int) ($item['RunTimeTicks'] ?? 0),
+                    Width: (int) ($item['Width'] ?? 0),
+                    Height: (int) ($item['Height'] ?? 0),
+                )
+            );
 
-            if (in_array($hash, $importedFiles, true)) {
-                continue;
-            }
-
-            if (array_key_exists($hash, $files)) {
-                continue;
-            }
-
-            if (Content::foundNameHash($hash)) {
-                continue;
-            }
-
-            $files[$hash] = $fullFile;
             $this->scanned++;
         }
 
-        return $files;
+        return $videos;
+    }
+
+    private function loadFromAPI(): array
+    {
+        return Cache::remember(
+            'VIDEOS:FROM:API',
+            now()->addDay()->subSeconds(2),
+            static function (): array {
+                try {
+                    Jellyfin::setProvider();
+                    $provider = Jellyfin::getProvider();
+                    $result = $provider->getItems();
+
+                    if (blank($result)) {
+                        Log::error('Api returned empty array');
+
+                        return [];
+                    }
+
+                    if (blank($result['Items'])) {
+                        Log::error("No items found");
+
+                        return [];
+                    }
+
+                    Log::notice("Found {$result['TotalRecordCount']} items");
+
+                    return $result['Items'];
+                } catch (Throwable $e) {
+                    Log::error($e->getMessage());
+
+                    return [];
+                }
+            }
+        );
     }
 }

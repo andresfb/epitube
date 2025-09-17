@@ -11,6 +11,7 @@ try {
     return RectorConfig::configure()
         ->withPaths([
             __DIR__.'/app',
+            __DIR__.'/modules',
             __DIR__.'/bootstrap/app.php',
             __DIR__.'/database',
             __DIR__.'/public',

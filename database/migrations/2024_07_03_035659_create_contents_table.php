@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(Category::class)
                 ->constrained('categories')
                 ->onDelete('cascade');
-            $table->string('name_hash')->unique();
+            $table->string('item_id')->unique();
             $table->string('file_hash')->unique();
             $table->text('title');
             $table->boolean('active')->default(false);
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            $table->index(['name_hash', 'file_hash'], 'hashes');
+            $table->index(['item_id', 'file_hash'], 'hashes');
             $table->index(['viewed', 'liked'], 'viewed_liked');
         });
     }

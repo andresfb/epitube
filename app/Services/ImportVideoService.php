@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Actions\TranscodeMediaAction;
+use App\Dtos\VideoItem;
+use App\Libraries\MediaNamesLibrary;
 use App\Libraries\TitleParserLibrary;
 use App\Models\Category;
 use App\Models\Content;
@@ -18,23 +20,28 @@ use RuntimeException;
 
 final readonly class ImportVideoService
 {
+    private array $bandedTags;
+
     public function __construct(
         private TitleParserLibrary $parserLibrary,
         private TranscodeMediaAction $transcodeAction,
-    ) {}
+    )
+    {
+        $this->bandedTags = Config::array('content.banded_tags');
+    }
 
     /**
      * @throws Exception
      */
-    public function execute(array $fileData): void
+    public function execute(VideoItem $videoItem): void
     {
-        Log::notice("Importing video for file: {$fileData['file']}");
+        Log::notice("Importing video for file: $videoItem->Path");
 
-        $fileInfo = pathinfo((string) $fileData['file']);
-        $fileHash = File::hash($fileData['file']);
+        $fileInfo = pathinfo($videoItem->Path);
+        $fileHash = File::hash($videoItem->Path);
 
         if (Content::foundFileHash($fileHash)) {
-            Log::notice("Video already imported: {$fileData['file']}");
+            Log::notice("Video already imported: $videoItem->Path");
 
             $this->parseTags(
                 Content::where('file_hash', $fileHash)->firstOrFail(),
@@ -48,21 +55,23 @@ final readonly class ImportVideoService
             ? Config::string('constants.alt_category')
             : Config::string('constants.main_category');
 
+        Log::notice('Saving content');
         $content = Content::create([
             'category_id' => Category::getId($category),
-            'name_hash' => $fileData['hash'],
+            'item_id' => $videoItem->Id,
             'file_hash' => $fileHash,
             'title' => $this->parserLibrary->parseFileName($fileInfo)->title()->toString(),
             'active' => true,
-            'og_path' => $fileData['file'],
-            'added_at' => Carbon::parse(filemtime($fileData['file'])),
+            'og_path' => $videoItem->Path,
+            'added_at' => Carbon::parse(filemtime($videoItem->Path)),
         ]);
 
         $this->parseTags($content, $fileInfo);
 
-        [$width, $height, $duration] = $this->getVideoInfo($fileData['file']);
+        [$width, $height, $duration] = $this->getVideoInfo($videoItem);
 
-        $media = $content->addMedia($fileData['file'])
+        Log::notice('Adding media');
+        $media = $content->addMedia($videoItem->Path)
             ->withCustomProperties([
                 'width' => $width,
                 'height' => $height,
@@ -70,21 +79,29 @@ final readonly class ImportVideoService
                 'is_video' => true,
             ])
             ->preservingOriginal()
-            ->toMediaCollection('videos');
+            ->toMediaCollection(MediaNamesLibrary::videos());
 
         $this->transcodeAction->handle($media);
 
         Log::notice('Done importing video');
     }
 
-    private function getVideoInfo(mixed $file): array
+    private function getVideoInfo(VideoItem $videoItem): array
     {
-        $probe = FFProbe::create();
-        if (! $probe->isValid($file)) {
-            throw new RuntimeException("$file file is not a valid video");
+        if ($videoItem->RunTimeTicks > 0 && $videoItem->Width > 0 && $videoItem->Height > 0) {
+            return [
+                $videoItem->Width,
+                $videoItem->Height,
+                (int) floor($videoItem->RunTimeTicks / 10000000),
+            ];
         }
 
-        $video = $probe->streams($file)
+        $probe = FFProbe::create();
+        if (! $probe->isValid($videoItem->Path)) {
+            throw new RuntimeException("$videoItem->Path file is not a valid video");
+        }
+
+        $video = $probe->streams($videoItem->Path)
             ->videos()
             ->first();
 
@@ -94,7 +111,7 @@ final readonly class ImportVideoService
 
         $height = (int) $video->get('height', 720);
         $width = (int) $video->get('width', 720);
-        $duration = (int) round($probe->format($file)->get('duration'));
+        $duration = (int) round($probe->format($videoItem->Path)->get('duration'));
 
         if ($duration < 10) {
             throw new RuntimeException('Video is too short');
@@ -121,6 +138,7 @@ final readonly class ImportVideoService
             ->lower();
 
         $sections = str($this->parserLibrary->replaceWords($directory))
+            ->replace("'", '')
             ->replace('-', ' ')
             ->replace('step', ' ')
             ->replace('    ', ' ')
@@ -135,7 +153,11 @@ final readonly class ImportVideoService
             $tags = $tags->merge(
                 str($section)->explode(' ')
                     ->map(fn ($tag): string => trim($tag))
-                    ->reject(fn (string $part): bool => empty($part))
+                    ->reject(function (string $part): bool {
+                        return blank($part)
+                            || in_array($part, $this->bandedTags, true)
+                            || mb_strlen($part) <= 2;
+                    })
             );
         }
 
