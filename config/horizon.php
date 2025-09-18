@@ -168,7 +168,7 @@ return [
     |
     */
 
-    'memory_limit' => 64,
+    'memory_limit' => 256,
 
     /*
     |--------------------------------------------------------------------------
@@ -200,7 +200,7 @@ return [
                 'balance' => 'auto',
                 'processes' => 1,
                 'maxProcesses' => 1,
-                'timeout' => 900,
+                'timeout' => 1800,
                 'tries' => 1,
             ],
 
@@ -210,7 +210,7 @@ return [
                 'balance' => 'auto',
                 'minProcesses' => 1,
                 'maxProcesses' => 5,
-                'timeout' => 3700,
+                'timeout' => 5400,
                 'tries' => 1,
             ],
 
@@ -221,7 +221,7 @@ return [
                 'minProcesses' => 1,
                 'maxProcesses' => 2,
                 'memory' => 512,
-                'timeout' => 5400,
+                'timeout' => 7200,
                 'tries' => 1,
             ],
 
@@ -232,7 +232,7 @@ return [
                 'minProcesses' => 1,
                 'maxProcesses' => 2,
                 'memory' => 512,
-                'timeout' => 5400,
+                'timeout' => 7200,
                 'tries' => 1,
             ],
 

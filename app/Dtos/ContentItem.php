@@ -21,6 +21,7 @@ final class ContentItem extends Data
         public bool $viewed,
         public bool $liked,
         public int $viewCount,
+        public string $service_url,
         public Carbon $addedAt,
         public array $tags = [],
         public array $videos = [],
@@ -48,9 +49,10 @@ final class ContentItem extends Data
                 return;
             }
 
-            $contentArray['videos'][$media->collection_name][] = [
+            $hls = MediaNamesLibrary::hlsConversion();
+            $contentArray['media'][$media->collection_name][] = [
                 'full' => $media->getFullUrl(),
-                'hls' => $media->hasGeneratedConversion('hls')
+                $hls => $media->hasGeneratedConversion($hls)
                     ? $media->getGeneratedConversions()->toArray()
                     : [],
             ];

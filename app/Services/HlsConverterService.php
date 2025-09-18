@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Libraries\MasterVideoLibrary;
+use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
 use App\Models\MimeType;
 use Exception;
@@ -16,7 +18,6 @@ use Illuminate\Support\Str;
 use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Filesystem;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Spatie\MediaLibrary\Support\TemporaryDirectory;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -50,7 +51,15 @@ final readonly class HlsConverterService
         self::RES_2160P => [-2, 2160, 18200, 192],
     ];
 
-    public function __construct(private Filesystem $filesystem) {}
+    private string $hls;
+
+    public function __construct(
+        private Filesystem $filesystem,
+        private MasterVideoLibrary $videoLibrary
+    )
+    {
+        $this->hls = MediaNamesLibrary::hlsConversion();
+    }
 
     /**
      * @throws Exception
@@ -65,13 +74,9 @@ final readonly class HlsConverterService
             throw new RuntimeException("Media not supported: {$media->id}");
         }
 
-        $temporaryDirectory = TemporaryDirectory::create()->deleteWhenDestroyed();
-        $copiedOriginalFile = $this->filesystem->copyFromMediaLibrary(
-            $media,
-            $temporaryDirectory->path(Str::random(32).'.'.$media->extension)
-        );
+        $this->videoLibrary->prepare($mediaId, self::class);
 
-        $filepath = $this->convert($copiedOriginalFile);
+        $filepath = $this->convert($this->videoLibrary->getDownloadPath());
         $directory = dirname($filepath);
 
         foreach (File::allFiles($directory) as $file) {
@@ -79,27 +84,30 @@ final readonly class HlsConverterService
                 $file->getPathname(),
                 $media,
                 'conversions',
-                "hls/{$file->getRelativePathname()}"
+                "$this->hls/{$file->getRelativePathname()}"
             );
         }
 
-        $media->markAsConversionGenerated('hls');
+        $media->markAsConversionGenerated($this->hls);
 
-        $diskRelativePath = "/{$this->filesystem->getConversionDirectory($media)}.'hls/playlist.m3u8'";
-
-        // todo: save the list of generated resolutions
-
-        $media->setCustomProperty('hls', $diskRelativePath);
+        $diskRelativePath = "/{$this->filesystem->getConversionDirectory($media)}.'$this->hls/playlist.m3u8'";
+        $media->setCustomProperty($this->hls, $diskRelativePath);
         $content = Content::where('id', $media->model_id)->first();
-        $content?->touch();
+        $content?->searchable();
 
-        unlink($copiedOriginalFile);
+        $this->videoLibrary->deleteTempFiles();
         Log::notice('Done creating HLS playlist');
     }
 
     public function convert(string $file): string
     {
-        $output = dirname($file).'/hls';
+        $output = sprintf(
+            "%s%s%s",
+            $this->videoLibrary->getProcessingPath(),
+            DIRECTORY_SEPARATOR,
+            $this->hls
+        );
+
         if (! mkdir($output, 0777, true) && ! is_dir($output)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $output));
         }

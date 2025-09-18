@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Config;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -80,6 +81,14 @@ final class Content extends Model implements HasMedia
         return $this->hasMany(View::class);
     }
 
+    public function scopeHasVideos(Builder $query): Builder
+    {
+        return $query->whereHas('media', function (Builder $query): void {
+            $query->where('collection_name', MediaNamesLibrary::transcoded())
+                ->orWhere('collection_name', MediaNamesLibrary::videos());
+        });
+    }
+
     public function scopeHasThumbnails(Builder $query): Builder
     {
         return $query->whereHas('media', function (Builder $query): void {
@@ -106,6 +115,10 @@ final class Content extends Model implements HasMedia
 
         $content['category'] = $this->category->name;
         $content['tags'] = $this->tags->pluck('name')->toArray();
+        $content['service_url'] = sprintf(
+            Config::string('jellyfin.item_web_url'),
+            $this->item_id,
+        );
 
         return $content;
     }
@@ -117,7 +130,7 @@ final class Content extends Model implements HasMedia
             'viewed' => 'bool',
             'view_count' => 'int',
             'liked_count' => 'int',
-            'added_at' => 'timestamp',
+            'added_at' => 'datetime',
         ];
     }
 

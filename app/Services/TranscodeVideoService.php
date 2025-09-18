@@ -180,7 +180,7 @@ final class TranscodeVideoService
             ])
             ->toMediaCollection(MediaNamesLibrary::transcoded());
 
-        $content->touch();
+        $content->searchable();
 
         return $media->id;
     }

@@ -11,8 +11,6 @@ final class Feed extends Model
 {
     protected $guarded = [];
 
-    protected $with = ['content'];
-
     public function content(): BelongsTo
     {
         return $this->belongsTo(Content::class);
@@ -23,6 +21,7 @@ final class Feed extends Model
         return [
             'content' => 'json',
             'expires_at' => 'datetime',
+            'added_at' => 'datetime',
         ];
     }
 }

@@ -79,6 +79,21 @@ return [
             ],
         ],
 
+        'download' => [
+            'driver' => 'local',
+            'root' => storage_path('download'),
+            'permissions' => [
+                'file' => [
+                    'public' => 0777,
+                    'private' => 0777,
+                ],
+                'dir' => [
+                    'public' => 0777,
+                    'private' => 0777,
+                ],
+            ],
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

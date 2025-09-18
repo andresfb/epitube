@@ -14,3 +14,4 @@ Artisan::command('inspire', function (): void {
 
 Schedule::job(new ImportVideosJob)->dailyAt('22:15');
 Schedule::job(new CreateFeedJob)->dailyAt('03:25');
+// TODO: add a job to clear all files from the "download" disk. Scheduled it to run at 21:30

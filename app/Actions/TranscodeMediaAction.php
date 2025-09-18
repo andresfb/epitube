@@ -31,16 +31,15 @@ final readonly class TranscodeMediaAction
                 return;
             }
 
-            Log::info("Transcoding $media->model_id | $media->name");
-
             if (! Config::boolean('constants.enable_encode_jobs')) {
                 Log::notice('@TranscodeMediaAction.handle: Encode jobs disabled.');
 
                 return;
             }
 
-            $media->setCustomProperty('transcode', true);
+            Log::info("Transcoding $media->model_id | $media->name");
 
+            $media->setCustomProperty('transcode', true);
             TranscodeVideoJob::dispatch($media->id);
         } catch (Exception $e) {
             Log::error("Error transcoding Media Id: $media->id: {$e->getMessage()}");

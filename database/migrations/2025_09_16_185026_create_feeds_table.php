@@ -18,6 +18,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->json('content');
             $table->dateTime('expires_at')->index();
+            $table->timestamp('added_at')->nullable();
             $table->timestamps();
         });
     }

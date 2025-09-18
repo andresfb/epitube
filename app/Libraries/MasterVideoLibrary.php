@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use RuntimeException;
+use Spatie\MediaLibrary\MediaCollections\Filesystem;
 
 final class MasterVideoLibrary
 {
@@ -19,13 +20,15 @@ final class MasterVideoLibrary
 
     private string $processingDisk = 'processing';
 
+    private string $downloadDisk = 'download';
+
     private string $tempPath = '';
 
     private string $relativeVideoPath = '';
 
-    private string $localFilePath = '';
-
     private string $processingPath = '';
+
+    private string $downloadPath = '';
 
     public function getContentId(): int
     {
@@ -42,6 +45,21 @@ final class MasterVideoLibrary
         return $this->processingDisk;
     }
 
+    public function getDownloadDisk(): string
+    {
+        return $this->downloadDisk;
+    }
+
+    public function getProcessingPath(): string
+    {
+        return $this->processingPath;
+    }
+
+    public function getDownloadPath(): string
+    {
+        return $this->downloadPath;
+    }
+
     public function getTempPath(): string
     {
         return $this->tempPath;
@@ -52,10 +70,7 @@ final class MasterVideoLibrary
         return $this->relativeVideoPath;
     }
 
-    public function getLocalFilePath(): string
-    {
-        return $this->localFilePath;
-    }
+    public function __construct(private readonly Filesystem $filesystem) {}
 
     public function prepare(int $mediaId, string $caller): void
     {
@@ -79,17 +94,24 @@ final class MasterVideoLibrary
             throw new RuntimeException(sprintf('Directory "%s" was not created', $this->processingPath));
         }
 
-        // prepare local file name
-        $videoFileName = pathinfo((string) $media->file_name, PATHINFO_BASENAME);
-        $this->localFilePath = sprintf('%s%s%s', $this->processingPath, DIRECTORY_SEPARATOR, $videoFileName);
-        $this->relativeVideoPath = sprintf('%s%s%s', $this->tempPath, DIRECTORY_SEPARATOR, $videoFileName);
+        // prepare local file
+        $tempMasterPath = md5($media->file_name);
+        $masterDownloadPath = Storage::disk($this->downloadDisk)->path($tempMasterPath);
+        if (! is_dir($masterDownloadPath) && ! mkdir($masterDownloadPath, 0777, true) && ! is_dir($masterDownloadPath)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $masterDownloadPath));
+        }
 
-        // download the video to the processing folder
-        $fileContent = Storage::disk('s3')->get($media->getPathRelativeToRoot());
-        file_put_contents($this->localFilePath, $fileContent);
+        $videoFileName = pathinfo($media->file_name, PATHINFO_BASENAME);
+        $this->downloadPath = sprintf('%s%s%s', $masterDownloadPath, DIRECTORY_SEPARATOR, $videoFileName);
+        $this->relativeVideoPath = sprintf('%s%s%s', $tempMasterPath, DIRECTORY_SEPARATOR, $videoFileName);
+
+        if (! File::exists($this->downloadPath)) {
+            // download the video from S3
+            $this->filesystem->copyFromMediaLibrary($media, $this->downloadPath);
+        }
 
         // Load the video into FFMpeg and check it.
-        $video = FFMpeg::fromDisk($this->processingDisk)->open($this->relativeVideoPath);
+        $video = FFMpeg::fromDisk($this->downloadDisk)->open($this->relativeVideoPath);
         if (! $video->isVideo()) {
             throw new RuntimeException('The media is not a valid video');
         }
@@ -100,7 +122,6 @@ final class MasterVideoLibrary
 
     public function deleteTempFiles(): void
     {
-        File::delete($this->localFilePath);
         File::deleteDirectory($this->processingPath);
     }
 }

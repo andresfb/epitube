@@ -15,6 +15,7 @@ final class CreateFeedService
     {
         $contents = Content::query()
             ->inMainCategory()
+            ->hasVideos()
             ->hasThumbnails()
             ->where('active', true)
             ->where('viewed', false)
@@ -35,6 +36,7 @@ final class CreateFeedService
             ], [
                 'content' => ContentItem::withContent($content)->toArray(),
                 'expires_at' => $expires,
+                'added_at' => $content->added_at,
             ]);
         }
     }

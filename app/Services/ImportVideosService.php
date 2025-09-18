@@ -45,12 +45,16 @@ final class ImportVideosService
      */
     private function getServiceItems(): Collection
     {
-        $items = $this->loadFromAPI();
-        if ($items === []) {
-            throw new RuntimeException('No videos found to import');
-        }
+        Log::notice('Loading the Service Items');
 
         $videos = collect();
+        $items = $this->loadFromAPI();
+        if ($items === []) {
+            Log::error('No videos found to import');
+
+            return $videos;
+        }
+
         $extensions = MimeType::extensions();
         $importedFiles = Content::getImported();
 
@@ -86,11 +90,15 @@ final class ImportVideosService
             $this->scanned++;
         }
 
+        Log::notice('Loading Items done');
+
         return $videos;
     }
 
     private function loadFromAPI(): array
     {
+        Log::notice('Calling the Service API');
+
         return Cache::remember(
             'VIDEOS:FROM:API',
             now()->addDay()->subSeconds(2),

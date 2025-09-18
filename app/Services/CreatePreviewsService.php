@@ -57,7 +57,7 @@ final readonly class CreatePreviewsService
             }
         }
 
-        $content->touch();
+        $content->searchable();
     }
 
     private function createClipFile(int $size, int $bitRate, string $extension): string
@@ -83,7 +83,7 @@ final readonly class CreatePreviewsService
         $sectionTime = ceil($trimmedDuration / $sections);
         $tmpFiles = [];
 
-        $video = FFMpeg::fromDisk($this->videoLibrary->getProcessingDisk())
+        $video = FFMpeg::fromDisk($this->videoLibrary->getDownloadDisk())
             ->open($this->videoLibrary->getRelativeVideoPath());
 
         for ($i = 0; $i < $sections; $i++) {

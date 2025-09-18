@@ -25,8 +25,7 @@ final readonly class ImportVideoService
     public function __construct(
         private TitleParserLibrary $parserLibrary,
         private TranscodeMediaAction $transcodeAction,
-    )
-    {
+    ) {
         $this->bandedTags = Config::array('content.banded_tags');
     }
 
@@ -128,7 +127,7 @@ final readonly class ImportVideoService
         }
 
         $content->attachTags($tags);
-        $content->touch();
+        $content->searchable();
     }
 
     private function extractTags(array $fileInfo): array

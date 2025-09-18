@@ -34,7 +34,7 @@ final readonly class ExtractThumbnailsService
         );
 
         $this->videoLibrary->deleteTempFiles();
-        Log::notice('Done extracting thumbnails');
+        Log::notice("Finished extracting thumbnails for: $mediaId");
     }
 
     /**
@@ -52,7 +52,7 @@ final readonly class ExtractThumbnailsService
                 ->toMediaCollection(MediaNamesLibrary::thumbnails());
         }
 
-        $content->touch();
+        $content->searchable();
     }
 
     /**
@@ -60,13 +60,15 @@ final readonly class ExtractThumbnailsService
      */
     private function extract(): array
     {
+        Log::notice('Extracting thumbnails');
+
         $images = [];
         $numberThumbnails = Config::integer('content.thumbnails.total');
         $duration = $this->videoLibrary->getDuration();
         $skip = random_int(3, 7) / 100;
         $timeCode = floor(($duration - ($duration * $skip)) / $numberThumbnails);
 
-        $video = FFMpeg::fromDisk($this->videoLibrary->getProcessingDisk())
+        $video = FFMpeg::fromDisk($this->videoLibrary->getDownloadDisk())
             ->open($this->videoLibrary->getRelativeVideoPath());
 
         for ($i = 1; $i <= $numberThumbnails; $i++) {
@@ -81,10 +83,11 @@ final readonly class ExtractThumbnailsService
                 '%s -hide_banner -y -v error -ss "%s" -i "%s" -vframes 1 -f image2 -vf "scale=\'trunc(ih*dar):ih\',setsar=1/1" "%s"',
                 Config::string('laravel-ffmpeg.ffmpeg.binaries'),
                 $time,
-                $this->videoLibrary->getLocalFilePath(),
+                $this->videoLibrary->getDownloadPath(),
                 Storage::disk($this->videoLibrary->getProcessingDisk())->path($image),
             );
 
+            Log::notice("Generating $image");
             $process = Process::fromShellCommandline($cmd)
                 ->setTimeout(0)
                 ->mustRun();
@@ -96,6 +99,8 @@ final readonly class ExtractThumbnailsService
             $images[] = Storage::disk($this->videoLibrary->getProcessingDisk())->path($image);
             $video = $video->fresh();
         }
+
+        Log::notice('Done extracting thumbnails');
 
         return $images;
     }
