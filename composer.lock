@@ -870,16 +870,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.356.20",
+            "version": "3.356.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "7514867a6463fb68a60f5e17b4ccc56b4dc7d4f1"
+                "reference": "90007f76fab4312e10d9200595d706ec59f7ff70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7514867a6463fb68a60f5e17b4ccc56b4dc7d4f1",
-                "reference": "7514867a6463fb68a60f5e17b4ccc56b4dc7d4f1",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/90007f76fab4312e10d9200595d706ec59f7ff70",
+                "reference": "90007f76fab4312e10d9200595d706ec59f7ff70",
                 "shasum": ""
             },
             "require": {
@@ -961,9 +961,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.356.20"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.356.21"
             },
-            "time": "2025-09-17T18:23:32+00:00"
+            "time": "2025-09-18T18:17:25+00:00"
         },
         {
             "name": "brick/math",
@@ -2346,16 +2346,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.29.0",
+            "version": "v12.30.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "a9e4c73086f5ba38383e9c1d74b84fe46aac730b"
+                "reference": "7f61e8679f9142f282a0184ac7ef9e3834bfd023"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/a9e4c73086f5ba38383e9c1d74b84fe46aac730b",
-                "reference": "a9e4c73086f5ba38383e9c1d74b84fe46aac730b",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/7f61e8679f9142f282a0184ac7ef9e3834bfd023",
+                "reference": "7f61e8679f9142f282a0184ac7ef9e3834bfd023",
                 "shasum": ""
             },
             "require": {
@@ -2383,7 +2383,7 @@
                 "monolog/monolog": "^3.0",
                 "nesbot/carbon": "^3.8.4",
                 "nunomaduro/termwind": "^2.0",
-                "phiki/phiki": "v2.0.0",
+                "phiki/phiki": "^2.0.0",
                 "php": "^8.2",
                 "psr/container": "^1.1.1|^2.0.1",
                 "psr/log": "^1.0|^2.0|^3.0",
@@ -2562,7 +2562,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-09-16T14:15:03+00:00"
+            "time": "2025-09-18T21:07:07+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -3745,23 +3745,24 @@
         },
         {
             "name": "meilisearch/meilisearch-php",
-            "version": "v1.16.0",
+            "version": "v1.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/meilisearch/meilisearch-php.git",
-                "reference": "04f7e5454dcd21b968771ec7c05a88ef852f501c"
+                "reference": "f9f63e0e7d12ffaae54f7317fa8f4f4dfa8ae7b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/meilisearch/meilisearch-php/zipball/04f7e5454dcd21b968771ec7c05a88ef852f501c",
-                "reference": "04f7e5454dcd21b968771ec7c05a88ef852f501c",
+                "url": "https://api.github.com/repos/meilisearch/meilisearch-php/zipball/f9f63e0e7d12ffaae54f7317fa8f4f4dfa8ae7b6",
+                "reference": "f9f63e0e7d12ffaae54f7317fa8f4f4dfa8ae7b6",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "php": "^7.4 || ^8.0",
                 "php-http/discovery": "^1.7",
-                "psr/http-client": "^1.0"
+                "psr/http-client": "^1.0",
+                "symfony/polyfill-php81": "^1.33"
             },
             "require-dev": {
                 "http-interop/http-factory-guzzle": "^1.2.0",
@@ -3791,8 +3792,20 @@
             ],
             "authors": [
                 {
-                    "name": "Clementine",
+                    "name": "Clémentine Urquizar",
                     "email": "clementine@meilisearch.com"
+                },
+                {
+                    "name": "Bruno Casali",
+                    "email": "bruno@meilisearch.com"
+                },
+                {
+                    "name": "Laurent Cazanove",
+                    "email": "lau.cazanove@gmail.com"
+                },
+                {
+                    "name": "Tomas Norkūnas",
+                    "email": "norkunas.tom@gmail.com"
                 }
             ],
             "description": "PHP wrapper for the Meilisearch API",
@@ -3806,9 +3819,9 @@
             ],
             "support": {
                 "issues": "https://github.com/meilisearch/meilisearch-php/issues",
-                "source": "https://github.com/meilisearch/meilisearch-php/tree/v1.16.0"
+                "source": "https://github.com/meilisearch/meilisearch-php/tree/v1.16.1"
             },
-            "time": "2025-09-10T08:50:58+00:00"
+            "time": "2025-09-18T10:15:45+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -4539,16 +4552,16 @@
         },
         {
             "name": "phiki/phiki",
-            "version": "v2.0.0",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phikiphp/phiki.git",
-                "reference": "461f6dd7e91dc3a95463b42f549ac7d0aab4702f"
+                "reference": "fe51fe6dc31856cd776fd1b04ee74053a4271644"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phikiphp/phiki/zipball/461f6dd7e91dc3a95463b42f549ac7d0aab4702f",
-                "reference": "461f6dd7e91dc3a95463b42f549ac7d0aab4702f",
+                "url": "https://api.github.com/repos/phikiphp/phiki/zipball/fe51fe6dc31856cd776fd1b04ee74053a4271644",
+                "reference": "fe51fe6dc31856cd776fd1b04ee74053a4271644",
                 "shasum": ""
             },
             "require": {
@@ -4594,7 +4607,7 @@
             "description": "Syntax highlighting using TextMate grammars in PHP.",
             "support": {
                 "issues": "https://github.com/phikiphp/phiki/issues",
-                "source": "https://github.com/phikiphp/phiki/tree/v2.0.0"
+                "source": "https://github.com/phikiphp/phiki/tree/v2.0.3"
             },
             "funding": [
                 {
@@ -4606,7 +4619,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2025-08-28T18:20:27+00:00"
+            "time": "2025-09-19T11:50:41+00:00"
         },
         {
             "name": "php-ffmpeg/php-ffmpeg",
@@ -6241,16 +6254,16 @@
         },
         {
             "name": "spatie/laravel-medialibrary",
-            "version": "11.14.0",
+            "version": "11.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-medialibrary.git",
-                "reference": "7050a0d041be8c5c5ef5886967fbbbe578a54296"
+                "reference": "9d1e9731d36817d1649bc584b2c40c0c9d4bcfac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/7050a0d041be8c5c5ef5886967fbbbe578a54296",
-                "reference": "7050a0d041be8c5c5ef5886967fbbbe578a54296",
+                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/9d1e9731d36817d1649bc584b2c40c0c9d4bcfac",
+                "reference": "9d1e9731d36817d1649bc584b2c40c0c9d4bcfac",
                 "shasum": ""
             },
             "require": {
@@ -6288,6 +6301,7 @@
                 "phpstan/extension-installer": "^1.3.1",
                 "spatie/laravel-ray": "^1.33",
                 "spatie/pdf-to-image": "^2.2|^3.0",
+                "spatie/pest-expectations": "^1.13",
                 "spatie/pest-plugin-snapshots": "^2.1"
             },
             "suggest": {
@@ -6334,7 +6348,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-medialibrary/issues",
-                "source": "https://github.com/spatie/laravel-medialibrary/tree/11.14.0"
+                "source": "https://github.com/spatie/laravel-medialibrary/tree/11.15.0"
             },
             "funding": [
                 {
@@ -6346,7 +6360,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-19T08:01:56+00:00"
+            "time": "2025-09-19T06:51:45+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
@@ -8373,6 +8387,86 @@
             "time": "2025-01-02T08:10:11+00:00"
         },
         {
+            "name": "symfony/polyfill-php81",
+            "version": "v1.33.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php81.git",
+                "reference": "4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c",
+                "reference": "4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php81\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.1+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php81/tree/v1.33.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2024-09-09T11:45:10+00:00"
+        },
+        {
             "name": "symfony/polyfill-php83",
             "version": "v1.33.0",
             "source": {
@@ -10296,16 +10390,16 @@
         },
         {
             "name": "larastan/larastan",
-            "version": "v3.7.1",
+            "version": "v3.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/larastan/larastan.git",
-                "reference": "2e653fd19585a825e283b42f38378b21ae481cc7"
+                "reference": "a761859a7487bd7d0cb8b662a7538a234d5bb5ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/larastan/larastan/zipball/2e653fd19585a825e283b42f38378b21ae481cc7",
-                "reference": "2e653fd19585a825e283b42f38378b21ae481cc7",
+                "url": "https://api.github.com/repos/larastan/larastan/zipball/a761859a7487bd7d0cb8b662a7538a234d5bb5ae",
+                "reference": "a761859a7487bd7d0cb8b662a7538a234d5bb5ae",
                 "shasum": ""
             },
             "require": {
@@ -10319,7 +10413,7 @@
                 "illuminate/pipeline": "^11.44.2 || ^12.4.1",
                 "illuminate/support": "^11.44.2 || ^12.4.1",
                 "php": "^8.2",
-                "phpstan/phpstan": "^2.1.23"
+                "phpstan/phpstan": "^2.1.28"
             },
             "require-dev": {
                 "doctrine/coding-standard": "^13",
@@ -10373,7 +10467,7 @@
             ],
             "support": {
                 "issues": "https://github.com/larastan/larastan/issues",
-                "source": "https://github.com/larastan/larastan/tree/v3.7.1"
+                "source": "https://github.com/larastan/larastan/tree/v3.7.2"
             },
             "funding": [
                 {
@@ -10381,39 +10475,39 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-10T19:42:11+00:00"
+            "time": "2025-09-19T09:03:05+00:00"
         },
         {
             "name": "laravel/boost",
-            "version": "v1.1.4",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/boost.git",
-                "reference": "70f909465bf73dad7e791fad8b7716b3b2712076"
+                "reference": "85f7de54a6b60f684fc9f7f6df5ad94f4f7d0d24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/boost/zipball/70f909465bf73dad7e791fad8b7716b3b2712076",
-                "reference": "70f909465bf73dad7e791fad8b7716b3b2712076",
+                "url": "https://api.github.com/repos/laravel/boost/zipball/85f7de54a6b60f684fc9f7f6df5ad94f4f7d0d24",
+                "reference": "85f7de54a6b60f684fc9f7f6df5ad94f4f7d0d24",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "^7.9",
-                "illuminate/console": "^10.0|^11.0|^12.0",
-                "illuminate/contracts": "^10.0|^11.0|^12.0",
-                "illuminate/routing": "^10.0|^11.0|^12.0",
-                "illuminate/support": "^10.0|^11.0|^12.0",
-                "laravel/mcp": "^0.1.1",
-                "laravel/prompts": "^0.1.9|^0.3",
-                "laravel/roster": "^0.2.5",
+                "guzzlehttp/guzzle": "^7.10",
+                "illuminate/console": "^10.49.0|^11.45.3|^12.28.1",
+                "illuminate/contracts": "^10.49.0|^11.45.3|^12.28.1",
+                "illuminate/routing": "^10.49.0|^11.45.3|^12.28.1",
+                "illuminate/support": "^10.49.0|^11.45.3|^12.28.1",
+                "laravel/mcp": "^0.2.0",
+                "laravel/prompts": "0.1.25|^0.3.6",
+                "laravel/roster": "^0.2.6",
                 "php": "^8.1"
             },
             "require-dev": {
-                "laravel/pint": "^1.14",
-                "mockery/mockery": "^1.6",
-                "orchestra/testbench": "^8.22.0|^9.0|^10.0",
-                "pestphp/pest": "^2.0|^3.0",
-                "phpstan/phpstan": "^2.0"
+                "laravel/pint": "1.20",
+                "mockery/mockery": "^1.6.12",
+                "orchestra/testbench": "^8.36.0|^9.15.0|^10.6",
+                "pestphp/pest": "^2.36.0|^3.8.4",
+                "phpstan/phpstan": "^2.1.27"
             },
             "type": "library",
             "extra": {
@@ -10435,7 +10529,7 @@
             "license": [
                 "MIT"
             ],
-            "description": "Laravel Boost accelerates AI-assisted development to generate high-quality, Laravel-specific code.",
+            "description": "Laravel Boost accelerates AI-assisted development by providing the essential context and structure that AI needs to generate high-quality, Laravel-specific code.",
             "homepage": "https://github.com/laravel/boost",
             "keywords": [
                 "ai",
@@ -10446,35 +10540,41 @@
                 "issues": "https://github.com/laravel/boost/issues",
                 "source": "https://github.com/laravel/boost"
             },
-            "time": "2025-09-04T12:16:09+00:00"
+            "time": "2025-09-18T13:05:07+00:00"
         },
         {
             "name": "laravel/mcp",
-            "version": "v0.1.1",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/mcp.git",
-                "reference": "6d6284a491f07c74d34f48dfd999ed52c567c713"
+                "reference": "56fade6882756d5828cc90b86611d29616c2d754"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/mcp/zipball/6d6284a491f07c74d34f48dfd999ed52c567c713",
-                "reference": "6d6284a491f07c74d34f48dfd999ed52c567c713",
+                "url": "https://api.github.com/repos/laravel/mcp/zipball/56fade6882756d5828cc90b86611d29616c2d754",
+                "reference": "56fade6882756d5828cc90b86611d29616c2d754",
                 "shasum": ""
             },
             "require": {
-                "illuminate/console": "^10.0|^11.0|^12.0",
-                "illuminate/contracts": "^10.0|^11.0|^12.0",
-                "illuminate/http": "^10.0|^11.0|^12.0",
-                "illuminate/routing": "^10.0|^11.0|^12.0",
-                "illuminate/support": "^10.0|^11.0|^12.0",
-                "illuminate/validation": "^10.0|^11.0|^12.0",
-                "php": "^8.1|^8.2"
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "illuminate/console": "^10.49.0|^11.45.3|^12.28.1",
+                "illuminate/container": "^10.49.0|^11.45.3|^12.28.1",
+                "illuminate/contracts": "^10.49.0|^11.45.3|^12.28.1",
+                "illuminate/http": "^10.49.0|^11.45.3|^12.28.1",
+                "illuminate/json-schema": "^12.28.1",
+                "illuminate/routing": "^10.49.0|^11.45.3|^12.28.1",
+                "illuminate/support": "^10.49.0|^11.45.3|^12.28.1",
+                "illuminate/validation": "^10.49.0|^11.45.3|^12.28.1",
+                "php": "^8.1"
             },
             "require-dev": {
-                "laravel/pint": "^1.14",
-                "orchestra/testbench": "^8.22.0|^9.0|^10.0",
-                "phpstan/phpstan": "^2.0"
+                "laravel/pint": "1.20.0",
+                "orchestra/testbench": "^8.36.0|^9.15.0|^10.6.0",
+                "pestphp/pest": "^2.36.0|^3.8.4|^4.1.0",
+                "phpstan/phpstan": "^2.1.27",
+                "rector/rector": "^2.1.7"
             },
             "type": "library",
             "extra": {
@@ -10490,8 +10590,6 @@
             "autoload": {
                 "psr-4": {
                     "Laravel\\Mcp\\": "src/",
-                    "Workbench\\App\\": "workbench/app/",
-                    "Laravel\\Mcp\\Tests\\": "tests/",
                     "Laravel\\Mcp\\Server\\": "src/Server/"
                 }
             },
@@ -10499,10 +10597,15 @@
             "license": [
                 "MIT"
             ],
-            "description": "The easiest way to add MCP servers to your Laravel app.",
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Rapidly build MCP servers for your Laravel applications.",
             "homepage": "https://github.com/laravel/mcp",
             "keywords": [
-                "dev",
                 "laravel",
                 "mcp"
             ],
@@ -10510,7 +10613,7 @@
                 "issues": "https://github.com/laravel/mcp/issues",
                 "source": "https://github.com/laravel/mcp"
             },
-            "time": "2025-08-16T09:50:43+00:00"
+            "time": "2025-09-18T12:58:47+00:00"
         },
         {
             "name": "laravel/pail",
@@ -10593,16 +10696,16 @@
         },
         {
             "name": "laravel/pint",
-            "version": "v1.25.0",
+            "version": "v1.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
-                "reference": "595de38458c6b0ab4cae4bcc769c2e5c5d5b8e96"
+                "reference": "5016e263f95d97670d71b9a987bd8996ade6d8d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pint/zipball/595de38458c6b0ab4cae4bcc769c2e5c5d5b8e96",
-                "reference": "595de38458c6b0ab4cae4bcc769c2e5c5d5b8e96",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/5016e263f95d97670d71b9a987bd8996ade6d8d9",
+                "reference": "5016e263f95d97670d71b9a987bd8996ade6d8d9",
                 "shasum": ""
             },
             "require": {
@@ -10655,20 +10758,20 @@
                 "issues": "https://github.com/laravel/pint/issues",
                 "source": "https://github.com/laravel/pint"
             },
-            "time": "2025-09-17T01:36:44+00:00"
+            "time": "2025-09-19T02:57:12+00:00"
         },
         {
             "name": "laravel/roster",
-            "version": "v0.2.6",
+            "version": "v0.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/roster.git",
-                "reference": "5615acdf860c5a5c61d04aba44f2d3312550c514"
+                "reference": "9de07bfb52cfe4e5a1fec10b8a446d6add8376cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/roster/zipball/5615acdf860c5a5c61d04aba44f2d3312550c514",
-                "reference": "5615acdf860c5a5c61d04aba44f2d3312550c514",
+                "url": "https://api.github.com/repos/laravel/roster/zipball/9de07bfb52cfe4e5a1fec10b8a446d6add8376cd",
+                "reference": "9de07bfb52cfe4e5a1fec10b8a446d6add8376cd",
                 "shasum": ""
             },
             "require": {
@@ -10716,7 +10819,7 @@
                 "issues": "https://github.com/laravel/roster/issues",
                 "source": "https://github.com/laravel/roster"
             },
-            "time": "2025-09-04T07:31:39+00:00"
+            "time": "2025-09-18T13:53:41+00:00"
         },
         {
             "name": "laravel/sail",
@@ -11605,16 +11708,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.27",
+            "version": "2.1.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "25da374959afa391992792691093550b3098ef1e"
+                "reference": "578fa296a166605d97b94091f724f1257185d278"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/25da374959afa391992792691093550b3098ef1e",
-                "reference": "25da374959afa391992792691093550b3098ef1e",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/578fa296a166605d97b94091f724f1257185d278",
+                "reference": "578fa296a166605d97b94091f724f1257185d278",
                 "shasum": ""
             },
             "require": {
@@ -11659,7 +11762,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-17T09:55:13+00:00"
+            "time": "2025-09-19T08:58:49+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

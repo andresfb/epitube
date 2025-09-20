@@ -39,7 +39,7 @@ final readonly class ImportVideoService
         $fileInfo = pathinfo($videoItem->Path);
         $fileHash = File::hash($videoItem->Path);
 
-        if (Content::foundFileHash($fileHash)) {
+        if (Content::fileHashExists($fileHash)) {
             Log::notice("Video already imported: $videoItem->Path");
 
             $this->parseTags(

@@ -22,6 +22,11 @@ final class Category extends Model
         return self::where('main', true)->firstOrFail();
     }
 
+    public static function getAlt(): self
+    {
+        return self::where('main', false)->firstOrFail();
+    }
+
     public static function getId(string $slug): int
     {
         return self::where('slug', $slug)->firstOrFail()->id;

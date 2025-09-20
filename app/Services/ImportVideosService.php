@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Modules\JellyfinApi\Facades\Jellyfin;
-use RuntimeException;
 use Throwable;
 
 final class ImportVideosService

@@ -28,7 +28,7 @@ final class Content extends Model implements HasMedia
 
     protected $with = ['category', 'tags', 'media'];
 
-    public static function foundFileHash(string $hash): bool
+    public static function fileHashExists(string $hash): bool
     {
         return self::where('file_hash', $hash)
             ->exists();
@@ -99,6 +99,11 @@ final class Content extends Model implements HasMedia
     public function scopeInMainCategory(Builder $query): Builder
     {
         return $query->where('category_id', Category::getMain()->id);
+    }
+
+    public function scopeInAltCategory(Builder $query): Builder
+    {
+        return $query->where('category_id', Category::getAlt()->id);
     }
 
     public function searchableAs(): string

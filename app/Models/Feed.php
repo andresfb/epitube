@@ -11,6 +11,13 @@ final class Feed extends Model
 {
     protected $guarded = [];
 
+    protected $with = ['category'];
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     public function content(): BelongsTo
     {
         return $this->belongsTo(Content::class);
