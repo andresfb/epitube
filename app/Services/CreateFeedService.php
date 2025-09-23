@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Dtos\ContentItem;
 use App\Models\Content;
 use App\Models\Feed;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
 final class CreateFeedService
@@ -18,8 +19,11 @@ final class CreateFeedService
             ->hasThumbnails()
             ->where('active', true)
             ->where('viewed', false)
+            ->with('related')
             ->inRandomOrder()
-            ->limit(500);
+            ->limit(
+                Config::integer('content.max_feed_limit')
+            );
 
         $contents = $query->inMainCategory()->get();
         if ($contents->isEmpty()) {
@@ -42,7 +46,7 @@ final class CreateFeedService
                 'content_id' => $content->id,
             ], [
                 'category_id' => $content->category_id,
-                'content' => ContentItem::withContent($content)->toArray(),
+                'content' => ContentItem::withRelated($content)->toArray(),
                 'expires_at' => $expires,
                 'added_at' => $content->added_at,
             ]);

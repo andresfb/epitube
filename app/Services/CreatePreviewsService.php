@@ -43,6 +43,8 @@ final readonly class CreatePreviewsService
      */
     private function generate(Content $content): void
     {
+        Log::notice('Generating Preview videos');
+
         foreach (Config::array('content.preview_options.sizes') as $size => $bitRate) {
             foreach (Config::array('content.preview_options.extensions') as $extension) {
                 $file = $this->createClipFile($size, $bitRate, $extension);
@@ -57,7 +59,7 @@ final readonly class CreatePreviewsService
             }
         }
 
-        $content->searchable();
+        $content->searchableSync();
     }
 
     private function createClipFile(int $size, int $bitRate, string $extension): string
@@ -83,20 +85,20 @@ final readonly class CreatePreviewsService
         $sectionTime = ceil($trimmedDuration / $sections);
         $tmpFiles = [];
 
-        $video = FFMpeg::fromDisk($this->videoLibrary->getDownloadDisk())
-            ->open($this->videoLibrary->getRelativeVideoPath());
-
         for ($i = 0; $i < $sections; $i++) {
+            $video = FFMpeg::fromDisk($this->videoLibrary->getDownloadDisk())
+                ->open($this->videoLibrary->getRelativeVideoPath());
+
             $tmpFile = sprintf(
                 $tmpFileTemplate,
-                mb_str_pad((string)($i + 1), 2, '0', STR_PAD_LEFT)
+                mb_str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT)
             );
 
             $video->export()
                 ->addFilter(function (VideoFilters $filters) use ($startTime): void {
                     $filters->clip(
                         TimeCode::fromSeconds($startTime),
-                        TimeCode::fromSeconds(config('previews.section_length'))
+                        TimeCode::fromSeconds(Config::integer('content.preview_options.section_length'))
                     );
                 })
                 ->addFilter('-crf', 15)
@@ -105,12 +107,13 @@ final readonly class CreatePreviewsService
                     $filters->custom("fps=10,scale=-2:$size:flags=lanczos");
                 })
                 ->toDisk($this->videoLibrary->getProcessingDisk())
-                ->inFormat($this->getEncodeFormat($extension, $bitRate))
+                ->inFormat($this->getEncodeFormat($bitRate))
                 ->save($tmpFile);
 
             $tmpFiles[] = $tmpFile;
             $startTime += $sectionTime;
-            $video = $video->fresh();
+
+            unset($video);
         }
 
         FFMpeg::fromDisk($this->videoLibrary->getProcessingDisk())
@@ -125,9 +128,12 @@ final readonly class CreatePreviewsService
         return $outputFile;
     }
 
-    private function getEncodeFormat(string $extension, int $bitRate): WebM|X264
+    private function getEncodeFormat(int $bitRate): WebM|X264
     {
-        return ($extension === 'mp4' ? new X264 : new WebM('libvorbis', 'libvpx-vp9'))
-            ->setKiloBitrate($bitRate);
+        $format = new X264();
+        $format->setKiloBitrate($bitRate)
+            ->setAudioCodec("libmp3lame");
+
+        return $format;
     }
 }

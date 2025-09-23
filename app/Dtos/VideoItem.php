@@ -7,11 +7,10 @@ use Spatie\LaravelData\Data;
 class VideoItem extends Data
 {
     public function __construct(
-        public string $Id,
-        public string $Name,
-        public string $Path,
-        public int $RunTimeTicks = 0,
-        public int $Width = 0,
-        public int $Height = 0,
+        public string $fulUrl,
+        public int $duration,
+        public int $width,
+        public int $height,
+        public array $hls,
     ) {}
 }

@@ -7,6 +7,7 @@ namespace App\Libraries;
 use App\Models\Media;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use RuntimeException;
@@ -107,6 +108,7 @@ final class MasterVideoLibrary
 
         if (! File::exists($this->downloadPath)) {
             // download the video from S3
+            Log::notice("Downloading video file: $this->downloadPath");
             $this->filesystem->copyFromMediaLibrary($media, $this->downloadPath);
         }
 

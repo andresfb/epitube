@@ -7,11 +7,30 @@ namespace App\Dtos;
 use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
 use App\Models\Media;
+use App\Models\RelatedContent;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
 final class ContentItem extends Data
 {
+    /**
+     * @param string $id
+     * @param int $category_id
+     * @param string $category
+     * @param string $title
+     * @param bool $active
+     * @param bool $viewed
+     * @param bool $liked
+     * @param int $viewCount
+     * @param string $service_url
+     * @param Carbon $addedAt
+     * @param array<string> $tags
+     * @param Collection<VideoItem>|null $videos
+     * @param Collection<PreviewItem>|null $previews
+     * @param Collection<ThumbnailItem>|null $thumbnails
+     * @param Collection<ContentItem>|null $related
+     */
     public function __construct(
         public string $id,
         public int $category_id,
@@ -24,39 +43,61 @@ final class ContentItem extends Data
         public string $service_url,
         public Carbon $addedAt,
         public array $tags = [],
-        public array $videos = [],
-        public array $previews = [],
-        public array $thumbnails = [],
+        public ?Collection $videos = null,
+        public ?Collection $previews = null,
+        public ?Collection $thumbnails = null,
+        public ?Collection $related = null,
     ) {}
+
+    public static function withRelated(Content $content): self
+    {
+        $contentArray = self::withContent($content)->toArray();
+
+        $contentArray['related'] = $content->related->map(function (RelatedContent $relatedContent) {
+             return self::withContent($relatedContent->content)->toArray();
+        });
+
+        return self::from($contentArray);
+    }
 
     public static function withContent(Content $content): self
     {
         $contentArray = $content->toSearchableArray();
 
-        $content->media()->each(function (Media $media) use (&$contentArray): void {
-            if ($media->collection_name === MediaNamesLibrary::thumbnails()) {
-                $contentArray[$media->collection_name][] = [
-                    'urls' => $media->getResponsiveImageUrls(),
-                    'srcset' => $media->getSrcset(),
-                ];
+        $contentArray[MediaNamesLibrary::thumbnails()] = $content->getMedia(MediaNamesLibrary::thumbnails())
+            ->map(function (Media $media) {
+                return new ThumbnailItem(
+                    urls: $media->getResponsiveImageUrls(),
+                    srcset: $media->getSrcset(),
+                );
+            });
 
-                return;
-            }
+        $contentArray[MediaNamesLibrary::previews()] = $content->getMedia(MediaNamesLibrary::previews())
+            ->map(function (Media $media) {
+                return new PreviewItem(
+                    fulUrl: $media->getFullUrl(),
+                    size: (int) $media->getCustomProperty('size'),
+                    extension: $media->getCustomProperty('extension'),
+                );
+            });
 
-            if ($media->collection_name === MediaNamesLibrary::previews()) {
-                $contentArray[$media->collection_name][] = $media->getFullUrl();
+        $collection = MediaNamesLibrary::videos();
+        if ($content->hasMedia(MediaNamesLibrary::transcoded())) {
+            $collection = MediaNamesLibrary::transcoded();
+        }
 
-                return;
-            }
-
-            $hls = MediaNamesLibrary::hlsConversion();
-            $contentArray['media'][$media->collection_name][] = [
-                'full' => $media->getFullUrl(),
-                $hls => $media->hasGeneratedConversion($hls)
-                    ? $media->getGeneratedConversions()->toArray()
-                    : [],
-            ];
-        });
+        $contentArray[$collection] = $content->getMedia($collection)
+            ->map(function (Media $media) {
+                new VideoItem(
+                    fulUrl: $media->getFullUrl(),
+                    duration: (int) $media->getCustomProperty('duration'),
+                    width: (int) $media->getCustomProperty('width'),
+                    height: (int) $media->getCustomProperty('height'),
+                    hls: $media->hasGeneratedConversion(MediaNamesLibrary::hlsConversion())
+                        ? $media->getGeneratedConversions()->toArray()
+                        : [],
+                );
+            });
 
         return self::from($contentArray);
     }

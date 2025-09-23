@@ -3,12 +3,12 @@
 namespace Modules\JellyfinApi\Traits\JellyfinAPI;
 
 use Psr\Http\Message\StreamInterface;
-use Throwable;
+use Exception;
 
 trait Items
 {
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function getItems(): StreamInterface|array|string
     {

@@ -3,12 +3,12 @@
 namespace Modules\JellyfinApi\Traits\JellyfinAPI;
 
 use Psr\Http\Message\StreamInterface;
-use Throwable;
+use Exception;
 
 trait Users
 {
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function getUsers(): StreamInterface|array|string
     {
@@ -22,7 +22,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function getUser(string $userId): StreamInterface|array|string
     {
@@ -36,7 +36,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function deleteUser(string $userId): StreamInterface|array|string
     {
@@ -50,7 +50,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function updateUser(string $userId, array $data): StreamInterface|array|string
     {
@@ -66,7 +66,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function updateUserConfiguration(string $userId, array $data): StreamInterface|array|string
     {
@@ -82,7 +82,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function updateUserPolicy(string $userId, array $data): StreamInterface|array|string
     {
@@ -98,7 +98,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function authenticateUser(string $userId, string $password): StreamInterface|array|string
     {
@@ -114,7 +114,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function updateUserEasyPassword(string $userId, array $data): StreamInterface|array|string
     {
@@ -130,12 +130,7 @@ trait Users
     }
 
     /**
-     * Updates a user's password.
-     *
-     * @param string $userId
-     * @param array $data
-     * @return array|StreamInterface|string
-     * @throws Throwable
+     * @throws Exception
      */
     public function updateUserPassword(string $userId, array $data): StreamInterface|array|string
     {
@@ -151,7 +146,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function authenticateUserByName(array $data): StreamInterface|array|string
     {
@@ -167,7 +162,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function authenticateUserWithQuickConnect(string $secret): StreamInterface|array|string
     {
@@ -185,7 +180,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function redeemsForgotPasswordPin(string $pin): StreamInterface|array|string
     {
@@ -203,7 +198,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function getUserBasedOnAuthToken(): StreamInterface|array|string
     {
@@ -217,7 +212,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function createUser(string $name, string $password): StreamInterface|array|string
     {
@@ -236,7 +231,7 @@ trait Users
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function getListOfPubliclyVisibleUsers(): StreamInterface|array|string
     {

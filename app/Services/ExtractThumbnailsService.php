@@ -44,6 +44,7 @@ final readonly class ExtractThumbnailsService
     {
         $images = $this->extract();
 
+        Log::notice('Saving thumbnails to Media');
         foreach ($images as $image) {
             $content->addMedia($image)
                 ->withCustomProperties([
@@ -52,7 +53,7 @@ final readonly class ExtractThumbnailsService
                 ->toMediaCollection(MediaNamesLibrary::thumbnails());
         }
 
-        $content->searchable();
+        $content->searchableSync();
     }
 
     /**

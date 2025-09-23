@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Actions\TranscodeMediaAction;
-use App\Dtos\VideoItem;
+use App\Dtos\ImportVideoItem;
 use App\Libraries\MediaNamesLibrary;
 use App\Libraries\TitleParserLibrary;
 use App\Models\Category;
@@ -14,9 +14,11 @@ use Exception;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
+use Throwable;
 
 final readonly class ImportVideoService
 {
@@ -30,9 +32,9 @@ final readonly class ImportVideoService
     }
 
     /**
-     * @throws Exception
+     * @throws Throwable
      */
-    public function execute(VideoItem $videoItem): void
+    public function execute(ImportVideoItem $videoItem): void
     {
         Log::notice("Importing video for file: $videoItem->Path");
 
@@ -55,37 +57,40 @@ final readonly class ImportVideoService
             : Config::string('constants.main_category');
 
         Log::notice('Saving content');
-        $content = Content::create([
-            'category_id' => Category::getId($category),
-            'item_id' => $videoItem->Id,
-            'file_hash' => $fileHash,
-            'title' => $this->parserLibrary->parseFileName($fileInfo)->title()->toString(),
-            'active' => true,
-            'og_path' => $videoItem->Path,
-            'added_at' => Carbon::parse(filemtime($videoItem->Path)),
-        ]);
 
-        $this->parseTags($content, $fileInfo);
+        DB::transaction(function () use ($videoItem, $category, $fileHash, $fileInfo) {
+            $content = Content::create([
+                'category_id' => Category::getId($category),
+                'item_id' => $videoItem->Id,
+                'file_hash' => $fileHash,
+                'title' => $this->parserLibrary->parseFileName($fileInfo)->title()->toString(),
+                'active' => true,
+                'og_path' => $videoItem->Path,
+                'added_at' => Carbon::parse(filemtime($videoItem->Path)),
+            ]);
 
-        [$width, $height, $duration] = $this->getVideoInfo($videoItem);
+            $this->parseTags($content, $fileInfo);
 
-        Log::notice('Adding media');
-        $media = $content->addMedia($videoItem->Path)
-            ->withCustomProperties([
-                'width' => $width,
-                'height' => $height,
-                'duration' => $duration,
-                'is_video' => true,
-            ])
-            ->preservingOriginal()
-            ->toMediaCollection(MediaNamesLibrary::videos());
+            [$width, $height, $duration] = $this->getVideoInfo($videoItem);
 
-        $this->transcodeAction->handle($media);
+            Log::notice('Adding media');
+            $media = $content->addMedia($videoItem->Path)
+                ->withCustomProperties([
+                    'width' => $width,
+                    'height' => $height,
+                    'duration' => $duration,
+                    'is_video' => true,
+                ])
+                ->preservingOriginal()
+                ->toMediaCollection(MediaNamesLibrary::videos());
+
+            $this->transcodeAction->handle($media);
+        });
 
         Log::notice('Done importing video');
     }
 
-    private function getVideoInfo(VideoItem $videoItem): array
+    private function getVideoInfo(ImportVideoItem $videoItem): array
     {
         if ($videoItem->RunTimeTicks > 0 && $videoItem->Width > 0 && $videoItem->Height > 0) {
             return [
@@ -110,7 +115,7 @@ final readonly class ImportVideoService
 
         $height = (int) $video->get('height', 720);
         $width = (int) $video->get('width', 720);
-        $duration = (int) round($probe->format($videoItem->Path)->get('duration'));
+        $duration = (int) $probe->format($videoItem->Path)->get('duration');
 
         if ($duration < 10) {
             throw new RuntimeException('Video is too short');
@@ -127,7 +132,7 @@ final readonly class ImportVideoService
         }
 
         $content->attachTags($tags);
-        $content->searchable();
+        $content->searchableSync();
     }
 
     private function extractTags(array $fileInfo): array

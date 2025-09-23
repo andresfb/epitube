@@ -95,7 +95,7 @@ final class TranscodeVideoService
         }
 
         // comparing master and encoded durations with a 2% threshold
-        $this->duration = (int) round($probe->format($file)->get('duration'));
+        $this->duration = (int) $probe->format($file)->get('duration');
         $originalDuration = (int) $this->media->getCustomProperty('duration');
         $threshold = 0.05 * $originalDuration;
         $difference = abs($originalDuration - $this->duration);
@@ -180,7 +180,7 @@ final class TranscodeVideoService
             ])
             ->toMediaCollection(MediaNamesLibrary::transcoded());
 
-        $content->searchable();
+        $content->searchableSync();
 
         return $media->id;
     }

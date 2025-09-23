@@ -46,6 +46,42 @@ final class Content extends Model implements HasMedia
         return $this->belongsTo(Category::class);
     }
 
+    public function views(): HasMany
+    {
+        return $this->hasMany(View::class);
+    }
+
+    public function related(): HasMany
+    {
+        return $this->hasMany(RelatedContent::class)
+            ->limit(16);
+    }
+
+    public function scopeHasVideos(Builder $query): Builder
+    {
+        return $query->whereHas('media', function (Builder $query): void {
+            $query->where('collection_name', MediaNamesLibrary::transcoded())
+                ->orWhere('collection_name', MediaNamesLibrary::videos());
+        });
+    }
+
+    public function scopeHasThumbnails(Builder $query): Builder
+    {
+        return $query->whereHas('media', function (Builder $query): void {
+            $query->where('collection_name', MediaNamesLibrary::thumbnails());
+        });
+    }
+
+    public function scopeInMainCategory(Builder $query): Builder
+    {
+        return $query->where('category_id', Category::getMain()->id);
+    }
+
+    public function scopeInAltCategory(Builder $query): Builder
+    {
+        return $query->where('category_id', Category::getAlt()->id);
+    }
+
     public function registerMediaCollections(): void
     {
         $disk = config('media-library.disk_name');
@@ -74,36 +110,6 @@ final class Content extends Model implements HasMedia
                 'image/jpeg',
             ])
             ->useDisk($disk);
-    }
-
-    public function views(): HasMany
-    {
-        return $this->hasMany(View::class);
-    }
-
-    public function scopeHasVideos(Builder $query): Builder
-    {
-        return $query->whereHas('media', function (Builder $query): void {
-            $query->where('collection_name', MediaNamesLibrary::transcoded())
-                ->orWhere('collection_name', MediaNamesLibrary::videos());
-        });
-    }
-
-    public function scopeHasThumbnails(Builder $query): Builder
-    {
-        return $query->whereHas('media', function (Builder $query): void {
-            $query->where('collection_name', MediaNamesLibrary::thumbnails());
-        });
-    }
-
-    public function scopeInMainCategory(Builder $query): Builder
-    {
-        return $query->where('category_id', Category::getMain()->id);
-    }
-
-    public function scopeInAltCategory(Builder $query): Builder
-    {
-        return $query->where('category_id', Category::getAlt()->id);
     }
 
     public function searchableAs(): string

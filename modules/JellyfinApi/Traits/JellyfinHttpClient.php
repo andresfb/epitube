@@ -2,11 +2,10 @@
 
 namespace Modules\JellyfinApi\Traits;
 
+use Exception;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Utils;
 use Psr\Http\Message\StreamInterface;
-use RuntimeException;
-use Throwable;
 
 trait JellyfinHttpClient
 {
@@ -88,7 +87,7 @@ trait JellyfinHttpClient
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     private function makeHttpRequest(): StreamInterface
     {
@@ -99,7 +98,7 @@ trait JellyfinHttpClient
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     private function doJellyfinRequest(bool $decode = true): StreamInterface|array|string
     {
@@ -112,7 +111,7 @@ trait JellyfinHttpClient
             $data = $response->getContents();
 
             return ($decode === false) ? $data : Utils::jsonDecode($data, true);
-        } catch (RuntimeException $t) {
+        } catch (Exception $t) {
             return $t->getMessage();
         }
     }

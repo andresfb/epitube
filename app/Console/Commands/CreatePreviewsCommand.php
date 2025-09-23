@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Actions;
+namespace App\Console\Commands;
 
-use App\Console\Commands\BaseEncodeCommand;
 use App\Jobs\CreatePreviewsJob;
 use App\Libraries\MediaNamesLibrary;
 use App\Services\CreatePreviewsService;
 use Throwable;
-
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;

@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Actions;
+namespace App\Console\Commands;
 
-use App\Console\Commands\BaseEncodeCommand;
 use App\Jobs\ExtractThumbnailsJob;
 use App\Libraries\MediaNamesLibrary;
 use App\Services\ExtractThumbnailsService;
-use Throwable;
+use Exception;
 
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
-use function Laravel\Prompts\info;
 
 class ExtractThumbnailsCommand extends BaseEncodeCommand
 {
@@ -51,7 +50,7 @@ class ExtractThumbnailsCommand extends BaseEncodeCommand
 
             info('Executing service');
             $this->service->execute($media->id);
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             error($e->getMessage());
         } finally {
             $this->newLine();

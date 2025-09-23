@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Dtos\VideoItem;
+use App\Dtos\ImportVideoItem;
 use App\Jobs\ImportVideoJob;
 use App\Models\Content;
 use App\Models\MimeType;
@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Modules\JellyfinApi\Facades\Jellyfin;
-use Throwable;
 
 final class ImportVideosService
 {
@@ -29,10 +28,10 @@ final class ImportVideosService
     {
         Log::notice('Videos import started at '.now()->toDateTimeString());
 
-        $this->maxFiles = Config::integer('content.max_files');
+        $this->maxFiles = Config::integer('content.max_import_videos');
         $videos = $this->getServiceItems();
 
-        $videos->each(function (VideoItem $videoItem) {
+        $videos->each(function (ImportVideoItem $videoItem) {
             ImportVideoJob::dispatch($videoItem);
         });
 
@@ -40,7 +39,7 @@ final class ImportVideosService
     }
 
     /**
-     * @return Collection<VideoItem>
+     * @return Collection<ImportVideoItem>
      */
     private function getServiceItems(): Collection
     {
@@ -76,7 +75,7 @@ final class ImportVideosService
             }
 
             $videos->add(
-                new VideoItem(
+                new ImportVideoItem(
                     Id: $item['Id'],
                     Name: $fileInfo['filename'],
                     Path: $item['Path'],
@@ -122,7 +121,7 @@ final class ImportVideosService
                     Log::notice("Found {$result['TotalRecordCount']} items");
 
                     return $result['Items'];
-                } catch (Throwable $e) {
+                } catch (Exception $e) {
                     Log::error($e->getMessage());
 
                     return [];

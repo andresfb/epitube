@@ -3,12 +3,12 @@
 namespace Modules\JellyfinApi\Traits\JellyfinAPI;
 
 use Psr\Http\Message\StreamInterface;
-use Throwable;
+use Exception;
 
 trait System
 {
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function getSystemServerInformations(): StreamInterface|array|string
     {
@@ -22,7 +22,7 @@ trait System
     }
 
     /**
-     * @throws Throwable
+     * @throws Exception
      */
     public function getSystemRequestEndpointInformations(): StreamInterface|array|string
     {
@@ -36,11 +36,7 @@ trait System
     }
 
     /**
-     * Gets public information about the server.
-     *
-     * @return array|StreamInterface|string
-     * @throws Throwable
-     *
+     * @throws Exception
      */
     public function getSystemPublicInformations(): StreamInterface|array|string
     {
@@ -54,11 +50,7 @@ trait System
     }
 
     /**
-     * Gets a list of available server log files.
-     *
-     * @return array|StreamInterface|string
-     * @throws Throwable
-     *
+     * @throws Exception
      */
     public function getSystemLogFiles(): StreamInterface|array|string
     {
@@ -72,11 +64,7 @@ trait System
     }
 
     /**
-     * Gets a log file.
-     *
-     * @param string $logName
-     * @return array|StreamInterface|string
-     * @throws Throwable
+     * @throws Exception
      */
     public function getSystemLogFile(string $logName): StreamInterface|array|string
     {
@@ -92,11 +80,7 @@ trait System
     }
 
     /**
-     * Pings the system with get.
-     *
-     * @return array|StreamInterface|string
-     * @throws Throwable
-     *
+     * @throws Exception
      */
     public function pingSystem(): StreamInterface|array|string
     {
@@ -110,11 +94,7 @@ trait System
     }
 
     /**
-     * Pings the system with post.
-     *
-     * @return array|StreamInterface|string
-     * @throws Throwable
-     *
+     * @throws Exception
      */
     public function postPingSystem(): StreamInterface|array|string
     {
@@ -128,11 +108,7 @@ trait System
     }
 
     /**
-     * Restarts the application.
-     *
-     * @return array|StreamInterface|string
-     * @throws Throwable
-     *
+     * @throws Exception
      */
     public function restartApplication(): StreamInterface|array|string
     {
@@ -146,11 +122,7 @@ trait System
     }
 
     /**
-     * Shuts down the application.
-     *
-     * @return array|StreamInterface|string
-     * @throws Throwable
-     *
+     * @throws Exception
      */
     public function shutdownApplication(): StreamInterface|array|string
     {
