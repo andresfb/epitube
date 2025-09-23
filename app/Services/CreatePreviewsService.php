@@ -13,6 +13,7 @@ use FFMpeg\Filters\Video\VideoFilters;
 use FFMpeg\Format\Video\WebM;
 use FFMpeg\Format\Video\X264;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
@@ -43,31 +44,51 @@ final readonly class CreatePreviewsService
      */
     private function generate(Content $content): void
     {
-        Log::notice('Generating Preview videos');
+        try {
+            Log::notice('Generating Preview videos');
+            $sections = $this->calculateSections($this->videoLibrary->getDuration());
 
-        foreach (Config::array('content.preview_options.sizes') as $size => $bitRate) {
-            foreach (Config::array('content.preview_options.extensions') as $extension) {
-                $file = $this->createClipFile($size, $bitRate, $extension);
+            foreach (Config::array('content.preview_options.sizes') as $size => $bitRate) {
+                $size = (int) $size;
+                $bitRate = (int) $bitRate;
 
-                $content->addMedia($file)
-                    ->withCustomProperties([
-                        'size' => $size,
-                        'extension' => $extension,
-                        'is_video' => true,
-                    ])
-                    ->toMediaCollection(MediaNamesLibrary::previews());
+                if ($this->videoLibrary->getHeight() < $size) {
+                    continue;
+                }
+
+                foreach (Config::array('content.preview_options.extensions') as $extension) {
+                    $file = $this->createClipFile($size, $bitRate, $extension, $sections);
+                    $fullPath = Storage::disk($this->videoLibrary->getProcessingDisk())
+                        ->path($file);
+
+                    $content->addMedia($fullPath)
+                        ->withCustomProperties([
+                            'size' => $size,
+                            'extension' => $extension,
+                            'is_video' => true,
+                        ])
+                        ->toMediaCollection(MediaNamesLibrary::previews());
+                }
             }
-        }
 
-        $content->searchableSync();
+            $content->searchableSync();
+            Log::notice('Done creating Preview videos');
+        } catch (Exception $e) {
+            File::deleteDirectory($this->videoLibrary->getProcessingPath());
+            $content->getMedia(MediaNamesLibrary::previews())
+                ->each(function ($media) {
+                    $media->forceDelete();
+                });
+
+            throw $e;
+        }
     }
 
-    private function createClipFile(int $size, int $bitRate, string $extension): string
+    private function createClipFile(int $size, int $bitRate, string $extension, array $sections): string
     {
         $fileTemplate = sprintf(
-            '%s/preview_%s_%s%s.%s',
+            '%s/preview_%s%s.%s',
             $this->videoLibrary->getTempPath(),
-            $this->videoLibrary->getContentId(),
             $size,
             '%s',
             $extension
@@ -78,27 +99,21 @@ final readonly class CreatePreviewsService
 
         Log::notice("Encoding $outputFile file");
 
-        $duration = $this->videoLibrary->getDuration();
-        $trimmedDuration = $duration - ($duration * (Config::integer('content.preview_options.padding_time') / 100));
-        $startTime = $duration - $trimmedDuration;
-        $sections = Config::integer('content.preview_options.sections');
-        $sectionTime = ceil($trimmedDuration / $sections);
         $tmpFiles = [];
-
-        for ($i = 0; $i < $sections; $i++) {
+        foreach ($sections as $section) {
             $video = FFMpeg::fromDisk($this->videoLibrary->getDownloadDisk())
                 ->open($this->videoLibrary->getRelativeVideoPath());
 
             $tmpFile = sprintf(
                 $tmpFileTemplate,
-                mb_str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT)
+                mb_str_pad($section['index'], 2, '0', STR_PAD_LEFT)
             );
 
             $video->export()
-                ->addFilter(function (VideoFilters $filters) use ($startTime): void {
+                ->addFilter(function (VideoFilters $filters) use ($section): void {
                     $filters->clip(
-                        TimeCode::fromSeconds($startTime),
-                        TimeCode::fromSeconds(Config::integer('content.preview_options.section_length'))
+                        TimeCode::fromSeconds($section['start']),
+                        TimeCode::fromSeconds($section['duration']),
                     );
                 })
                 ->addFilter('-crf', 15)
@@ -111,7 +126,6 @@ final readonly class CreatePreviewsService
                 ->save($tmpFile);
 
             $tmpFiles[] = $tmpFile;
-            $startTime += $sectionTime;
 
             unset($video);
         }
@@ -128,12 +142,48 @@ final readonly class CreatePreviewsService
         return $outputFile;
     }
 
-    private function getEncodeFormat(int $bitRate): WebM|X264
+    private function calculateSections(int $duration): array
     {
-        $format = new X264();
-        $format->setKiloBitrate($bitRate)
-            ->setAudioCodec("libmp3lame");
+        $trimmedDuration = $duration
+            - ($duration * (Config::integer('content.preview_options.padding_time') / 100));
+        $sectionDuration = Config::integer('content.preview_options.section_length');
+        $sectionsPerInterval = Config::integer('content.preview_options.sections');
+        $intervalDuration = 20 * 60; // 20 minutes in seconds
 
-        return $format;
+        // Calculate the total number of sections needed
+        $totalSections = max(
+            $sectionsPerInterval, // minimum 3 sections
+            ceil($trimmedDuration / $intervalDuration) * $sectionsPerInterval
+        );
+
+        // Calculate spacing between sections
+        $availableDuration = $trimmedDuration - ($totalSections * $sectionDuration);
+        $spacing = $availableDuration / ($totalSections + 1);
+
+        $sections = [];
+        for ($i = 0; $i < $totalSections; $i++) {
+            $index = $i + 1;
+            $startTime = $index * $spacing + ($i * $sectionDuration);
+
+            // Ensure the section fits within the video duration
+            if ($startTime + $sectionDuration <= $trimmedDuration) {
+                $sections[] = [
+                    'index' => (string) $index,
+                    'start' => $startTime,
+                    'duration' => $sectionDuration
+                ];
+            }
+        }
+
+        return $sections;
+    }
+
+    private function getEncodeFormat(string $extension, int $bitRate): WebM|X264
+    {
+        $format = $extension !== 'mp4'
+            ? new X264('libmp3lame')
+            : new WebM('libvorbis');
+
+        return $format->setKiloBitrate($bitRate);
     }
 }

@@ -19,6 +19,8 @@ final class MasterVideoLibrary
 
     private int $duration = 0;
 
+    private int $height = 0;
+
     private string $processingDisk = 'processing';
 
     private string $downloadDisk = 'download';
@@ -39,6 +41,11 @@ final class MasterVideoLibrary
     public function getDuration(): int
     {
         return $this->duration;
+    }
+
+    public function getHeight(): int
+    {
+        return $this->height;
     }
 
     public function getProcessingDisk(): string
@@ -83,7 +90,8 @@ final class MasterVideoLibrary
             throw new RuntimeException('The media provided is not a video');
         }
 
-        $this->duration = (int) $media->getCustomProperty('duration');
+        $this->height = (int) $media->getCustomProperty('height', 0);
+        $this->duration = (int) $media->getCustomProperty('duration', 0);
         if ($this->duration < Config::integer('content.minimum_duration')) {
             throw new RuntimeException("The video duration is too short: $this->duration");
         }
@@ -95,7 +103,7 @@ final class MasterVideoLibrary
             throw new RuntimeException(sprintf('Directory "%s" was not created', $this->processingPath));
         }
 
-        // prepare local file
+        // prepare a local file
         $tempMasterPath = md5($media->file_name);
         $masterDownloadPath = Storage::disk($this->downloadDisk)->path($tempMasterPath);
         if (! is_dir($masterDownloadPath) && ! mkdir($masterDownloadPath, 0777, true) && ! is_dir($masterDownloadPath)) {
