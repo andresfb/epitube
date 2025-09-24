@@ -19,7 +19,6 @@ final class CreateFeedService
             ->hasThumbnails()
             ->where('active', true)
             ->where('viewed', false)
-            ->with('related')
             ->inRandomOrder()
             ->limit(
                 Config::integer('content.max_feed_limit')
@@ -40,16 +39,8 @@ final class CreateFeedService
             return;
         }
 
-        $expires = now()->addDay()->subSecond();
         foreach ($contents as $content) {
-            Feed::updateOrCreate([
-                'content_id' => $content->id,
-            ], [
-                'category_id' => $content->category_id,
-                'content' => ContentItem::withRelated($content)->toArray(),
-                'expires_at' => $expires,
-                'added_at' => $content->added_at,
-            ]);
+            Feed::generate($content);
         }
     }
 }

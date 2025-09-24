@@ -26,7 +26,7 @@ final class Content extends Model implements HasMedia
 
     protected $guarded = [];
 
-    protected $with = ['category', 'tags', 'media'];
+    protected $with = ['category', 'tags', 'media', 'related'];
 
     public static function fileHashExists(string $hash): bool
     {
@@ -88,12 +88,10 @@ final class Content extends Model implements HasMedia
 
         $this->addMediaCollection(MediaNamesLibrary::videos())
             ->acceptsMimeTypes(MimeType::list())
-            ->singleFile()
             ->useDisk($disk);
 
         $this->addMediaCollection(MediaNamesLibrary::transcoded())
             ->acceptsMimeTypes(['video/mp4'])
-            ->singleFile()
             ->useDisk($disk);
 
         $this->addMediaCollection(MediaNamesLibrary::previews())

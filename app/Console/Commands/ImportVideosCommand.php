@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
@@ -35,6 +36,7 @@ final class ImportVideosCommand extends Command
             clear();
             intro('Starting Import');
 
+            info('Executing service...');
             $service->execute();
         } catch (Exception $e) {
             error($e->getMessage());

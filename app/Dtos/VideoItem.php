@@ -11,6 +11,5 @@ class VideoItem extends Data
         public int $duration,
         public int $width,
         public int $height,
-        public array $hls,
     ) {}
 }

@@ -47,7 +47,7 @@ class CreatePreviewsCommand extends BaseEncodeCommand
                 return;
             }
 
-            info('Executing service');
+            info('Executing service...');
             $this->service->execute($media->id);
         } catch (Throwable $e) {
             error($e->getMessage());

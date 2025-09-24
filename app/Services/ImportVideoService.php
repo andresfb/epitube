@@ -10,6 +10,7 @@ use App\Libraries\MediaNamesLibrary;
 use App\Libraries\TitleParserLibrary;
 use App\Models\Category;
 use App\Models\Content;
+use App\Models\Feed;
 use Exception;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Carbon;
@@ -133,6 +134,7 @@ final readonly class ImportVideoService
 
         $content->attachTags($tags);
         $content->searchableSync();
+        Feed::updateIfExists($content);
     }
 
     private function extractTags(array $fileInfo): array

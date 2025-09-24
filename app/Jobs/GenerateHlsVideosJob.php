@@ -13,6 +13,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * @deprecated
+ */
 final class GenerateHlsVideosJob implements ShouldQueue
 {
     use Dispatchable;

@@ -7,6 +7,8 @@ namespace App\Services;
 use App\Libraries\MasterVideoLibrary;
 use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
+use App\Models\Feed;
+use App\Traits\Encodable;
 use Exception;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\Filters\Video\VideoFilters;
@@ -20,6 +22,8 @@ use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 final readonly class CreatePreviewsService
 {
+    use Encodable;
+
     public function __construct(private MasterVideoLibrary $videoLibrary) {}
 
     /**
@@ -27,16 +31,26 @@ final readonly class CreatePreviewsService
      */
     public function execute(int $mediaId): void
     {
-        Log::notice("Starting creating Preview videos for: $mediaId");
-        $this->videoLibrary->prepare($mediaId, self::class);
+        try {
+            Log::notice("Starting creating Preview videos for: $mediaId");
+            $this->videoLibrary->prepare($mediaId, self::class);
 
-        $this->generate(
-            Content::where('id', $this->videoLibrary->getContentId())
-                ->firstOrFail()
-        );
+            $this->flag = sprintf("%s/creating", $this->videoLibrary->getProcessingPath());
+            $this->checkFlag(
+                disk: $this->videoLibrary->getProcessingDisk(),
+                mediaId: $mediaId,
+                mediaName: '',
+            );
 
-        $this->videoLibrary->deleteTempFiles();
-        Log::notice('Done creating Preview videos');
+            $this->createFlag($this->videoLibrary->getProcessingDisk());
+            $this->generate($this->videoLibrary->getContent());
+
+            Log::notice('Done creating Preview videos');
+        } finally {
+            $this->videoLibrary->deleteTempFiles();
+
+            $this->deleteFlag($this->videoLibrary->getProcessingDisk());
+        }
     }
 
     /**
@@ -72,7 +86,7 @@ final readonly class CreatePreviewsService
             }
 
             $content->searchableSync();
-            Log::notice('Done creating Preview videos');
+            Feed::updateIfExists($content);
         } catch (Exception $e) {
             File::deleteDirectory($this->videoLibrary->getProcessingPath());
             $content->getMedia(MediaNamesLibrary::previews())
@@ -87,9 +101,10 @@ final readonly class CreatePreviewsService
     private function createClipFile(int $size, int $bitRate, string $extension, array $sections): string
     {
         $fileTemplate = sprintf(
-            '%s/preview_%s%s.%s',
+            '%s/preview_%s_%s%s.%s',
             $this->videoLibrary->getTempPath(),
             $size,
+            $extension,
             '%s',
             $extension
         );
@@ -122,7 +137,7 @@ final readonly class CreatePreviewsService
                     $filters->custom("fps=10,scale=-2:$size:flags=lanczos");
                 })
                 ->toDisk($this->videoLibrary->getProcessingDisk())
-                ->inFormat($this->getEncodeFormat($bitRate))
+                ->inFormat($this->getEncodeFormat($extension, $bitRate))
                 ->save($tmpFile);
 
             $tmpFiles[] = $tmpFile;
@@ -180,7 +195,7 @@ final readonly class CreatePreviewsService
 
     private function getEncodeFormat(string $extension, int $bitRate): WebM|X264
     {
-        $format = $extension !== 'mp4'
+        $format = $extension === 'mp4'
             ? new X264('libmp3lame')
             : new WebM('libvorbis');
 

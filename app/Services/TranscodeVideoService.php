@@ -6,7 +6,9 @@ namespace App\Services;
 
 use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
+use App\Models\Feed;
 use App\Models\Media;
+use App\Traits\Encodable;
 use Exception;
 use FFMpeg\FFProbe;
 use FFMpeg\FFProbe\DataMapping\Stream;
@@ -17,11 +19,11 @@ use Symfony\Component\Process\Process;
 
 final class TranscodeVideoService
 {
+    use Encodable;
+
     private const string TRANSCODE_DISK = 'transcode';
 
     private int $duration = 0;
-
-    private string $flag = '';
 
     private string $tempPath = '';
 
@@ -46,21 +48,23 @@ final class TranscodeVideoService
             $this->flag = "$this->tempPath/creating";
 
             Log::info("Checking for {$this->flag} file");
-            if (Storage::disk(self::TRANSCODE_DISK)->exists($this->flag)) {
-                throw new RuntimeException(
-                    "{$this->media->model_id} | {$this->media->name} Transcode process already running."
-                );
-            }
+            $this->checkFlag(
+                disk: self::TRANSCODE_DISK,
+                mediaId: $this->media->model_id,
+                mediaName: $this->media->name,
+            );
 
             Log::info("Creating $this->flag file");
-            $this->createFlag();
+            $this->createFlag(self::TRANSCODE_DISK);
 
             Log::info('Executing Transcoding process');
             $info = $this->transcode();
 
             return $this->addNewMedia($info);
         } finally {
-            $this->deleteFlag();
+            $this->deleteFlag(self::TRANSCODE_DISK);
+
+            Storage::disk(self::TRANSCODE_DISK)->deleteDirectory($this->tempPath);
         }
     }
 
@@ -83,7 +87,10 @@ final class TranscodeVideoService
         }
 
         // has a duration greater than 0
-        $probe = FFProbe::create();
+        $probe = FFProbe::create([
+            'ffprobe.binaries' => $this->ffProbe(),
+        ]);
+
         if (! $probe->isValid($file)) {
             throw new RuntimeException("$fileType file is not valid");
         }
@@ -126,8 +133,12 @@ final class TranscodeVideoService
             pathinfo($this->fullPath, PATHINFO_FILENAME)
         );
 
-        $baseCmd = config('media-library.ffmpeg_path').' -y -v error -i "%s" -q:v 0 -ar 44100 -ab 128k "%s"';
-        $cmd = sprintf($baseCmd, $this->fullPath, $outputFile);
+        $cmd = sprintf(
+            '"%s" -hide_banner -y -v error -i "%s" -q:v 0 -ar 44100 -ab 128k "%s"',
+            $this->ffMpeg(),
+            $this->fullPath,
+            $outputFile
+        );
 
         Log::info("Transcoding ffmpeg running command: $cmd");
 
@@ -172,28 +183,23 @@ final class TranscodeVideoService
         $media = $content->addMedia($info['out_file'])
             ->withProperties(['name' => $this->media->name])
             ->withCustomProperties([
-                'width' => $info['width'],
-                'height' => $info['height'],
+                'width' => (int) $info['width'],
+                'height' => (int) $info['height'],
                 'duration' => $this->duration,
                 'owner_id' => $this->media->id,
                 'is_video' => true,
             ])
             ->toMediaCollection(MediaNamesLibrary::transcoded());
 
+        // Delete the original video files from the record
+        $content->getMedia(MediaNamesLibrary::videos())
+            ->each(function (Media $media) {
+                $media->forceDelete();
+            });
+
         $content->searchableSync();
+        Feed::updateIfExists($content);
 
         return $media->id;
-    }
-
-    private function createFlag(): void
-    {
-        Storage::disk(self::TRANSCODE_DISK)->put($this->flag, '1');
-    }
-
-    private function deleteFlag(): void
-    {
-        Storage::disk(self::TRANSCODE_DISK)->delete($this->flag);
-
-        Storage::disk(self::TRANSCODE_DISK)->deleteDirectory($this->tempPath);
     }
 }

@@ -25,6 +25,7 @@ use Symfony\Component\Process\Process;
  * Class HlsConverterService
  *
  * Based on https://github.com/Astrotomic/laravel-medialibrary-hls/tree/main
+ * @deprecated
  */
 final readonly class HlsConverterService
 {
@@ -56,8 +57,7 @@ final readonly class HlsConverterService
     public function __construct(
         private Filesystem $filesystem,
         private MasterVideoLibrary $videoLibrary
-    )
-    {
+    ) {
         $this->hls = MediaNamesLibrary::hlsConversion();
     }
 
@@ -76,7 +76,7 @@ final readonly class HlsConverterService
 
         $this->videoLibrary->prepare($mediaId, self::class);
 
-        $filepath = $this->convert($this->videoLibrary->getDownloadPath());
+        $filepath = $this->convert($this->videoLibrary->getMasterFile());
         $directory = dirname($filepath);
 
         foreach (File::allFiles($directory) as $file) {
@@ -92,6 +92,8 @@ final readonly class HlsConverterService
 
         $diskRelativePath = "/{$this->filesystem->getConversionDirectory($media)}.'$this->hls/playlist.m3u8'";
         $media->setCustomProperty($this->hls, $diskRelativePath);
+        $media->save();
+
         $content = Content::where('id', $media->model_id)->first();
         $content?->searchable();
 
@@ -108,7 +110,7 @@ final readonly class HlsConverterService
             $this->hls
         );
 
-        if (! mkdir($output, 0777, true) && ! is_dir($output)) {
+        if (! is_dir($output) && ! mkdir($output, 0777, true) && ! is_dir($output)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $output));
         }
 
@@ -132,7 +134,7 @@ final readonly class HlsConverterService
             '-c:v h264 -crf 20 -c:a aac -ar 48000',
             $resolutions
                 ->values()
-                ->map(fn (array $r, int $i): string => "-filter:v:{$i} scale=w={$r[0]}:h={$r[1]}:force_original_aspect_ratio=decrease -maxrate:v:{$i} {$r[2]}k -b:a:{$i} {$r[3]}k")
+                ->map(fn (array $r, int $i): string => "-filter:v:{$i} scale=w={$r[0]}:h={$r[1]}:force_original_aspect_ratio=decrease:force_divisible_by=2 -maxrate:v:{$i} {$r[2]}k -b:a:{$i} {$r[3]}k")
                 ->implode(' '),
             Str::of(
                 $resolutions
@@ -152,8 +154,6 @@ final readonly class HlsConverterService
             ->mustRun();
 
         Log::info('HLS conversion finished');
-
-        // todo: list the generated resolutions.
 
         return $output.'/playlist.m3u8';
     }

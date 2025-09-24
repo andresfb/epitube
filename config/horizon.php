@@ -225,17 +225,6 @@ return [
                 'tries' => 1,
             ],
 
-            'hls-supervisor' => [
-                'connection' => 'redis',
-                'queue' => ['hls'],
-                'balance' => 'auto',
-                'minProcesses' => 1,
-                'maxProcesses' => 2,
-                'memory' => 512,
-                'timeout' => 7200,
-                'tries' => 1,
-            ],
-
         ],
 
         'local' => [
@@ -271,17 +260,6 @@ return [
             'encoder-supervisor' => [
                 'connection' => 'redis',
                 'queue' => ['encode'],
-                'balance' => 'auto',
-                'minProcesses' => 1,
-                'maxProcesses' => 2,
-                'memory' => 512,
-                'timeout' => 7200,
-                'tries' => 1,
-            ],
-
-            'hls-supervisor' => [
-                'connection' => 'redis',
-                'queue' => ['hls'],
                 'balance' => 'auto',
                 'minProcesses' => 1,
                 'maxProcesses' => 2,

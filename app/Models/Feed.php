@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Dtos\ContentItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use function Laravel\Prompts\select;
 
 final class Feed extends Model
 {
@@ -30,5 +32,26 @@ final class Feed extends Model
             'expires_at' => 'datetime',
             'added_at' => 'datetime',
         ];
+    }
+
+    public static function updateIfExists(Content $content): void
+    {
+        if (! self::where('content_id', $content->id)->exists()) {
+            return;
+        }
+
+        self::generate($content);
+    }
+
+    public static function generate(Content $content): void
+    {
+        self::updateOrCreate([
+            'content_id' => $content->id,
+        ], [
+            'category_id' => $content->category_id,
+            'content' => ContentItem::withRelated($content)->toArray(),
+            'expires_at' => now()->addDay()->subSecond(),
+            'added_at' => $content->added_at,
+        ]);
     }
 }

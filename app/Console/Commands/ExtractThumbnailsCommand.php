@@ -48,7 +48,7 @@ class ExtractThumbnailsCommand extends BaseEncodeCommand
                 return;
             }
 
-            info('Executing service');
+            info('Executing service...');
             $this->service->execute($media->id);
         } catch (Exception $e) {
             error($e->getMessage());

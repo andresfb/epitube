@@ -23,7 +23,7 @@ final class ExtractThumbnailsJob implements ShouldQueue
     public function __construct(private readonly int $mediaId)
     {
         $this->queue = 'encode';
-        $this->delay = now()->addSeconds(15);
+        $this->delay = now()->addSeconds(30);
     }
 
     /**

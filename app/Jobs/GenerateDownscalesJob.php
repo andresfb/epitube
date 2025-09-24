@@ -1,10 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Jobs;
 
-use App\Services\CreatePreviewsService;
+use App\Services\GenerateDownscalesService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,7 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-final class CreatePreviewsJob implements ShouldQueue
+class GenerateDownscalesJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -29,12 +27,12 @@ final class CreatePreviewsJob implements ShouldQueue
     /**
      * @throws Exception
      */
-    public function handle(CreatePreviewsService $service): void
+    public function handle(GenerateDownscalesService $service): void
     {
         try {
             $service->execute($this->mediaId);
         } catch (Exception $e) {
-            Log::error("Previews generation error for Media Id: {$this->mediaId}: {$e->getMessage()}");
+            Log::error("Downscales error for Media Id: {$this->mediaId}: {$e->getMessage()}");
 
             throw $e;
         }

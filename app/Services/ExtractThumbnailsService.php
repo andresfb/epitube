@@ -7,6 +7,8 @@ namespace App\Services;
 use App\Libraries\MasterVideoLibrary;
 use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
+use App\Models\Feed;
+use App\Traits\Encodable;
 use Exception;
 use FFMpeg\Coordinate\TimeCode;
 use Illuminate\Support\Facades\Config;
@@ -18,6 +20,8 @@ use Symfony\Component\Process\Process;
 
 final readonly class ExtractThumbnailsService
 {
+    use Encodable;
+
     public function __construct(private MasterVideoLibrary $videoLibrary) {}
 
     /**
@@ -25,16 +29,26 @@ final readonly class ExtractThumbnailsService
      */
     public function execute(int $mediaId): void
     {
-        Log::notice("Starting extracting thumbnails for: $mediaId");
-        $this->videoLibrary->prepare($mediaId, self::class);
+        try {
+            Log::notice("Starting extracting thumbnails for: $mediaId");
+            $this->videoLibrary->prepare($mediaId, self::class);
 
-        $this->generate(
-            Content::where('id', $this->videoLibrary->getContentId())
-                ->firstOrFail()
-        );
+            $this->flag = sprintf("%s/creating", $this->videoLibrary->getProcessingPath());
+            $this->checkFlag(
+                disk: $this->videoLibrary->getProcessingDisk(),
+                mediaId: $mediaId,
+                mediaName: '',
+            );
 
-        $this->videoLibrary->deleteTempFiles();
-        Log::notice("Finished extracting thumbnails for: $mediaId");
+            $this->createFlag($this->videoLibrary->getProcessingDisk());
+            $this->generate($this->videoLibrary->getContent());
+
+            Log::notice("Finished extracting thumbnails for: $mediaId");
+        } finally {
+            $this->videoLibrary->deleteTempFiles();
+
+            $this->deleteFlag($this->videoLibrary->getProcessingDisk());
+        }
     }
 
     /**
@@ -54,6 +68,7 @@ final readonly class ExtractThumbnailsService
         }
 
         $content->searchableSync();
+        Feed::updateIfExists($content);
     }
 
     /**
@@ -69,9 +84,6 @@ final readonly class ExtractThumbnailsService
         $skip = random_int(3, 7) / 100;
         $timeCode = floor(($duration - ($duration * $skip)) / $numberThumbnails);
 
-        $video = FFMpeg::fromDisk($this->videoLibrary->getDownloadDisk())
-            ->open($this->videoLibrary->getRelativeVideoPath());
-
         for ($i = 1; $i <= $numberThumbnails; $i++) {
             $image = sprintf(
                 '%s/%s.png',
@@ -81,10 +93,10 @@ final readonly class ExtractThumbnailsService
 
             $time = TimeCode::fromSeconds($timeCode * $i);
             $cmd = sprintf(
-                '%s -hide_banner -y -v error -ss "%s" -i "%s" -vframes 1 -f image2 -vf "scale=\'trunc(ih*dar):ih\',setsar=1/1" "%s"',
-                Config::string('laravel-ffmpeg.ffmpeg.binaries'),
+                '"%s" -hide_banner -y -v error -ss "%s" -i "%s" -vframes 1 -f image2 -vf "scale=\'trunc(ih*dar):ih\',setsar=1/1" "%s"',
+                $this->ffMpeg(),
                 $time,
-                $this->videoLibrary->getDownloadPath(),
+                $this->videoLibrary->getMasterFile(),
                 Storage::disk($this->videoLibrary->getProcessingDisk())->path($image),
             );
 
@@ -98,7 +110,6 @@ final readonly class ExtractThumbnailsService
             }
 
             $images[] = Storage::disk($this->videoLibrary->getProcessingDisk())->path($image);
-            $video = $video->fresh();
         }
 
         Log::notice('Done extracting thumbnails');

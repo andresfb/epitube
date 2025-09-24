@@ -88,14 +88,11 @@ final class ContentItem extends Data
 
         $contentArray[$collection] = $content->getMedia($collection)
             ->map(function (Media $media) {
-                new VideoItem(
+                return new VideoItem(
                     fulUrl: $media->getFullUrl(),
                     duration: (int) $media->getCustomProperty('duration'),
                     width: (int) $media->getCustomProperty('width'),
                     height: (int) $media->getCustomProperty('height'),
-                    hls: $media->hasGeneratedConversion(MediaNamesLibrary::hlsConversion())
-                        ? $media->getGeneratedConversions()->toArray()
-                        : [],
                 );
             });
 

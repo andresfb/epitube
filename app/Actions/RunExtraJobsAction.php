@@ -6,7 +6,7 @@ namespace App\Actions;
 
 use App\Jobs\CreatePreviewsJob;
 use App\Jobs\ExtractThumbnailsJob;
-use App\Jobs\GenerateHlsVideosJob;
+use App\Jobs\GenerateDownscalesJob;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
@@ -24,6 +24,6 @@ final readonly class RunExtraJobsAction
 
         CreatePreviewsJob::dispatch($mediaId);
 
-        GenerateHlsVideosJob::dispatch($mediaId);
+        GenerateDownscalesJob::dispatch($mediaId);
     }
 }

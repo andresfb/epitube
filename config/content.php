@@ -20,11 +20,12 @@ return [
 
         // video resolution => bitrate
         'sizes' => [
-            480 => 1000,
+//            480 => 1000,
+            360 => 750,
             180 => 500,
         ],
 
-        'extensions' => ['mp4', 'webm'],
+        'extensions' => ['webm', 'mp4'],
 
         'padding_time' => (int) env('PREVIEW_PADDING_TIME', 15),
 
