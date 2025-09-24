@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\JellyfinApi\Services;
 
 use Modules\JellyfinApi\Traits\JellyfinRequest;
 
-class JellyfinService
+final class JellyfinService
 {
     use JellyfinRequest;
 

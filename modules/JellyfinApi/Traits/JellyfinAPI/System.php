@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\JellyfinApi\Traits\JellyfinAPI;
 
-use Psr\Http\Message\StreamInterface;
 use Exception;
+use Psr\Http\Message\StreamInterface;
 
 trait System
 {
@@ -14,7 +16,7 @@ trait System
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "System/Info";
+        $this->apiEndPoint = 'System/Info';
 
         $this->verb = 'get';
 
@@ -28,7 +30,7 @@ trait System
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "System/Endpoint";
+        $this->apiEndPoint = 'System/Endpoint';
 
         $this->verb = 'get';
 
@@ -42,7 +44,7 @@ trait System
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "System/Info/Public";
+        $this->apiEndPoint = 'System/Info/Public';
 
         $this->verb = 'get';
 
@@ -56,7 +58,7 @@ trait System
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "System/Logs";
+        $this->apiEndPoint = 'System/Logs';
 
         $this->verb = 'get';
 
@@ -70,7 +72,7 @@ trait System
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "System/Logs/Log";
+        $this->apiEndPoint = 'System/Logs/Log';
 
         $this->setRequestQuery('name', $logName);
 
@@ -86,7 +88,7 @@ trait System
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "System/Ping";
+        $this->apiEndPoint = 'System/Ping';
 
         $this->verb = 'get';
 
@@ -100,7 +102,7 @@ trait System
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "System/Ping";
+        $this->apiEndPoint = 'System/Ping';
 
         $this->verb = 'post';
 
@@ -114,7 +116,7 @@ trait System
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "System/Restart";
+        $this->apiEndPoint = 'System/Restart';
 
         $this->verb = 'post';
 
@@ -128,7 +130,7 @@ trait System
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "System/Shutdown";
+        $this->apiEndPoint = 'System/Shutdown';
 
         $this->verb = 'post';
 

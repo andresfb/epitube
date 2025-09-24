@@ -113,7 +113,7 @@ final class ImportVideosService
                     }
 
                     if (blank($result['Items'])) {
-                        Log::error("No items found");
+                        Log::error('No items found');
 
                         return [];
                     }

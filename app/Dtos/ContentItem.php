@@ -15,11 +15,11 @@ use Spatie\LaravelData\Data;
 final class ContentItem extends Data
 {
     /**
-     * @param array<string> $tags
-     * @param Collection<VideoItem>|null $videos
-     * @param Collection<PreviewItem>|null $previews
-     * @param Collection<ThumbnailItem>|null $thumbnails
-     * @param Collection<ContentItem>|null $related
+     * @param  array<string>  $tags
+     * @param  Collection<VideoItem>|null  $videos
+     * @param  Collection<PreviewItem>|null  $previews
+     * @param  Collection<ThumbnailItem>|null  $thumbnails
+     * @param  Collection<ContentItem>|null  $related
      */
     public function __construct(
         public string $id,
@@ -44,7 +44,7 @@ final class ContentItem extends Data
         $contentArray = self::withContent($content)->toArray();
 
         $contentArray['related'] = $content->related->map(
-            fn(RelatedContent $relatedContent): array => self::withContent($relatedContent->content)->toArray()
+            fn (RelatedContent $relatedContent): array => self::withContent($relatedContent->content)->toArray()
         );
 
         return self::from($contentArray);
@@ -55,13 +55,13 @@ final class ContentItem extends Data
         $contentArray = $content->toSearchableArray();
 
         $contentArray[MediaNamesLibrary::thumbnails()] = $content->getMedia(MediaNamesLibrary::thumbnails())
-            ->map(fn(Media $media): \App\Dtos\ThumbnailItem => new ThumbnailItem(
+            ->map(fn (Media $media): ThumbnailItem => new ThumbnailItem(
                 urls: $media->getResponsiveImageUrls(),
                 srcset: $media->getSrcset(),
             ));
 
         $contentArray[MediaNamesLibrary::previews()] = $content->getMedia(MediaNamesLibrary::previews())
-            ->map(fn(Media $media): \App\Dtos\PreviewItem => new PreviewItem(
+            ->map(fn (Media $media): PreviewItem => new PreviewItem(
                 fulUrl: $media->getFullUrl(),
                 size: (int) $media->getCustomProperty('size'),
                 extension: $media->getCustomProperty('extension'),
@@ -73,7 +73,7 @@ final class ContentItem extends Data
         }
 
         $contentArray[$collection] = $content->getMedia($collection)
-            ->map(fn(Media $media): \App\Dtos\VideoItem => new VideoItem(
+            ->map(fn (Media $media): VideoItem => new VideoItem(
                 fulUrl: $media->getFullUrl(),
                 duration: (int) $media->getCustomProperty('duration'),
                 width: (int) $media->getCustomProperty('width'),

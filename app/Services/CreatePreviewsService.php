@@ -35,7 +35,7 @@ final class CreatePreviewsService
             Log::notice("Starting creating Preview videos for: $mediaId");
             $this->videoLibrary->prepare($mediaId, self::class);
 
-            $this->flag = sprintf("%s/creating", $this->videoLibrary->getProcessingPath());
+            $this->flag = sprintf('%s/creating', $this->videoLibrary->getProcessingPath());
             $this->checkFlag(
                 disk: $this->videoLibrary->getProcessingDisk(),
                 mediaId: $mediaId,
@@ -185,7 +185,7 @@ final class CreatePreviewsService
                 $sections[] = [
                     'index' => (string) $index,
                     'start' => $startTime,
-                    'duration' => $sectionDuration
+                    'duration' => $sectionDuration,
                 ];
             }
         }

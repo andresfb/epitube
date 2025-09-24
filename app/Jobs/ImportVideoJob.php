@@ -6,13 +6,13 @@ namespace App\Jobs;
 
 use App\Dtos\ImportVideoItem;
 use App\Services\ImportVideoService;
-use Throwable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 final class ImportVideoJob implements ShouldQueue
 {

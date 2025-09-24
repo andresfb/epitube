@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Jobs\TranscodeVideoJob;
@@ -16,7 +18,7 @@ use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class TranscodeMediaCommand extends BaseEncodeCommand
+final class TranscodeMediaCommand extends BaseEncodeCommand
 {
     protected $signature = 'transcode:content {contentId?}';
 
@@ -33,7 +35,7 @@ class TranscodeMediaCommand extends BaseEncodeCommand
             clear();
             intro('Starting Transcoding');
 
-            $contentId =(int) $this->argument('contentId');
+            $contentId = (int) $this->argument('contentId');
             $content = $this->getContent($contentId);
 
             /** @noinspection NotOptimalIfConditionsInspection */

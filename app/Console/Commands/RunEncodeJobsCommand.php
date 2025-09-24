@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Actions\RunExtraJobsAction;
-use Throwable;
+use Exception;
+
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class RunEncodeJobsCommand extends BaseEncodeCommand
+final class RunEncodeJobsCommand extends BaseEncodeCommand
 {
     protected $signature = 'encode:content {contentId?}';
 
@@ -31,7 +34,7 @@ class RunEncodeJobsCommand extends BaseEncodeCommand
             $media = $this->getMedia($content);
 
             $this->jobsAction->handle($media->id);
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             error($e->getMessage());
         } finally {
             $this->newLine();

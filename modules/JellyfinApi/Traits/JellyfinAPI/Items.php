@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\JellyfinApi\Traits\JellyfinAPI;
 
-use Psr\Http\Message\StreamInterface;
 use Exception;
+use Psr\Http\Message\StreamInterface;
 
 trait Items
 {
@@ -14,7 +16,7 @@ trait Items
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Items";
+        $this->apiEndPoint = 'Items';
 
         $this->setRequestsQuery([
             'recursive' => 'true',

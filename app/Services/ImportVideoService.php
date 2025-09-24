@@ -11,7 +11,6 @@ use App\Libraries\TitleParserLibrary;
 use App\Models\Category;
 use App\Models\Content;
 use App\Models\Feed;
-use Exception;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -159,7 +158,7 @@ final readonly class ImportVideoService
             $tags = $tags->merge(
                 str($section)->explode(' ')
                     ->map(fn (string $tag): string => trim($tag))
-                    ->reject(fn(string $part): bool => blank($part)
+                    ->reject(fn (string $part): bool => blank($part)
                         || in_array($part, $this->bandedTags, true)
                         || mb_strlen($part) <= 2)
             );

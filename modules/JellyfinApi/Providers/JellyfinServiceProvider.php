@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\JellyfinApi\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Modules\JellyfinApi\Services\JellyfinService as JellyfinClient;
 
-class JellyfinServiceProvider extends ServiceProvider
+final class JellyfinServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
@@ -21,7 +23,7 @@ class JellyfinServiceProvider extends ServiceProvider
 
     private function registerJellyfin(): void
     {
-        $this->app->singleton('jellyfin_client', static fn(): JellyfinClient => new JellyfinClient());
+        $this->app->singleton('jellyfin_client', static fn (): JellyfinClient => new JellyfinClient());
     }
 
     /**

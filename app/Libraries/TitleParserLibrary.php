@@ -93,7 +93,7 @@ final class TitleParserLibrary
         $titled = $titled->replace($dirList, '')
             ->replace(
                 $dirList->map(
-                    fn(Stringable $item): string => $item->replace(' ', '')->toString()
+                    fn (Stringable $item): string => $item->replace(' ', '')->toString()
                 )->toArray(),
                 ''
             )

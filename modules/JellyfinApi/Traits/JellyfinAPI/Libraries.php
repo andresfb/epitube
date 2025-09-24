@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\JellyfinApi\Traits\JellyfinAPI;
 
 use Exception;
@@ -14,7 +16,7 @@ trait Libraries
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Library/MediaFolders";
+        $this->apiEndPoint = 'Library/MediaFolders';
 
         $this->verb = 'get';
 
@@ -28,7 +30,7 @@ trait Libraries
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Items";
+        $this->apiEndPoint = 'Items';
 
         $this->setRequestQuery('ids', $ids);
 
@@ -82,7 +84,7 @@ trait Libraries
     /**
      * @throws Exception
      */
-    public function getAllParentsOfAnItems(string $itemId, string $userId = null): StreamInterface|array|string
+    public function getAllParentsOfAnItems(string $itemId, ?string $userId = null): StreamInterface|array|string
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
@@ -184,11 +186,11 @@ trait Libraries
     /**
      * @throws Exception
      */
-    public function getItemCounts(string $userId = null, bool|null $isFavorite = null): StreamInterface|array|string
+    public function getItemCounts(?string $userId = null, ?bool $isFavorite = null): StreamInterface|array|string
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Items/Counts";
+        $this->apiEndPoint = 'Items/Counts';
 
         if (isset($userId)) {
             $this->setRequestQuery('userId', $userId);
@@ -206,11 +208,11 @@ trait Libraries
     /**
      * @throws Exception
      */
-    public function getLibraryOptionsInfo(string $libraryContentType = null, bool $isNewLibrary = false): StreamInterface|array|string
+    public function getLibraryOptionsInfo(?string $libraryContentType = null, bool $isNewLibrary = false): StreamInterface|array|string
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Items/Counts";
+        $this->apiEndPoint = 'Items/Counts';
 
         if (isset($libraryContentType)) {
             $this->setRequestQuery('libraryContentType', $libraryContentType);
@@ -226,11 +228,11 @@ trait Libraries
     /**
      * @throws Exception
      */
-    public function getAllUserMediaFolders(bool|null $isHidden = null): StreamInterface|array|string
+    public function getAllUserMediaFolders(?bool $isHidden = null): StreamInterface|array|string
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Library/MediaFolders";
+        $this->apiEndPoint = 'Library/MediaFolders';
 
         if (isset($isHidden)) {
             $this->setRequestQuery('isHidden', $isHidden);
@@ -248,7 +250,7 @@ trait Libraries
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Library/Refresh";
+        $this->apiEndPoint = 'Library/Refresh';
 
         $this->verb = 'post';
 

@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Jobs\GenerateDownscalesJob;
 use App\Libraries\MediaNamesLibrary;
 use App\Services\GenerateDownscalesService;
 use Exception;
-
 use RuntimeException;
+
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
@@ -15,7 +17,7 @@ use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class GenerateDownscalesCommand extends BaseEncodeCommand
+final class GenerateDownscalesCommand extends BaseEncodeCommand
 {
     protected $signature = 'create:downscales {contentId?}';
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Jobs\EncodeDownscaleJob;
@@ -18,9 +20,9 @@ final class GenerateDownscalesService
     use Encodable;
 
     public const array RESOLUTIONS = [
-        '360p' =>  360,
-        '480p' =>  480,
-        '720p' =>  720,
+        '360p' => 360,
+        '480p' => 480,
+        '720p' => 720,
         '1080p' => 1080,
         '1440p' => 1440,
         '2160p' => 2160,

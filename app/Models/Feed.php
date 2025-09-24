@@ -7,32 +7,12 @@ namespace App\Models;
 use App\Dtos\ContentItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use function Laravel\Prompts\select;
 
 final class Feed extends Model
 {
     protected $guarded = [];
 
     protected $with = ['category'];
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
-    }
-
-    public function content(): BelongsTo
-    {
-        return $this->belongsTo(Content::class);
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'content' => 'json',
-            'expires_at' => 'datetime',
-            'added_at' => 'datetime',
-        ];
-    }
 
     public static function updateIfExists(Content $content): void
     {
@@ -53,5 +33,24 @@ final class Feed extends Model
             'expires_at' => now()->addDay()->subSecond(),
             'added_at' => $content->added_at,
         ]);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function content(): BelongsTo
+    {
+        return $this->belongsTo(Content::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'content' => 'json',
+            'expires_at' => 'datetime',
+            'added_at' => 'datetime',
+        ];
     }
 }

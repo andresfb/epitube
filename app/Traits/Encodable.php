@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +19,7 @@ trait Encodable
         }
 
         throw new RuntimeException(
-            sprintf("%s | %s %s process already running.", $mediaId, $mediaName, self::class)
+            sprintf('%s | %s %s process already running.', $mediaId, $mediaName, self::class)
         );
     }
 

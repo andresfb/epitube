@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Jobs\ExtractThumbnailsJob;
@@ -14,7 +16,7 @@ use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class ExtractThumbnailsCommand extends BaseEncodeCommand
+final class ExtractThumbnailsCommand extends BaseEncodeCommand
 {
     protected $signature = 'extract:thumbs {contentId?}';
 

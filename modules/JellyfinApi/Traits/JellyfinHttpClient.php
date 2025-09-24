@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\JellyfinApi\Traits;
 
 use Exception;
@@ -9,11 +11,13 @@ use Psr\Http\Message\StreamInterface;
 
 trait JellyfinHttpClient
 {
+    protected string $apiBaseUrl;
+
+    protected string $verb = 'get';
+
     private HttpClient $client;
 
     private array $httpClientConfig;
-
-    protected string $apiBaseUrl;
 
     private string $apiUrl;
 
@@ -23,28 +27,7 @@ trait JellyfinHttpClient
 
     private bool $validateSSL;
 
-    protected string $verb = 'get';
-
-    protected function setCurlConstants(): void
-    {
-        $constants = [
-            'CURLOPT_SSLVERSION'        => 32,
-            'CURL_SSLVERSION_TLSv1_2'   => 6,
-            'CURLOPT_SSL_VERIFYPEER'    => 64,
-            'CURLOPT_SSLCERT'           => 10025,
-        ];
-
-        foreach ($constants as $key => $item) {
-            $this->defineCurlConstant($key, $item);
-        }
-    }
-
-    protected function defineCurlConstant(string $key, string $value): bool|string
-    {
-        return defined($key) ? true : define($key, $value);
-    }
-
-    public function setClient(HttpClient $client = null): void
+    public function setClient(?HttpClient $client = null): void
     {
         if ($client instanceof HttpClient) {
             $this->client = $client;
@@ -57,12 +40,31 @@ trait JellyfinHttpClient
         ]);
     }
 
+    protected function setCurlConstants(): void
+    {
+        $constants = [
+            'CURLOPT_SSLVERSION' => 32,
+            'CURL_SSLVERSION_TLSv1_2' => 6,
+            'CURLOPT_SSL_VERIFYPEER' => 64,
+            'CURLOPT_SSLCERT' => 10025,
+        ];
+
+        foreach ($constants as $key => $item) {
+            $this->defineCurlConstant($key, $item);
+        }
+    }
+
+    protected function defineCurlConstant(string $key, string $value): bool|string
+    {
+        return defined($key) ? true : define($key, $value);
+    }
+
     protected function setHttpClientConfiguration(): void
     {
         $this->setCurlConstants();
 
         $this->httpClientConfig = [
-            CURLOPT_SSLVERSION     => CURL_SSLVERSION_TLSv1_2,
+            CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2,
             CURLOPT_SSL_VERIFYPEER => $this->validateSSL,
         ];
 

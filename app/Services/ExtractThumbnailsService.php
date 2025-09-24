@@ -14,7 +14,6 @@ use FFMpeg\Coordinate\TimeCode;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -33,7 +32,7 @@ final class ExtractThumbnailsService
             Log::notice("Starting extracting thumbnails for: $mediaId");
             $this->videoLibrary->prepare($mediaId, self::class);
 
-            $this->flag = sprintf("%s/creating", $this->videoLibrary->getProcessingPath());
+            $this->flag = sprintf('%s/creating', $this->videoLibrary->getProcessingPath());
             $this->checkFlag(
                 disk: $this->videoLibrary->getProcessingDisk(),
                 mediaId: $mediaId,

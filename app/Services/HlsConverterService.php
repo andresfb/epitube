@@ -25,6 +25,7 @@ use Symfony\Component\Process\Process;
  * Class HlsConverterService
  *
  * Based on https://github.com/Astrotomic/laravel-medialibrary-hls/tree/main
+ *
  * @deprecated
  */
 final readonly class HlsConverterService
@@ -104,7 +105,7 @@ final readonly class HlsConverterService
     public function convert(string $file): string
     {
         $output = sprintf(
-            "%s%s%s",
+            '%s%s%s',
             $this->videoLibrary->getProcessingPath(),
             DIRECTORY_SEPARATOR,
             $this->hls

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\JellyfinApi\Traits\JellyfinAPI;
 
-use Psr\Http\Message\StreamInterface;
 use Exception;
+use Psr\Http\Message\StreamInterface;
 
 trait Users
 {
@@ -14,7 +16,7 @@ trait Users
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Users";
+        $this->apiEndPoint = 'Users';
 
         $this->verb = 'get';
 
@@ -152,7 +154,7 @@ trait Users
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Users/AuthenticateByName";
+        $this->apiEndPoint = 'Users/AuthenticateByName';
 
         $this->options['json'] = $data;
 
@@ -168,10 +170,10 @@ trait Users
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Users/AuthenticateWithQuickConnect";
+        $this->apiEndPoint = 'Users/AuthenticateWithQuickConnect';
 
         $this->options['json'] = [
-            'secret' => $secret
+            'secret' => $secret,
         ];
 
         $this->verb = 'post';
@@ -186,10 +188,10 @@ trait Users
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Users/ForgotPassword/Pin";
+        $this->apiEndPoint = 'Users/ForgotPassword/Pin';
 
         $this->options['json'] = [
-            'pin' => $pin
+            'pin' => $pin,
         ];
 
         $this->verb = 'post';
@@ -204,7 +206,7 @@ trait Users
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Users/Me";
+        $this->apiEndPoint = 'Users/Me';
 
         $this->verb = 'get';
 
@@ -218,11 +220,11 @@ trait Users
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Users/New";
+        $this->apiEndPoint = 'Users/New';
 
         $this->options['json'] = [
             'name' => $name,
-            'password' => $password
+            'password' => $password,
         ];
 
         $this->verb = 'post';
@@ -237,7 +239,7 @@ trait Users
     {
         $this->apiBaseUrl = $this->config['server_api_url'];
 
-        $this->apiEndPoint = "Users/Public";
+        $this->apiEndPoint = 'Users/Public';
 
         $this->verb = 'get';
 

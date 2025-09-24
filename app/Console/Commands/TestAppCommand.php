@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Exception;
 
-use Throwable;
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
@@ -24,7 +24,7 @@ final class TestAppCommand extends Command
             clear();
             intro('Starting test');
 
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             error($e->getMessage());
         } finally {
             $this->newLine();

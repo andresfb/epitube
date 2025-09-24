@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\JellyfinApi\Facades;
 
 use Exception;
 use Modules\JellyfinApi\Services\JellyfinService as JellyfinClient;
 
-class JellyfinFacadeAccessor
+final class JellyfinFacadeAccessor
 {
     public static JellyfinClient $provider;
 

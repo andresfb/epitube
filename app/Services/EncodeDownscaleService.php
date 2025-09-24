@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Libraries\MasterVideoLibrary;
@@ -23,9 +25,9 @@ final class EncodeDownscaleService
     {
         try {
             Log::notice("Starting downscaling video for media: $mediaId to resolution: $resolution");
-            $this->videoLibrary->prepare($mediaId, self::class . $resolution);
+            $this->videoLibrary->prepare($mediaId, self::class.$resolution);
 
-            $this->flag = sprintf("%s/creating", $this->videoLibrary->getProcessingPath());
+            $this->flag = sprintf('%s/creating', $this->videoLibrary->getProcessingPath());
             $this->checkFlag(
                 disk: $this->videoLibrary->getProcessingDisk(),
                 mediaId: $mediaId,
@@ -38,7 +40,7 @@ final class EncodeDownscaleService
             ]);
 
             $file = $this->downscale($resolution);
-            if (!$ffProbe->isValid($file)) {
+            if (! $ffProbe->isValid($file)) {
                 throw new RuntimeException("File: $file is not a valid video");
             }
 
@@ -49,9 +51,9 @@ final class EncodeDownscaleService
 
             $this->videoLibrary->getContent()->addMedia($file)
                 ->withCustomProperties([
-                    'width' => (int)$streams->getDimensions()->getWidth(),
-                    'height' => (int)$streams->getDimensions()->getHeight(),
-                    'duration' => (int)$ffProbe->format($file)->get('duration'),
+                    'width' => (int) $streams->getDimensions()->getWidth(),
+                    'height' => (int) $streams->getDimensions()->getHeight(),
+                    'duration' => (int) $ffProbe->format($file)->get('duration'),
                     'is_video' => true,
                 ])
                 ->toMediaCollection($this->videoLibrary->getMedia()->collection_name);

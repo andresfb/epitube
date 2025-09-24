@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dtos;
 
 use Spatie\LaravelData\Data;
 
-class ImportVideoItem extends Data
+final class ImportVideoItem extends Data
 {
     public function __construct(
         public string $Id,

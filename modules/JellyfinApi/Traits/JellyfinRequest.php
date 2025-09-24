@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Modules\JellyfinApi\Traits;
 
 use Exception;
@@ -7,14 +9,14 @@ use RuntimeException;
 
 trait JellyfinRequest
 {
-    use JellyfinHttpClient;
     use JellyfinAPI;
+    use JellyfinHttpClient;
 
     public string $token;
 
-    private array $config;
-
     protected array $options = [];
+
+    private array $config;
 
     /**
      * @throws Exception
@@ -30,34 +32,6 @@ trait JellyfinRequest
 
         // Set Http Client configuration.
         $this->setHttpClientConfiguration();
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function setApiProviderConfiguration(array $credentials): void
-    {
-        // Setting Jellyfin API Credentials
-        collect($credentials)->map(function ($value, $key): void {
-            $this->config[$key] = $value;
-        });
-
-        $this->validateSSL = $this->config['validate_ssl'];
-
-        $this->setRequestHeader('X-Emby-Token', $this->config['token']);
-        $this->setRequestHeader('X-Application', $this->config['application'] ?: 'Laravel Jellyfin / v1.0');
-        $this->setRequestHeader(
-            'X-Emby-Authorization',
-            'MediaBrowser Client="'
-            . $this->config['application']
-            . ' CLI", Device="'
-            . $this->config['application']
-            . '-CLI", DeviceId="None", Version="'
-            . $this->config['version']
-            . '"'
-        );
-
-        $this->setOptions($this->config);
     }
 
     public function setRequestHeader(string $key, string $value): self
@@ -119,6 +93,34 @@ trait JellyfinRequest
         }
 
         throw new RuntimeException('Options query is not set.');
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function setApiProviderConfiguration(array $credentials): void
+    {
+        // Setting Jellyfin API Credentials
+        collect($credentials)->map(function ($value, $key): void {
+            $this->config[$key] = $value;
+        });
+
+        $this->validateSSL = $this->config['validate_ssl'];
+
+        $this->setRequestHeader('X-Emby-Token', $this->config['token']);
+        $this->setRequestHeader('X-Application', $this->config['application'] ?: 'Laravel Jellyfin / v1.0');
+        $this->setRequestHeader(
+            'X-Emby-Authorization',
+            'MediaBrowser Client="'
+            .$this->config['application']
+            .' CLI", Device="'
+            .$this->config['application']
+            .'-CLI", DeviceId="None", Version="'
+            .$this->config['version']
+            .'"'
+        );
+
+        $this->setOptions($this->config);
     }
 
     /**

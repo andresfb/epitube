@@ -20,7 +20,7 @@ return [
 
         // video resolution => bitrate
         'sizes' => [
-//            480 => 1000,
+            //            480 => 1000,
             360 => 750,
             180 => 500,
         ],

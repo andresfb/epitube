@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Content;
@@ -8,7 +10,7 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use Modules\JellyfinApi\Facades\Jellyfin;
 
-class ImportRelatedVideoService
+final class ImportRelatedVideoService
 {
     public function execute(int $contentId): void
     {
@@ -57,7 +59,7 @@ class ImportRelatedVideoService
             }
 
             if (blank($result['Items'])) {
-                Log::error("No items found");
+                Log::error('No items found');
 
                 return [];
             }
