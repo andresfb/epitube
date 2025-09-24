@@ -21,7 +21,7 @@ trait JellyfinRequest
      */
     public function setApiCredentials(array $credentials): void
     {
-        if (empty($credentials)) {
+        if ($credentials === []) {
             $this->throwConfigurationException();
         }
 
@@ -38,7 +38,7 @@ trait JellyfinRequest
     private function setApiProviderConfiguration(array $credentials): void
     {
         // Setting Jellyfin API Credentials
-        collect($credentials)->map(function ($value, $key) {
+        collect($credentials)->map(function ($value, $key): void {
             $this->config[$key] = $value;
         });
 

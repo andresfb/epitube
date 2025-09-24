@@ -31,7 +31,7 @@ final class ImportVideosService
         $this->maxFiles = Config::integer('content.max_import_videos');
         $videos = $this->getServiceItems();
 
-        $videos->each(function (ImportVideoItem $videoItem) {
+        $videos->each(function (ImportVideoItem $videoItem): void {
             ImportVideoJob::dispatch($videoItem);
         });
 
@@ -69,7 +69,7 @@ final class ImportVideosService
                 continue;
             }
 
-            $fileInfo = pathinfo($item['Path']);
+            $fileInfo = pathinfo((string) $item['Path']);
             if (! in_array($fileInfo['extension'], $extensions, true)) {
                 continue;
             }

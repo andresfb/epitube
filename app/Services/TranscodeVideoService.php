@@ -193,7 +193,7 @@ final class TranscodeVideoService
 
         // Delete the original video files from the record
         $content->getMedia(MediaNamesLibrary::videos())
-            ->each(function (Media $media) {
+            ->each(function (Media $media): void {
                 $media->forceDelete();
             });
 

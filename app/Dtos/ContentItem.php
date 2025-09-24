@@ -15,16 +15,6 @@ use Spatie\LaravelData\Data;
 final class ContentItem extends Data
 {
     /**
-     * @param string $id
-     * @param int $category_id
-     * @param string $category
-     * @param string $title
-     * @param bool $active
-     * @param bool $viewed
-     * @param bool $liked
-     * @param int $viewCount
-     * @param string $service_url
-     * @param Carbon $addedAt
      * @param array<string> $tags
      * @param Collection<VideoItem>|null $videos
      * @param Collection<PreviewItem>|null $previews
@@ -53,9 +43,9 @@ final class ContentItem extends Data
     {
         $contentArray = self::withContent($content)->toArray();
 
-        $contentArray['related'] = $content->related->map(function (RelatedContent $relatedContent) {
-             return self::withContent($relatedContent->content)->toArray();
-        });
+        $contentArray['related'] = $content->related->map(
+            fn(RelatedContent $relatedContent): array => self::withContent($relatedContent->content)->toArray()
+        );
 
         return self::from($contentArray);
     }
@@ -65,21 +55,17 @@ final class ContentItem extends Data
         $contentArray = $content->toSearchableArray();
 
         $contentArray[MediaNamesLibrary::thumbnails()] = $content->getMedia(MediaNamesLibrary::thumbnails())
-            ->map(function (Media $media) {
-                return new ThumbnailItem(
-                    urls: $media->getResponsiveImageUrls(),
-                    srcset: $media->getSrcset(),
-                );
-            });
+            ->map(fn(Media $media): \App\Dtos\ThumbnailItem => new ThumbnailItem(
+                urls: $media->getResponsiveImageUrls(),
+                srcset: $media->getSrcset(),
+            ));
 
         $contentArray[MediaNamesLibrary::previews()] = $content->getMedia(MediaNamesLibrary::previews())
-            ->map(function (Media $media) {
-                return new PreviewItem(
-                    fulUrl: $media->getFullUrl(),
-                    size: (int) $media->getCustomProperty('size'),
-                    extension: $media->getCustomProperty('extension'),
-                );
-            });
+            ->map(fn(Media $media): \App\Dtos\PreviewItem => new PreviewItem(
+                fulUrl: $media->getFullUrl(),
+                size: (int) $media->getCustomProperty('size'),
+                extension: $media->getCustomProperty('extension'),
+            ));
 
         $collection = MediaNamesLibrary::videos();
         if ($content->hasMedia(MediaNamesLibrary::transcoded())) {
@@ -87,14 +73,12 @@ final class ContentItem extends Data
         }
 
         $contentArray[$collection] = $content->getMedia($collection)
-            ->map(function (Media $media) {
-                return new VideoItem(
-                    fulUrl: $media->getFullUrl(),
-                    duration: (int) $media->getCustomProperty('duration'),
-                    width: (int) $media->getCustomProperty('width'),
-                    height: (int) $media->getCustomProperty('height'),
-                );
-            });
+            ->map(fn(Media $media): \App\Dtos\VideoItem => new VideoItem(
+                fulUrl: $media->getFullUrl(),
+                duration: (int) $media->getCustomProperty('duration'),
+                width: (int) $media->getCustomProperty('width'),
+                height: (int) $media->getCustomProperty('height'),
+            ));
 
         return self::from($contentArray);
     }

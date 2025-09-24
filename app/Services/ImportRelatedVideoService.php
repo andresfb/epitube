@@ -28,7 +28,11 @@ class ImportRelatedVideoService
                 ->where('item_id', $item['Id'])
                 ->first();
 
-            if ($relatedContent === null || $relatedContent->id === $contentId) {
+            if ($relatedContent === null) {
+                continue;
+            }
+
+            if ($relatedContent->id === $contentId) {
                 continue;
             }
 

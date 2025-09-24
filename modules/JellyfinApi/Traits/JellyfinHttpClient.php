@@ -75,8 +75,6 @@ trait JellyfinHttpClient
 
     /**
      * Set default values for configuration.
-     *
-     * @return void
      */
     private function setDefaultValues(): void
     {

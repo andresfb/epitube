@@ -25,7 +25,7 @@ class ImportRelatedVideosService
             return;
         }
 
-        $contents->each(function (Content $item) {
+        $contents->each(function (Content $item): void {
             ImportRelatedVideoJob::dispatch($item->id);
         });
     }

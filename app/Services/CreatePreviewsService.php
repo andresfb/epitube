@@ -90,7 +90,7 @@ final class CreatePreviewsService
         } catch (Exception $e) {
             File::deleteDirectory($this->videoLibrary->getProcessingPath());
             $content->getMedia(MediaNamesLibrary::previews())
-                ->each(function ($media) {
+                ->each(function ($media): void {
                     $media->forceDelete();
                 });
 

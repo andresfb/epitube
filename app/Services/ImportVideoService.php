@@ -59,7 +59,7 @@ final readonly class ImportVideoService
 
         Log::notice('Saving content');
 
-        DB::transaction(function () use ($videoItem, $category, $fileHash, $fileInfo) {
+        DB::transaction(function () use ($videoItem, $category, $fileHash, $fileInfo): void {
             $content = Content::create([
                 'category_id' => Category::getId($category),
                 'item_id' => $videoItem->Id,
@@ -151,19 +151,17 @@ final readonly class ImportVideoService
             ->replace('   ', ' ')
             ->replace('  ', ' ')
             ->explode('/')
-            ->map(fn ($tag): string => trim($tag))
+            ->map(fn (string $tag): string => trim($tag))
             ->reject(fn (string $part): bool => empty($part));
 
         $tags = collect();
         foreach ($sections as $section) {
             $tags = $tags->merge(
                 str($section)->explode(' ')
-                    ->map(fn ($tag): string => trim($tag))
-                    ->reject(function (string $part): bool {
-                        return blank($part)
-                            || in_array($part, $this->bandedTags, true)
-                            || mb_strlen($part) <= 2;
-                    })
+                    ->map(fn (string $tag): string => trim($tag))
+                    ->reject(fn(string $part): bool => blank($part)
+                        || in_array($part, $this->bandedTags, true)
+                        || mb_strlen($part) <= 2)
             );
         }
 

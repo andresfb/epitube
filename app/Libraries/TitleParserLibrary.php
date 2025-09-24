@@ -70,7 +70,7 @@ final class TitleParserLibrary
 
     private function removeDashes(): self
     {
-        // replace dashes that are presided by words (i.e. solo-company = solo company)
+        // replace dashes that are presided by words (i.e., solo-company = solo company)
         $titled = preg_replace('/(?<=\w)-(?=\w)/', ' ', $this->title);
         $this->title = trim((string) $titled);
 
@@ -92,9 +92,9 @@ final class TitleParserLibrary
 
         $titled = $titled->replace($dirList, '')
             ->replace(
-                $dirList->map(function (Stringable $item): string {
-                    return $item->replace(' ', '')->toString();
-                })->toArray(),
+                $dirList->map(
+                    fn(Stringable $item): string => $item->replace(' ', '')->toString()
+                )->toArray(),
                 ''
             )
             ->trim()

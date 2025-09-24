@@ -21,15 +21,11 @@ class JellyfinServiceProvider extends ServiceProvider
 
     private function registerJellyfin(): void
     {
-        $this->app->singleton('jellyfin_client', static function () {
-            return new JellyfinClient();
-        });
+        $this->app->singleton('jellyfin_client', static fn(): JellyfinClient => new JellyfinClient());
     }
 
     /**
      * Merges user's and jellyfin configs.
-     *
-     * @return void
      */
     private function mergeConfig(): void
     {
