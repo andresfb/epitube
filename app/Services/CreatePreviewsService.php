@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
-final readonly class CreatePreviewsService
+final class CreatePreviewsService
 {
     use Encodable;
 

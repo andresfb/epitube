@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
-final readonly class EncodeDownscaleService
+final class EncodeDownscaleService
 {
     use Encodable;
 

@@ -18,7 +18,7 @@ use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-final readonly class ExtractThumbnailsService
+final class ExtractThumbnailsService
 {
     use Encodable;
 
