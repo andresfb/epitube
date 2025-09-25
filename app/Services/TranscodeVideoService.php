@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Actions\RunExtraJobsAction;
 use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
 use App\Models\Feed;
@@ -33,10 +34,12 @@ final class TranscodeVideoService
 
     private ?Stream $video = null;
 
+    public function __construct(private readonly RunExtraJobsAction $action) {}
+
     /**
      * @throws Exception
      */
-    public function execute(int $mediaId): int
+    public function execute(int $mediaId): void
     {
         Log::info("Starting transcoding for video: $mediaId");
 
@@ -60,7 +63,9 @@ final class TranscodeVideoService
             Log::info('Executing Transcoding process');
             $info = $this->transcode();
 
-            return $this->addNewMedia($info);
+            $this->action->handle(
+                $this->addNewMedia($info)
+            );
         } finally {
             $this->deleteFlag(self::TRANSCODE_DISK);
 

@@ -12,6 +12,7 @@ final class ImportVideoItem extends Data
         public string $Id,
         public string $Name,
         public string $Path,
+        public string $MimeType,
         public int $RunTimeTicks = 0,
         public int $Width = 0,
         public int $Height = 0,

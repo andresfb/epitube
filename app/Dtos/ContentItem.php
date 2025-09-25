@@ -9,17 +9,16 @@ use App\Models\Content;
 use App\Models\Media;
 use App\Models\RelatedContent;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
 final class ContentItem extends Data
 {
     /**
      * @param  array<string>  $tags
-     * @param  Collection<VideoItem>|null  $videos
-     * @param  Collection<PreviewItem>|null  $previews
-     * @param  Collection<ThumbnailItem>|null  $thumbnails
-     * @param  Collection<ContentItem>|null  $related
+     * @param  array<VideoItem>  $videos
+     * @param  array<PreviewItem>  $previews
+     * @param  array<ThumbnailItem>  $thumbnails
+     * @param  array<ContentItem>  $related
      */
     public function __construct(
         public string $id,
@@ -33,10 +32,10 @@ final class ContentItem extends Data
         public string $service_url,
         public Carbon $addedAt,
         public array $tags = [],
-        public ?Collection $videos = null,
-        public ?Collection $previews = null,
-        public ?Collection $thumbnails = null,
-        public ?Collection $related = null,
+        public array $videos = [],
+        public array $previews = [],
+        public array $thumbnails = [],
+        public array $related = [],
     ) {}
 
     public static function withRelated(Content $content): self
@@ -58,14 +57,14 @@ final class ContentItem extends Data
             ->map(fn (Media $media): ThumbnailItem => new ThumbnailItem(
                 urls: $media->getResponsiveImageUrls(),
                 srcset: $media->getSrcset(),
-            ));
+            ))->toArray();
 
         $contentArray[MediaNamesLibrary::previews()] = $content->getMedia(MediaNamesLibrary::previews())
             ->map(fn (Media $media): PreviewItem => new PreviewItem(
                 fulUrl: $media->getFullUrl(),
                 size: (int) $media->getCustomProperty('size'),
                 extension: $media->getCustomProperty('extension'),
-            ));
+            ))->toArray();
 
         $collection = MediaNamesLibrary::videos();
         if ($content->hasMedia(MediaNamesLibrary::transcoded())) {
@@ -78,7 +77,7 @@ final class ContentItem extends Data
                 duration: (int) $media->getCustomProperty('duration'),
                 width: (int) $media->getCustomProperty('width'),
                 height: (int) $media->getCustomProperty('height'),
-            ));
+            ))->toArray();
 
         return self::from($contentArray);
     }

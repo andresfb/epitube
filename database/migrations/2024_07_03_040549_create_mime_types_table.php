@@ -58,7 +58,6 @@ return new class extends Migration
             mpg,video/mpeg,1
             webm,video/webm,1
             wmv,video/x-ms-wmv,1
-            wmv,video/x-ms-asf,1
             mkv,video/x-matroska,1
             m4v,video/x-m4v,0
             m4v,video/m4v,0

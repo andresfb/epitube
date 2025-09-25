@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
-use App\Actions\RunExtraJobsAction;
 use App\Services\TranscodeVideoService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -30,12 +29,10 @@ final class TranscodeVideoJob implements ShouldQueue
     /**
      * @throws Exception
      */
-    public function handle(TranscodeVideoService $service, RunExtraJobsAction $action): void
+    public function handle(TranscodeVideoService $service): void
     {
         try {
-            $newMediaId = $service->execute($this->mediaId);
-
-            $action->handle($newMediaId);
+            $service->execute($this->mediaId);
         } catch (Exception $e) {
             Log::error("Error transcoding file for Media Id: $this->mediaId: {$e->getMessage()}");
 

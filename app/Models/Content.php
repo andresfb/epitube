@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Libraries\DiskNamesLibrary;
 use App\Libraries\MediaNamesLibrary;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -84,22 +85,20 @@ final class Content extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $disk = config('media-library.disk_name');
-
         $this->addMediaCollection(MediaNamesLibrary::videos())
             ->acceptsMimeTypes(MimeType::list())
-            ->useDisk($disk);
+            ->useDisk(DiskNamesLibrary::content());
 
         $this->addMediaCollection(MediaNamesLibrary::transcoded())
             ->acceptsMimeTypes(['video/mp4'])
-            ->useDisk($disk);
+            ->useDisk(DiskNamesLibrary::media());
 
         $this->addMediaCollection(MediaNamesLibrary::previews())
             ->acceptsMimeTypes([
                 'video/mp4',
                 'video/webm',
             ])
-            ->useDisk($disk);
+            ->useDisk(DiskNamesLibrary::media());
 
         $this->addMediaCollection('thumbnails')
             ->withResponsiveImages()
@@ -107,7 +106,7 @@ final class Content extends Model implements HasMedia
                 'image/png',
                 'image/jpeg',
             ])
-            ->useDisk($disk);
+            ->useDisk(DiskNamesLibrary::media());
     }
 
     public function searchableAs(): string
@@ -137,8 +136,8 @@ final class Content extends Model implements HasMedia
         return [
             'active' => 'bool',
             'viewed' => 'bool',
+            'liked' => 'bool',
             'view_count' => 'int',
-            'liked_count' => 'int',
             'added_at' => 'datetime',
         ];
     }

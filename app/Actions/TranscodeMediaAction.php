@@ -23,8 +23,7 @@ final readonly class TranscodeMediaAction
         try {
             Log::notice("Check if video needs transcoding: $media->id");
 
-            $transcodeMineTypes = MimeType::transcode();
-            if (! in_array($media->mime_type, $transcodeMineTypes, true)) {
+            if (! MimeType::needsTranscode($media->mime_type)) {
                 Log::notice("Media: $media->id of type $media->mime_type doesn't need transcoding");
                 $this->jobsAction->handle($media->id);
 
@@ -39,7 +38,6 @@ final readonly class TranscodeMediaAction
 
             Log::info("Transcoding $media->model_id | $media->name");
 
-            $media->setCustomProperty('transcode', true);
             TranscodeVideoJob::dispatch($media->id);
         } catch (Exception $e) {
             Log::error("Error transcoding Media Id: $media->id: {$e->getMessage()}");

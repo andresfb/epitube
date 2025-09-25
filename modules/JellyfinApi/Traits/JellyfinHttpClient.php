@@ -54,7 +54,7 @@ trait JellyfinHttpClient
         }
     }
 
-    protected function defineCurlConstant(string $key, string $value): bool|string
+    protected function defineCurlConstant(string $key, null|array|bool|int|float|string $value): bool|string
     {
         return defined($key) ? true : define($key, $value);
     }

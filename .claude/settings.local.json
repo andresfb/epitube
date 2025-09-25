@@ -1,10 +1,11 @@
 {
-  "enabledMcpjsonServers": [
-    "laravel-boost"
-  ],
   "permissions": {
     "allow": [
-      "mcp__laravel-boost__tinker"
+      "mcp__laravel-boost__tinker",
+      "mcp__laravel-boost__search-docs"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "laravel-boost"
+  ]
 }
