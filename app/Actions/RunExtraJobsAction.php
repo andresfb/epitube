@@ -20,8 +20,6 @@ final readonly class RunExtraJobsAction
             return;
         }
 
-        // TODO: add a job to replace the media file in the content disk with a symlink to the actual file
-
         ExtractThumbnailsJob::dispatch($mediaId);
 
         CreatePreviewsJob::dispatch($mediaId);

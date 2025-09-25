@@ -119,7 +119,6 @@ final class Content extends Model implements HasMedia
         $content = $this->except([
             'item_id',
             'file_hash',
-            'transcoded',
         ]);
 
         $content['category'] = $this->category->name;

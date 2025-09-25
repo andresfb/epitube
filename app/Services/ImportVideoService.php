@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Actions\CreateSymLinksAction;
 use App\Actions\TranscodeMediaAction;
 use App\Dtos\ImportVideoItem;
 use App\Dtos\VideoInfoItem;
-use App\Libraries\DiskNamesLibrary;
 use App\Libraries\MediaNamesLibrary;
 use App\Libraries\TitleParserLibrary;
 use App\Models\Category;
@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Throwable;
 
 final readonly class ImportVideoService
@@ -31,6 +30,7 @@ final readonly class ImportVideoService
     public function __construct(
         private TitleParserLibrary $parserLibrary,
         private TranscodeMediaAction $transcodeAction,
+        private CreateSymLinksAction $symLinksAction,
     ) {
         $this->bandedTags = Config::array('content.banded_tags');
     }
@@ -92,12 +92,13 @@ final readonly class ImportVideoService
                     'height' => $videoInfo->height,
                     'duration' => $videoInfo->duration,
                     'is_video' => true,
-                    'transcoded' => $needsTranscode,
+                    'transcode' => $needsTranscode,
                     'og_path' => $videoItem->Path,
                 ])
                 ->preservingOriginal()
                 ->toMediaCollection(MediaNamesLibrary::videos());
 
+            $this->symLinksAction->handle($media);
             $this->transcodeAction->handle($media);
         });
 
