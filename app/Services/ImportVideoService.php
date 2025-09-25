@@ -6,18 +6,22 @@ namespace App\Services;
 
 use App\Actions\TranscodeMediaAction;
 use App\Dtos\ImportVideoItem;
+use App\Dtos\VideoInfoItem;
+use App\Libraries\DiskNamesLibrary;
 use App\Libraries\MediaNamesLibrary;
 use App\Libraries\TitleParserLibrary;
 use App\Models\Category;
 use App\Models\Content;
 use App\Models\Feed;
+use App\Models\MimeType;
+use App\Models\Rejected;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use RuntimeException;
+use Illuminate\Support\Str;
 use Throwable;
 
 final readonly class ImportVideoService
@@ -52,18 +56,28 @@ final readonly class ImportVideoService
             return;
         }
 
-        $category = $this->parserLibrary->getRootDirectory() === Config::string('constants.alt_category')
-            ? Config::string('constants.alt_category')
-            : Config::string('constants.main_category');
+        $videoInfo = $this->getVideoInfo($videoItem);
+        if (! $videoInfo->status) {
+            return;
+        }
+
+        if (! $this->validate($videoItem, $videoInfo->duration)) {
+            return;
+        }
 
         Log::notice('Saving content');
+        DB::transaction(function () use ($videoItem, $fileHash, $fileInfo, $videoInfo): void {
+            $needsTranscode = MimeType::needsTranscode($videoItem->MimeType);
+            $tile = $this->parserLibrary->parseFileName($fileInfo)->title()->toString();
+            $category = $this->parserLibrary->getRootDirectory() === Config::string('constants.alt_category')
+                ? Config::string('constants.alt_category')
+                : Config::string('constants.main_category');
 
-        DB::transaction(function () use ($videoItem, $category, $fileHash, $fileInfo): void {
             $content = Content::create([
                 'category_id' => Category::getId($category),
                 'item_id' => $videoItem->Id,
                 'file_hash' => $fileHash,
-                'title' => $this->parserLibrary->parseFileName($fileInfo)->title()->toString(),
+                'title' => $tile,
                 'active' => true,
                 'og_path' => $videoItem->Path,
                 'added_at' => Carbon::parse(filemtime($videoItem->Path)),
@@ -71,15 +85,15 @@ final readonly class ImportVideoService
 
             $this->parseTags($content, $fileInfo);
 
-            [$width, $height, $duration] = $this->getVideoInfo($videoItem);
-
             Log::notice('Adding media');
             $media = $content->addMedia($videoItem->Path)
                 ->withCustomProperties([
-                    'width' => $width,
-                    'height' => $height,
-                    'duration' => $duration,
+                    'width' => $videoInfo->width,
+                    'height' => $videoInfo->height,
+                    'duration' => $videoInfo->duration,
                     'is_video' => true,
+                    'transcoded' => $needsTranscode,
+                    'og_path' => $videoItem->Path,
                 ])
                 ->preservingOriginal()
                 ->toMediaCollection(MediaNamesLibrary::videos());
@@ -90,19 +104,24 @@ final readonly class ImportVideoService
         Log::notice('Done importing video');
     }
 
-    private function getVideoInfo(ImportVideoItem $videoItem): array
+    private function getVideoInfo(ImportVideoItem $videoItem): VideoInfoItem
     {
         if ($videoItem->RunTimeTicks > 0 && $videoItem->Width > 0 && $videoItem->Height > 0) {
-            return [
-                $videoItem->Width,
-                $videoItem->Height,
-                (int) floor($videoItem->RunTimeTicks / 10000000),
-            ];
+            return new VideoInfoItem(
+                status: true,
+                width: $videoItem->Width,
+                height: $videoItem->Height,
+                duration: (int) floor($videoItem->RunTimeTicks / 10000000),
+            );
         }
 
         $probe = FFProbe::create();
         if (! $probe->isValid($videoItem->Path)) {
-            throw new RuntimeException("$videoItem->Path file is not a valid video");
+            $message = "$videoItem->Path file is not a valid video";
+            $this->createRejected($videoItem, $message);
+            Log::error($message);
+
+            return new VideoInfoItem(false);
         }
 
         $video = $probe->streams($videoItem->Path)
@@ -110,18 +129,23 @@ final readonly class ImportVideoService
             ->first();
 
         if ($video === null) {
-            throw new RuntimeException('No valid video found');
+            $message = 'No valid video found';
+            $this->createRejected($videoItem, $message);
+            Log::error($message);
+
+            return new VideoInfoItem(false);
         }
 
         $height = (int) $video->get('height', 720);
         $width = (int) $video->get('width', 720);
         $duration = (int) $probe->format($videoItem->Path)->get('duration');
 
-        if ($duration < 10) {
-            throw new RuntimeException('Video is too short');
-        }
-
-        return [$width, $height, $duration];
+        return new VideoInfoItem(
+            status: true,
+            width: $width,
+            height: $height,
+            duration: $duration,
+        );
     }
 
     private function parseTags(Content $content, array $fileInfo): void
@@ -165,5 +189,46 @@ final readonly class ImportVideoService
         }
 
         return $tags->toArray();
+    }
+
+    private function validate(ImportVideoItem $videoItem, int $duration): bool
+    {
+        if ($duration < Config::integer('content.minimum_duration')) {
+            $message = sprintf(
+                "The video duration is too short: %s minutes",
+                number_format($duration / 60, 2)
+            );
+
+            $this->createRejected($videoItem, $message);
+            Log::error($message);
+
+            return false;
+        }
+
+        $extensions = MimeType::extensions();
+        $fileInfo = pathinfo($videoItem->Path);
+        if (! in_array($fileInfo['extension'], $extensions, true)) {
+            $message = sprintf(
+                "File extension: %s is not supported",
+                $fileInfo['extension']
+            );
+
+            $this->createRejected($videoItem, $message);
+            Log::error($message);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function createRejected(ImportVideoItem $videoItem, string $message): void
+    {
+        Rejected::updateOrCreate([
+            'item_id' => $videoItem->Id,
+        ], [
+            'og_path' => $videoItem->Path,
+            'reason' => $message,
+        ]);
     }
 }

@@ -19,9 +19,9 @@ final class MasterVideoLibrary
 
     private int $height = 0;
 
-    private string $processingDisk = 'processing';
+    private string $processingDisk;
 
-    private string $downloadDisk = 'download';
+    private string $downloadDisk;
 
     private string $tempPath = '';
 
@@ -35,7 +35,11 @@ final class MasterVideoLibrary
 
     private Content $content;
 
-    public function __construct(private readonly Filesystem $filesystem) {}
+    public function __construct(private readonly Filesystem $filesystem)
+    {
+        $this->processingDisk = DiskNamesLibrary::processing();
+        $this->downloadDisk = DiskNamesLibrary::download();
+    }
 
     public function getDuration(): int
     {
@@ -95,8 +99,7 @@ final class MasterVideoLibrary
         $this->content = Content::where('id', $this->media->model_id)
             ->firstOrFail();
 
-        $isVideo = (bool) $this->media->getCustomProperty('is_video', false);
-        if (! $isVideo) {
+        if (! $this->media->getCustomProperty('is_video', false)) {
             throw new RuntimeException('The media provided is not a video');
         }
 
@@ -118,6 +121,14 @@ final class MasterVideoLibrary
 
     public function downloadMaster(Media $media): void
     {
+        if (! $media->getCustomProperty('transcoded', false)) {
+            $this->downloadDisk = 'content';
+            $this->masterFile = $media->getPath();
+            $this->relativeVideoPath = $media->getPathRelativeToRoot();
+
+            return;
+        }
+
         // prepare a local file
         $tempMasterPath = md5($media->file_name);
         $masterDownloadPath = Storage::disk($this->downloadDisk)->path($tempMasterPath);

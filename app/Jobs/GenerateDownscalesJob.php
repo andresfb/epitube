@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
 final class GenerateDownscalesJob implements ShouldQueue
@@ -31,6 +32,12 @@ final class GenerateDownscalesJob implements ShouldQueue
      */
     public function handle(GenerateDownscalesService $service): void
     {
+        if (! Config::boolean('constants.enable_downscales')) {
+            Log::notice('Downscales not enabled');
+
+            return;
+        }
+
         try {
             $service->execute($this->mediaId);
         } catch (Exception $e) {

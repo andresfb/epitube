@@ -10,7 +10,7 @@ return [
 
     'max_feed_limit' => (int) env('MAX_RAW_FEED', 528),
 
-    'minimum_duration' => (int) env('MINIMUM_VIDEO_DURATION', 60),
+    'minimum_duration' => (int) env('MINIMUM_VIDEO_DURATION', 300), // 5 minutes
 
     'thumbnails' => [
         'total' => (int) env('POSTERS_NUMBER_THUMBNAILS', 6),
@@ -20,7 +20,7 @@ return [
 
         // video resolution => bitrate
         'sizes' => [
-            //            480 => 1000,
+            // 480 => 1000,
             360 => 750,
             180 => 500,
         ],

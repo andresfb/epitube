@@ -49,6 +49,15 @@ return [
             'report' => false,
         ],
 
+        'content' => [
+            'driver' => 'local',
+            'root' => env('CONTENT_STORAGE_PATH'),
+            'url' => env('APP_URL').'/content',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         'transcode' => [
             'driver' => 'local',
             'root' => storage_path('transcode'),

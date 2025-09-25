@@ -11,6 +11,7 @@ use App\Models\MimeType;
 use App\Traits\Encodable;
 use Exception;
 use FFMpeg\FFProbe;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -35,6 +36,12 @@ final class GenerateDownscalesService
      */
     public function execute(int $mediaId): void
     {
+        if (! Config::boolean('constants.enable_downscales')) {
+            Log::notice('Downscales not enabled');
+
+            return;
+        }
+
         Log::notice("Starting generating downscales for: $mediaId");
         $media = Media::where('id', $mediaId)
             ->firstOrFail();

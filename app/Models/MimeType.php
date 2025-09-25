@@ -70,7 +70,7 @@ final class MimeType extends Model
         self::$transcodableMimeList = Cache::tags('transcodable-list-of-mime-types')
             ->remember(
                 md5(self::class.__FUNCTION__),
-                now()->addMinutes(30),
+                now()->addDays(30),
                 static fn (): array => self::select('type')
                     ->where('transcode', true)
                     ->groupBy('type')
@@ -78,6 +78,11 @@ final class MimeType extends Model
                     ->toArray());
 
         return self::$transcodableMimeList;
+    }
+
+    public static function needsTranscode(string $mime): bool
+    {
+        return in_array($mime, self::transcode(), true);
     }
 
     public static function canHls(): array

@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Dtos\ImportVideoItem;
 use App\Jobs\ImportVideoJob;
 use App\Models\Content;
-use App\Models\MimeType;
+use App\Models\Rejected;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -47,14 +47,14 @@ final class ImportVideosService
 
         $videos = collect();
         $items = $this->loadFromAPI();
-        if ($items === []) {
+        if (blank($items)) {
             Log::error('No videos found to import');
 
             return $videos;
         }
 
-        $extensions = MimeType::extensions();
         $importedFiles = Content::getImported();
+        $rejected = Rejected::getRejected();
 
         foreach ($items as $item) {
             if ($this->scanned >= $this->maxFiles) {
@@ -69,16 +69,17 @@ final class ImportVideosService
                 continue;
             }
 
-            $fileInfo = pathinfo((string) $item['Path']);
-            if (! in_array($fileInfo['extension'], $extensions, true)) {
+            if (in_array($item['Id'], $rejected, true)) {
                 continue;
             }
 
+            $fileInfo = pathinfo((string) $item['Path']);
             $videos->add(
                 new ImportVideoItem(
                     Id: $item['Id'],
                     Name: $fileInfo['filename'],
                     Path: $item['Path'],
+                    MimeType: mime_content_type($item['Path']),
                     RunTimeTicks: (int) ($item['RunTimeTicks'] ?? 0),
                     Width: (int) ($item['Width'] ?? 0),
                     Height: (int) ($item['Height'] ?? 0),
@@ -97,7 +98,7 @@ final class ImportVideosService
     {
         Log::notice('Calling the Service API');
 
-        return Cache::remember(
+        $result = Cache::remember(
             'VIDEOS:FROM:API',
             now()->addDay()->subSeconds(2),
             static function (): array {
@@ -118,9 +119,7 @@ final class ImportVideosService
                         return [];
                     }
 
-                    Log::notice("Found {$result['TotalRecordCount']} items");
-
-                    return $result['Items'];
+                    return $result;
                 } catch (Exception $e) {
                     Log::error($e->getMessage());
 
@@ -128,5 +127,9 @@ final class ImportVideosService
                 }
             }
         );
+
+        Log::notice("Found {$result['TotalRecordCount']} items");
+
+        return $result['Items'];
     }
 }

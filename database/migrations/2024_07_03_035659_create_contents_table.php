@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('file_hash')->unique();
             $table->text('title');
             $table->boolean('active')->default(false);
-            $table->unsignedTinyInteger('viewed')->default(0);
-            $table->unsignedTinyInteger('liked')->default(0);
+            $table->boolean('viewed')->default(false);
+            $table->boolean('liked')->default(false);
             $table->unsignedMediumInteger('view_count')->default(0);
             $table->text('og_path');
             $table->text('notes')->nullable();
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['item_id', 'file_hash'], 'hashes');
-            $table->index(['viewed', 'liked'], 'viewed_liked');
+            $table->index(['active', 'viewed', 'liked'], 'flags');
         });
     }
 
