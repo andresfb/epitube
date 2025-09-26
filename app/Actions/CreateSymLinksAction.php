@@ -6,19 +6,27 @@ namespace App\Actions;
 
 use App\Models\Media;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
 final readonly class CreateSymLinksAction
 {
     public function handle(Media $media): void
     {
-        $ogFile = $media->getCustomProperty('og_file', '');
+        Log::notice('Replacing video file with symlink');
+
+        $ogFile = $media->getCustomProperty('og_path', '');
         if (blank($ogFile)) {
+            Log::warning("Media $media->id does not have a original path");
+
             return;
         }
 
+
         $mediaPath = $media->getPath();
         if (is_link($mediaPath)) {
+            Log::warning("Media $media->id already has a symlink");
+
             return;
         }
 
@@ -29,5 +37,7 @@ final readonly class CreateSymLinksAction
         if (! symlink($ogFile, $mediaPath)) {
             throw new RuntimeException("Unable to link symlink: $ogFile -> $mediaPath");
         }
+
+        Log::notice('Done replacing video file with symlink');
     }
 }

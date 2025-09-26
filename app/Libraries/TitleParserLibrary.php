@@ -138,6 +138,7 @@ final class TitleParserLibrary
                     'step',
                     'step-',
                     'xxx',
+                    '240p',
                     '360p',
                     '480p',
                     '720p',
@@ -151,12 +152,11 @@ final class TitleParserLibrary
                     ' rq',
                     'internal',
                     'vsex',
+                    '-vs',
                     'prt',
-                    'vs',
                     'kt',
                     'xleech',
                     'worldmkv',
-                    'mov',
                     '[xv',
                     'xvid',
                 ],
@@ -165,6 +165,7 @@ final class TitleParserLibrary
             ->replace('...', '.')
             ->replace('..', '.')
             ->trim()
+            ->rtrim('vs')
             ->rtrim('v')
             ->rtrim('-');
 
@@ -189,13 +190,24 @@ final class TitleParserLibrary
             'mom' => $this->getGirlGeneric(),
             'mommy' => $this->getGirlGeneric(),
             'daughter' => $this->getBoyGeneric(),
+            'd@ughter' => $this->getBoyGeneric(),
             'aunt' => $this->getGeneric(),
             'uncle' => $this->getBoyGeneric(),
             'niece' => $this->getGeneric(),
             'nephew' => $this->getBoyGeneric(),
             'cousin' => $this->getGeneric(),
             'in-law' => $this->getGeneric(),
-            'family' => ['group', 'friends', 'pals'],
+            'family' => [
+                'group',
+                'friends',
+                'pals',
+                'coworkers',
+                'pupils',
+                'students',
+                'fans',
+                'influencers',
+                '',
+            ],
         ];
     }
 

@@ -21,39 +21,40 @@ final class GenerateDownscalesService
     use Encodable;
 
     public const array RESOLUTIONS = [
-        '360p' => 360,
-        '480p' => 480,
         '720p' => 720,
         '1080p' => 1080,
-        '1440p' => 1440,
-        '2160p' => 2160,
     ];
 
-    public function __construct(private MasterVideoLibrary $videoLibrary) {}
+    public function __construct(private readonly MasterVideoLibrary $videoLibrary) {}
 
     /**
      * @throws Exception
      */
     public function execute(int $mediaId): void
     {
-        if (! Config::boolean('constants.enable_downscales')) {
-            Log::notice('Downscales not enabled');
-
-            return;
-        }
-
         Log::notice("Starting generating downscales for: $mediaId");
         $media = Media::where('id', $mediaId)
             ->firstOrFail();
 
         if (! $this->canConvert($media)) {
-            throw new RuntimeException("Media not supported: {$media->id}");
+            throw new RuntimeException("Media not supported: $media->id");
+        }
+
+        $mediaHeight = (int) $media->getCustomProperty('height');
+        $minDowRes = Config::integer('content.min_down_res', 1080);
+
+        if ($mediaHeight < $minDowRes) {
+            Log::notice(sprintf(
+                "Media doesn't need downscaling at %sp resolution",
+                $mediaHeight
+            ));
+
+            return;
         }
 
         $this->videoLibrary->downloadMaster($media);
-
         $resolutions = collect(self::RESOLUTIONS)
-            ->filter(fn (int $resolution): bool => $resolution < (int) $media->getCustomProperty('height'));
+            ->filter(fn (int $resolution): bool => $resolution < $mediaHeight);
 
         foreach ($resolutions as $resolution) {
             EncodeDownscaleJob::dispatch($resolution, $mediaId);

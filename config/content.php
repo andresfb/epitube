@@ -12,6 +12,8 @@ return [
 
     'minimum_duration' => (int) env('MINIMUM_VIDEO_DURATION', 300), // 5 minutes
 
+    'min_down_res' => (int) env('MINIMUM_DOWNSCALE_ROUND', 1080),
+
     'thumbnails' => [
         'total' => (int) env('POSTERS_NUMBER_THUMBNAILS', 6),
     ],
@@ -20,7 +22,6 @@ return [
 
         // video resolution => bitrate
         'sizes' => [
-            // 480 => 1000,
             360 => 750,
             180 => 500,
         ],

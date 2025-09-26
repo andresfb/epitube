@@ -10,6 +10,4 @@ return [
 
     'enable_encode_jobs' => (bool) env('ENABLE_ENCODE_JOBS', true),
 
-    'enable_downscales' => (bool) env('ENABLE_DOWNSCALES', false),
-
 ];

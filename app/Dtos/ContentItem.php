@@ -28,9 +28,9 @@ final class ContentItem extends Data
         public bool $active,
         public bool $viewed,
         public bool $liked,
-        public int $viewCount,
+        public int $view_count,
         public string $service_url,
-        public Carbon $addedAt,
+        public Carbon $added_at,
         public array $tags = [],
         public array $videos = [],
         public array $previews = [],
@@ -71,13 +71,29 @@ final class ContentItem extends Data
             $collection = MediaNamesLibrary::transcoded();
         }
 
-        $contentArray[$collection] = $content->getMedia($collection)
+        $videos = $content->getMedia($collection)
             ->map(fn (Media $media): VideoItem => new VideoItem(
                 fulUrl: $media->getFullUrl(),
                 duration: (int) $media->getCustomProperty('duration'),
                 width: (int) $media->getCustomProperty('width'),
                 height: (int) $media->getCustomProperty('height'),
-            ))->toArray();
+            ));
+
+        if (! $content->hasMedia(MediaNamesLibrary::downscaled())) {
+            $contentArray[MediaNamesLibrary::videos()] = $videos->toArray();
+
+            return self::from($contentArray);
+        }
+
+        $downscales = $content->getMedia(MediaNamesLibrary::downscaled())
+            ->map(fn (Media $media): VideoItem => new VideoItem(
+                fulUrl: $media->getFullUrl(),
+                duration: (int) $media->getCustomProperty('duration'),
+                width: (int) $media->getCustomProperty('width'),
+                height: (int) $media->getCustomProperty('height'),
+            ));
+
+        $contentArray[MediaNamesLibrary::videos()] = $videos->merge($downscales)->toArray();
 
         return self::from($contentArray);
     }

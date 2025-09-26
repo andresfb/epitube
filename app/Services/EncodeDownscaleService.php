@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Libraries\MasterVideoLibrary;
+use App\Libraries\MediaNamesLibrary;
 use App\Traits\Encodable;
 use Exception;
 use FFMpeg\FFProbe;
@@ -49,14 +50,16 @@ final class EncodeDownscaleService
                 throw new RuntimeException("No video streams found for $file");
             }
 
+            Log::notice('Adding downscale to Media');
             $this->videoLibrary->getContent()->addMedia($file)
                 ->withCustomProperties([
                     'width' => (int) $streams->getDimensions()->getWidth(),
                     'height' => (int) $streams->getDimensions()->getHeight(),
                     'duration' => (int) $ffProbe->format($file)->get('duration'),
+                    'owner_id' => $mediaId,
                     'is_video' => true,
                 ])
-                ->toMediaCollection($this->videoLibrary->getMedia()->collection_name);
+                ->toMediaCollection(MediaNamesLibrary::downscaled());
 
             $this->videoLibrary->getContent()->searchableSync();
             Log::notice('Done Downscaling video');

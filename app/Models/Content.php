@@ -93,6 +93,10 @@ final class Content extends Model implements HasMedia
             ->acceptsMimeTypes(['video/mp4'])
             ->useDisk(DiskNamesLibrary::media());
 
+        $this->addMediaCollection(MediaNamesLibrary::downscaled())
+            ->acceptsMimeTypes(['video/mp4'])
+            ->useDisk(DiskNamesLibrary::media());
+
         $this->addMediaCollection(MediaNamesLibrary::previews())
             ->acceptsMimeTypes([
                 'video/mp4',

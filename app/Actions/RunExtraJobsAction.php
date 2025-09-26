@@ -24,12 +24,6 @@ final readonly class RunExtraJobsAction
 
         CreatePreviewsJob::dispatch($mediaId);
 
-        if (! Config::boolean('constants.enable_downscales')) {
-            Log::notice('Downscales not enabled');
-
-            return;
-        }
-
         GenerateDownscalesJob::dispatch($mediaId);
     }
 }

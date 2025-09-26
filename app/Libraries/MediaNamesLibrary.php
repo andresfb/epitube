@@ -16,6 +16,11 @@ final readonly class MediaNamesLibrary
         return 'transcoded';
     }
 
+    public static function downscaled(): string
+    {
+        return 'downscaled';
+    }
+
     public static function previews(): string
     {
         return 'previews';
