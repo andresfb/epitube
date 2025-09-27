@@ -4,7 +4,7 @@ namespace App\Dtos;
 
 use Spatie\LaravelData\Data;
 
-class VideoInfoItem extends Data
+final class VideoInfoItem extends Data
 {
     public function __construct(
         public bool $status,

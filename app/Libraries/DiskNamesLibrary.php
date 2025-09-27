@@ -2,7 +2,7 @@
 
 namespace App\Libraries;
 
-class DiskNamesLibrary
+final class DiskNamesLibrary
 {
     public static function content(): string
     {
