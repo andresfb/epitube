@@ -13,6 +13,7 @@ use App\Libraries\TitleParserLibrary;
 use App\Models\Category;
 use App\Models\Content;
 use App\Models\Feed;
+use App\Models\Media;
 use App\Models\MimeType;
 use App\Models\Rejected;
 use FFMpeg\FFProbe;
@@ -66,7 +67,7 @@ final readonly class ImportVideoService
         }
 
         Log::notice('Saving content');
-        DB::transaction(function () use ($videoItem, $fileHash, $fileInfo, $videoInfo): void {
+        $media = DB::transaction(function () use ($videoItem, $fileHash, $fileInfo, $videoInfo): Media {
             $needsTranscode = MimeType::needsTranscode($videoItem->MimeType);
             $tile = $this->parserLibrary->parseFileName($fileInfo)->title()->toString();
             $category = $this->parserLibrary->getRootDirectory() === Config::string('constants.alt_category')
@@ -99,8 +100,11 @@ final readonly class ImportVideoService
                 ->toMediaCollection(MediaNamesLibrary::videos());
 
             $this->symLinksAction->handle($media);
-            $this->transcodeAction->handle($media);
+
+            return $media;
         });
+
+        $this->transcodeAction->handle($media);
 
         Log::notice('Done importing video');
     }
@@ -119,7 +123,7 @@ final readonly class ImportVideoService
         $probe = FFProbe::create();
         if (! $probe->isValid($videoItem->Path)) {
             $message = "$videoItem->Path file is not a valid video";
-            $this->createRejected($videoItem, $message);
+            Rejected::reject($videoItem, $message);
             Log::error($message);
 
             return new VideoInfoItem(false);
@@ -131,7 +135,7 @@ final readonly class ImportVideoService
 
         if ($video === null) {
             $message = 'No valid video found';
-            $this->createRejected($videoItem, $message);
+            Rejected::reject($videoItem, $message);
             Log::error($message);
 
             return new VideoInfoItem(false);
@@ -200,7 +204,7 @@ final readonly class ImportVideoService
                 number_format($duration / 60, 2)
             );
 
-            $this->createRejected($videoItem, $message);
+            Rejected::reject($videoItem, $message);
             Log::error($message);
 
             return false;
@@ -214,22 +218,12 @@ final readonly class ImportVideoService
                 $fileInfo['extension']
             );
 
-            $this->createRejected($videoItem, $message);
+            Rejected::reject($videoItem, $message);
             Log::error($message);
 
             return false;
         }
 
         return true;
-    }
-
-    private function createRejected(ImportVideoItem $videoItem, string $message): void
-    {
-        Rejected::updateOrCreate([
-            'item_id' => $videoItem->Id,
-        ], [
-            'og_path' => $videoItem->Path,
-            'reason' => $message,
-        ]);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Jobs\TranscodeVideoJob;
+use App\Libraries\Notifications;
 use App\Models\Media;
 use App\Models\MimeType;
 use Exception;
@@ -40,7 +41,9 @@ final readonly class TranscodeMediaAction
 
             TranscodeVideoJob::dispatch($media->id);
         } catch (Exception $e) {
-            Log::error("Error transcoding Media Id: $media->id: {$e->getMessage()}");
+            $error = "Error checking for transcoding on Media Id: $media->id: {$e->getMessage()}";
+            Log::error($error);
+            Notifications::error(self::class, $media->id, $error);
 
             throw $e;
         }

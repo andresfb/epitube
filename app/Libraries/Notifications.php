@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Libraries;
+
+use App\Models\Content;
+use App\Models\Media;
+use App\Notifications\EncodeErrorNotification;
+use Exception;
+use Illuminate\Support\Facades\Log;
+
+class Notifications
+{
+    public static function error(string $caller, int $mediaId, string $error): void
+    {
+        try {
+            $media = Media::where('id', $mediaId)
+                ->firstOrFail();
+
+            $content = Content::where('id', $media->model_id)
+                ->firstOrFail();
+
+            $content->notify(new EncodeErrorNotification(
+                caller: $caller,
+                mediaId: $mediaId,
+                ogPath: $content->og_path,
+                error: $error,
+            ));
+        } catch (Exception $e) {
+            Log::error(
+                "Can't send notification for Media: $mediaId: Message: $error, Caller: $caller, Error: {$e->getMessage()}"
+            );
+        }
+    }
+}

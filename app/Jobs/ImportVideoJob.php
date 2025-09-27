@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Dtos\ImportVideoItem;
+use App\Models\Rejected;
 use App\Services\ImportVideoService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -35,7 +36,9 @@ final class ImportVideoJob implements ShouldQueue
         try {
             $service->execute($this->videoItem);
         } catch (Throwable $e) {
-            Log::error("Error importing file: {$this->videoItem->Path}: {$e->getMessage()}");
+            $error = "Error importing file: {$this->videoItem->Path}: {$e->getMessage()}";
+            Log::error($error);
+            Rejected::reject($this->videoItem, $error);
 
             throw $e;
         }

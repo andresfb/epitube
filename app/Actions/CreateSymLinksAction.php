@@ -22,7 +22,6 @@ final readonly class CreateSymLinksAction
             return;
         }
 
-
         $mediaPath = $media->getPath();
         if (is_link($mediaPath)) {
             Log::warning("Media $media->id already has a symlink");

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs;
 
+use App\Libraries\Notifications;
 use App\Services\GenerateDownscalesService;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -34,7 +35,9 @@ final class GenerateDownscalesJob implements ShouldQueue
         try {
             $service->execute($this->mediaId);
         } catch (Exception $e) {
-            Log::error("Downscales error for Media Id: {$this->mediaId}: {$e->getMessage()}");
+            $error = "Downscales error for Media Id: {$this->mediaId}: {$e->getMessage()}";
+            Log::error($error);
+            Notifications::error(self::class, $this->mediaId, $error);
 
             throw $e;
         }
