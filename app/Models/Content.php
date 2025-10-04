@@ -134,6 +134,17 @@ final class Content extends Model implements HasMedia
             $this->item_id,
         );
 
+        $collection = MediaNamesLibrary::videos();
+        if ($this->hasMedia(MediaNamesLibrary::transcoded())) {
+            $collection = MediaNamesLibrary::transcoded();
+        }
+
+        $media = $this->getMedia($collection)->first();
+        if ($media !== null) {
+            $content['duration'] = (int) $media->getCustomProperty('duration', 0);
+            $content['height'] = sprintf('%sp', $media->getCustomProperty('height', 0));
+        }
+
         return $content;
     }
 
