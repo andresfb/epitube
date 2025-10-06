@@ -21,6 +21,11 @@ final class ImportVideosService
 
     private int $scanned = 0;
 
+    public function __construct()
+    {
+        $this->maxFiles = Config::integer('content.max_import_videos');
+    }
+
     /**
      * @throws Exception
      */
@@ -28,10 +33,8 @@ final class ImportVideosService
     {
         Log::notice('Videos import started at '.now()->toDateTimeString());
 
-        $this->maxFiles = Config::integer('content.max_import_videos');
-        $videos = $this->getServiceItems();
-
-        $videos->each(function (ImportVideoItem $videoItem): void {
+        $this->getServiceItems()->each(function (ImportVideoItem $videoItem): void {
+            Log::notice("Queueing file: $videoItem->Path for importing");
             ImportVideoJob::dispatch($videoItem);
         });
 
@@ -55,6 +58,7 @@ final class ImportVideosService
 
         $importedFiles = Content::getImported();
         $rejected = Rejected::getRejected();
+        shuffle($items);
 
         foreach ($items as $item) {
             if ($this->scanned >= $this->maxFiles) {
