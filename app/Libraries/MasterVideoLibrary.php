@@ -121,13 +121,15 @@ final class MasterVideoLibrary
 
     public function downloadMaster(Media $media): void
     {
-        if (! $media->getCustomProperty('transcode', false)) {
-            $this->downloadDisk = 'content';
+        if (! $media->getCustomProperty('transcoded', false)) {
+            $this->downloadDisk = DiskNamesLibrary::content();
             $this->masterFile = $media->getPath();
             $this->relativeVideoPath = $media->getPathRelativeToRoot();
 
             return;
         }
+
+        $this->downloadDisk = DiskNamesLibrary::download();
 
         // prepare a local file
         $tempMasterPath = md5($media->file_name);

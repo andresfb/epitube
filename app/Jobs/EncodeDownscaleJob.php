@@ -20,6 +20,8 @@ final class EncodeDownscaleJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public bool $failOnTimeout = true;
+
     public function __construct(
         private readonly int $resolution,
         private readonly int $mediaId,

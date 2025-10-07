@@ -199,12 +199,16 @@ final class TitleParserLibrary
             'daughter' => $this->getGirlGeneric(),
             'd@ughter' => $this->getGirlGeneric(),
             'hijastra' => $this->getGirlGeneric(),
-            'aunt' => $this->getGeneric(),
+            'aunt' => $this->getGirlGeneric(),
             'uncle' => $this->getBoyGeneric(),
             'niece' => $this->getGirlGeneric(),
             'nephew' => $this->getBoyGeneric(),
             'cousin' => $this->getGeneric(),
+            'grandmother' => $this->getGirlGeneric(),
+            'grandfather' => $this->getBoyGeneric(),
+            'granny' => $this->getGirlGeneric(),
             'in-law' => $this->getGeneric(),
+            'in law' => $this->getGeneric(),
             'family' => [
                 'group',
                 'friends',
@@ -214,6 +218,11 @@ final class TitleParserLibrary
                 'students',
                 'fans',
                 'influencers',
+                'strangers',
+                'associates',
+                'teammates',
+                'neighbor',
+                'clients',
                 '',
             ],
         ];
@@ -229,22 +238,33 @@ final class TitleParserLibrary
             'pal',
             'bff',
             'bar-tender',
+            'cop',
+            'lawyer',
+            'doctor',
+            'widower',
+            'lover',
+            'acquaintance',
+            'associate',
+            'teammate',
+            'neighbor',
+            'mentor',
+            'client',
+            'patient',
+            'contractor',
+            'manager',
+            'director',
+            'editor',
+            'researcher',
+            'consultant',
+            'technician',
+            'accountant',
+            'architect',
+            'journalist',
+            'photographer',
+            'performer',
+            'volunteer',
+            'vampire',
         ];
-    }
-
-    private function getBoyGeneric(): array
-    {
-        return array_merge(
-            $this->getGeneric(),
-            [
-                'girlfriend',
-                'sister-in-law',
-                'mother-in-law',
-                'hostess',
-                'waitress',
-                'comadre',
-            ]
-        );
     }
 
     private function getGirlGeneric(): array
@@ -252,12 +272,68 @@ final class TitleParserLibrary
         return array_merge(
             $this->getGeneric(),
             [
-                'boy-friend',
+                'wife',
+                'mistress',
+                'girlfriend',
+                'sister-in-law',
+                'mother-in-law',
+                'bride',
+                'duchess',
+                'governess',
+                'heiress',
+                'heroine',
+                'maiden',
+                'princess',
+                'queen',
+                'sorceress',
+                'nun',
+                'vicar‑wife',
+                'hostess',
+                'waitress',
+                'comadre',
+                'matriarch',
+                'midwife',
+                'empress',
+                'baroness',
+                'countess',
+                'stewardess',
+            ]
+        );
+    }
+
+    private function getBoyGeneric(): array
+    {
+        return array_merge(
+            $this->getGeneric(),
+            [
+                'husband',
+                'marido',
+                'boyfriend',
                 'brother-in-law',
                 'father-in-law',
                 'fireman',
                 'waiter',
                 'compadre',
+                'groom',
+                'duke',
+                'governor',
+                'heir',
+                'hero',
+                'bachelor',
+                'knight',
+                'squire',
+                'baron',
+                'count',
+                'lord',
+                'monarch',
+                'priest',
+                'pastor',
+                'imam',
+                'rabbi',
+                'sheriff',
+                'steward',
+                'fire‑fighter',
+                'bartender',
             ]
         );
     }

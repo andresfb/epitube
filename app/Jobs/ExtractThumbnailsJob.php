@@ -21,6 +21,8 @@ final class ExtractThumbnailsJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public bool $failOnTimeout = true;
+
     public function __construct(private readonly int $mediaId)
     {
         $this->queue = 'encode';
