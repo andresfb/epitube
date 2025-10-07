@@ -1,22 +1,42 @@
 <?php
+/** @noinspection SelfClassReferencingInspection */
 
 declare(strict_types=1);
 
 namespace App\Models;
 
 use App\Dtos\ContentItem;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use DateTime;
+use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\Laravel\Relations\BelongsTo;
 
+/**
+ * @property int $content_id
+ * @property int $category_id
+ * @property string $category
+ * @property string $title
+ * @property bool $active
+ * @property bool $viewed
+ * @property bool $liked
+ * @property int $view_count
+ * @property string $service_url
+ * @property array $tags
+ * @property array $videos
+ * @property array $previews
+ * @property array $thumbnails
+ * @property array $related
+ * @property DateTime $expires_at
+ * @property DateTime $added_at
+ */
 final class Feed extends Model
 {
-    protected $guarded = [];
+    protected $connection = 'mongodb';
 
-    protected $with = ['category'];
+    protected $guarded = [];
 
     public static function updateIfExists(Content $content): void
     {
-        if (! self::where('content_id', $content->id)->exists()) {
+        if (! Feed::where('content_id', $content->id)->exists()) {
             return;
         }
 
@@ -25,19 +45,10 @@ final class Feed extends Model
 
     public static function generate(Content $content): void
     {
-        self::updateOrCreate([
-            'content_id' => $content->id,
-        ], [
-            'category_id' => $content->category_id,
-            'content' => ContentItem::withRelated($content)->toArray(),
-            'expires_at' => now()->addDay()->subSecond(),
-            'added_at' => $content->added_at,
-        ]);
-    }
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
+        Feed::updateOrCreate(
+            ['content_id' => $content->id],
+            ContentItem::withRelated($content)->toArray(),
+        );
     }
 
     public function content(): BelongsTo
@@ -48,7 +59,15 @@ final class Feed extends Model
     protected function casts(): array
     {
         return [
-            'content' => 'json',
+            'active' => 'boolean',
+            'viewed' => 'boolean',
+            'liked' => 'boolean',
+            'view_count' => 'integer',
+            'tags' => 'array',
+            'videos' => 'array',
+            'previews' => 'array',
+            'thumbnails' => 'array',
+            'related' => 'array',
             'expires_at' => 'datetime',
             'added_at' => 'datetime',
         ];

@@ -21,7 +21,7 @@ final class ContentItem extends Data
      * @param  array<ContentItem>  $related
      */
     public function __construct(
-        public string $id,
+        public int $id,
         public int $category_id,
         public string $category,
         public string $title,
@@ -30,6 +30,7 @@ final class ContentItem extends Data
         public bool $liked,
         public int $view_count,
         public string $service_url,
+        public Carbon $expires_at,
         public Carbon $added_at,
         public array $tags = [],
         public array $videos = [],
@@ -52,6 +53,7 @@ final class ContentItem extends Data
     public static function withContent(Content $content): self
     {
         $contentArray = $content->toSearchableArray();
+        $contentArray['expires_at'] = now()->addDay()->subSecond();
 
         $contentArray[MediaNamesLibrary::thumbnails()] = $content->getMedia(MediaNamesLibrary::thumbnails())
             ->map(fn (Media $media): ThumbnailItem => new ThumbnailItem(

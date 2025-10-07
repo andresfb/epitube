@@ -74,6 +74,12 @@ return [
             ]) : [],
         ],
 
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'dsn' => env('MONGO_DB_DSN', 'mongodb://localhost:27017'),
+            'database' => env('MONGO_DB_DATABASE', 'laravel_app'),
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),

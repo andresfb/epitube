@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use Illuminate\Support\Facades\DB;
+
+final readonly class GetFeedAction
+{
+    public function handle(): void
+    {
+        DB::transaction(function (): void {
+            //
+        });
+    }
+}

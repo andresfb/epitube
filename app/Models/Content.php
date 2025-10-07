@@ -127,6 +127,7 @@ final class Content extends Model implements HasMedia
             'file_hash',
         ]);
 
+        $content['id'] = $this->id;
         $content['category'] = $this->category->name;
         $content['tags'] = $this->tags->pluck('name')->toArray();
         $content['service_url'] = sprintf(

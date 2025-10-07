@@ -20,7 +20,7 @@ final class CreateFeedService
             ->where('viewed', false)
             ->inRandomOrder()
             ->limit(
-                Config::integer('content.max_feed_limit')
+                Config::integer('feed.max_feed_limit')
             );
 
         $contents = $query->inMainCategory()->get();
