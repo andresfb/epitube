@@ -55,7 +55,7 @@ final class TranscodeMediaCommand extends BaseEncodeCommand
                 return;
             }
 
-            $media->setCustomProperty('transcode', true);
+            $media->setCustomProperty('transcoded', true);
             if (confirm('Dispatch Job?', false)) {
                 TranscodeVideoJob::dispatch($media->id);
                 info('Job Dispatched');

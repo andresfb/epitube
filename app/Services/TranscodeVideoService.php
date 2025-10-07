@@ -50,7 +50,7 @@ final class TranscodeVideoService
             $this->tempPath = md5($this->fullPath);
             $this->flag = "$this->tempPath/creating";
 
-            Log::info("Checking for {$this->flag} file");
+            Log::info("Checking for $this->flag file");
             $this->checkFlag(
                 disk: self::TRANSCODE_DISK,
                 mediaId: $this->media->model_id,
@@ -193,14 +193,9 @@ final class TranscodeVideoService
                 'duration' => $this->duration,
                 'owner_id' => $this->media->id,
                 'is_video' => true,
+                'transcoded' => true,
             ])
             ->toMediaCollection(MediaNamesLibrary::transcoded());
-
-        // Delete the original video files from the record
-        $content->getMedia(MediaNamesLibrary::videos())
-            ->each(function (Media $media): void {
-                $media->forceDelete();
-            });
 
         $content->searchableSync();
         Feed::updateIfExists($content);

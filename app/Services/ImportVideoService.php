@@ -93,7 +93,7 @@ final readonly class ImportVideoService
                     'height' => $videoInfo->height,
                     'duration' => $videoInfo->duration,
                     'is_video' => true,
-                    'transcode' => $needsTranscode,
+                    'transcoded' => $needsTranscode,
                     'og_path' => $videoItem->Path,
                 ])
                 ->preservingOriginal()
