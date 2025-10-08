@@ -22,6 +22,6 @@ abstract class BaseEncodeService
             mediaName: '',
         );
 
-        $this->createFlag($this->videoLibrary->getTempPath());
+        $this->createFlag($this->videoLibrary->getProcessingDisk());
     }
 }

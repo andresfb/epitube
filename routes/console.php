@@ -14,7 +14,7 @@ Artisan::command('inspire', function (): void {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::job(new ImportVideosJob)->dailyAt('22:15');
+Schedule::job(new ImportVideosJob)->twiceDailyAt(9, 21, 15);
 #Schedule::job(new ImportRelatedVideosJob)->dailyAt('01:45');
 #Schedule::job(new CreateFeedJob)->dailyAt('03:25');
 #Schedule::job(new CheckEncodingErrorsJob)->dailyAt('17:00');
