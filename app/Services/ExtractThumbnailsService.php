@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Libraries\MasterVideoLibrary;
 use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
 use App\Models\Feed;
-use App\Traits\Encodable;
 use Exception;
 use FFMpeg\Coordinate\TimeCode;
 use Illuminate\Support\Facades\Config;
@@ -17,12 +15,8 @@ use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-final class ExtractThumbnailsService
+final class ExtractThumbnailsService extends BaseEncodeService
 {
-    use Encodable;
-
-    public function __construct(private MasterVideoLibrary $videoLibrary) {}
-
     /**
      * @throws Exception
      */
@@ -30,16 +24,8 @@ final class ExtractThumbnailsService
     {
         try {
             Log::notice("Starting extracting thumbnails for: $mediaId");
-            $this->videoLibrary->prepare($mediaId, self::class);
 
-            $this->flag = sprintf('%s/creating', $this->videoLibrary->getProcessingPath());
-            $this->checkFlag(
-                disk: $this->videoLibrary->getProcessingDisk(),
-                mediaId: $mediaId,
-                mediaName: '',
-            );
-
-            $this->createFlag($this->videoLibrary->getProcessingDisk());
+            $this->prepare($mediaId);
             $this->generate($this->videoLibrary->getContent());
 
             Log::notice("Finished extracting thumbnails for: $mediaId");

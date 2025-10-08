@@ -4,21 +4,15 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Libraries\MasterVideoLibrary;
 use App\Libraries\MediaNamesLibrary;
-use App\Traits\Encodable;
 use Exception;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
-final class EncodeDownscaleService
+final class EncodeDownscaleService extends BaseEncodeService
 {
-    use Encodable;
-
-    public function __construct(private MasterVideoLibrary $videoLibrary) {}
-
     /**
      * @throws Exception
      */
@@ -26,16 +20,9 @@ final class EncodeDownscaleService
     {
         try {
             Log::notice("Starting downscaling video for media: $mediaId to resolution: $resolution");
-            $this->videoLibrary->prepare($mediaId, self::class.$resolution);
 
-            $this->flag = sprintf('%s/creating', $this->videoLibrary->getProcessingPath());
-            $this->checkFlag(
-                disk: $this->videoLibrary->getProcessingDisk(),
-                mediaId: $mediaId,
-                mediaName: '',
-            );
+            $this->prepare($mediaId, (string) $resolution);
 
-            $this->createFlag($this->videoLibrary->getProcessingDisk());
             $ffProbe = FFProbe::create([
                 'ffprobe.binaries' => $this->ffProbe(),
             ]);
