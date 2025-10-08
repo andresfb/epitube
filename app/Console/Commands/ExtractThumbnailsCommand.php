@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\ExtractThumbnailsJob;
 use App\Libraries\MediaNamesLibrary;
+use App\Models\Media;
 use App\Services\ExtractThumbnailsService;
 use Exception;
 
@@ -33,13 +34,19 @@ final class ExtractThumbnailsCommand extends BaseEncodeCommand
             clear();
             intro('Extract Thumbnails');
 
-            $contentId = (int) $this->argument('contentId');
+            $contentId = (int)$this->argument('contentId');
             $content = $this->getContent($contentId);
 
-            /** @noinspection NotOptimalIfConditionsInspection */
-            if ($content->hasMedia(MediaNamesLibrary::thumbnails())
-                && ! confirm('Media already has Thumbnails. Continue?')) {
-                return;
+            if ($content->hasMedia(MediaNamesLibrary::thumbnails())) {
+                if (! confirm('Media already has Thumbnails. Continue?')) {
+                    return;
+                }
+
+                $content->getMedia(MediaNamesLibrary::thumbnails())
+                    ->each(function (Media $media) {
+                        $media->forceDelete();
+                    }
+                );
             }
 
             $media = $this->getMedia($content);

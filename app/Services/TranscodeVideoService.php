@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Actions\RunExtraJobsAction;
+use App\Exceptions\ProcessRunningException;
 use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
 use App\Models\Feed;
@@ -13,9 +14,11 @@ use App\Traits\Encodable;
 use Exception;
 use FFMpeg\FFProbe;
 use FFMpeg\FFProbe\DataMapping\Stream;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 final class TranscodeVideoService
@@ -56,7 +59,13 @@ final class TranscodeVideoService
                 mediaId: $this->media->model_id,
                 mediaName: $this->media->name,
             );
+        } catch (ProcessRunningException $exception) {
+            Log::error($exception->getMessage());
 
+            return;
+        }
+
+        try {
             Log::info("Creating $this->flag file");
             $this->createFlag(self::TRANSCODE_DISK);
 
@@ -145,11 +154,17 @@ final class TranscodeVideoService
             $outputFile
         );
 
-        Log::info("Transcoding ffmpeg running command: $cmd");
+        Log::info("Transcoding video");
+        Log::channel(Config::string('laravel-ffmpeg.log_channel'))
+            ->info("Transcoding ffmpeg running command: $cmd");
 
-        Process::fromShellCommandline($cmd)
+        $process = Process::fromShellCommandline($cmd)
             ->setTimeout(0)
             ->mustRun();
+
+        if (! $process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
 
         Log::info('Transcoding video finished');
 

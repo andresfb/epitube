@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Traits;
 
+use App\Exceptions\ProcessRunningException;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
@@ -12,13 +13,16 @@ trait Encodable
 {
     protected string $flag = '';
 
+    /**
+     * @throws ProcessRunningException
+     */
     protected function checkFlag(string $disk, int $mediaId, string $mediaName): void
     {
         if (! Storage::disk($disk)->exists($this->flag)) {
             return;
         }
 
-        throw new RuntimeException(
+        throw new ProcessRunningException(
             sprintf('%s | %s %s process already running.', $mediaId, $mediaName, self::class)
         );
     }

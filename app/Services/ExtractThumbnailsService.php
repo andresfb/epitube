@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Exceptions\ProcessRunningException;
 use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
 use App\Models\Feed;
@@ -22,10 +23,17 @@ final class ExtractThumbnailsService extends BaseEncodeService
      */
     public function execute(int $mediaId): void
     {
-        try {
-            Log::notice("Starting extracting thumbnails for: $mediaId");
+        Log::notice("Starting extracting thumbnails for: $mediaId");
 
+        try {
             $this->prepare($mediaId);
+        } catch (ProcessRunningException $exception) {
+            Log::error($exception->getMessage());
+
+            return;
+        }
+
+        try {
             $this->generate($this->videoLibrary->getContent());
 
             Log::notice("Finished extracting thumbnails for: $mediaId");
@@ -66,7 +74,7 @@ final class ExtractThumbnailsService extends BaseEncodeService
         $images = [];
         $numberThumbnails = Config::integer('content.thumbnails.total');
         $duration = $this->videoLibrary->getDuration();
-        $skip = random_int(3, 7) / 100;
+        $skip = random_int(2, 8) / 100;
         $timeCode = floor(($duration - ($duration * $skip)) / $numberThumbnails);
 
         for ($i = 1; $i <= $numberThumbnails; $i++) {
@@ -86,6 +94,9 @@ final class ExtractThumbnailsService extends BaseEncodeService
             );
 
             Log::notice("Generating $image");
+            Log::channel(Config::string('laravel-ffmpeg.log_channel'))
+                ->info("Generating $image with cmd: $cmd");
+
             $process = Process::fromShellCommandline($cmd)
                 ->setTimeout(0)
                 ->mustRun();

@@ -12,12 +12,14 @@ use Exception;
 use FFMpeg\Coordinate\Dimension;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Filesystem;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -128,7 +130,7 @@ final readonly class HlsConverterService
         );
 
         // https://gist.github.com/Andrey2G/78d42b5c87850f8fbadd0b670b0e6924
-        $command = implode(' ', [
+        $cmd = implode(' ', [
             $this->ffMpeg(),
             "-n -i \"{$file}\"",
             $resolutions->map(fn (): string => '-map 0:v:0 -map 0:a:0')->implode(' '),
@@ -148,11 +150,17 @@ final readonly class HlsConverterService
             "\"{$output}/%v/playlist.m3u8\"",
         ]);
 
-        Log::info("HLS conversion command: $command");
+        Log::info("Running HLS conversions");
+        Log::channel(Config::string('laravel-ffmpeg.log_channel'))
+            ->info("HLS conversion command: $cmd");
 
-        Process::fromShellCommandline($command)
+        $process = Process::fromShellCommandline($cmd)
             ->setTimeout(0)
             ->mustRun();
+
+        if (! $process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
 
         Log::info('HLS conversion finished');
 

@@ -90,15 +90,39 @@ final class TitleParserLibrary
         $dirList->shift();
         $this->rootDirectory = str($dirList->first())->lower()->toString();
 
-        $titled = $titled->replace($dirList, '')
-            ->replace(
-                $dirList->map(
-                    fn (Stringable $item): string => $item->replace(' ', '')->toString()
-                )->toArray(),
-                ''
-            )
+        $dirList->each(function (Stringable $item) use (&$titled): void {
+            if ($titled->startsWith($item)) {
+                $titled = $titled->replace($item, '');
+            }
+
+            $noSpacesItem = $item->replace(' ', '');
+            if ($titled->startsWith($noSpacesItem)) {
+                $titled = $titled->replace($noSpacesItem, '');
+            }
+
+            $noNumbersItem = $item->replaceMatches('/\d+/', '')
+                ->replace('  ', '')
+                ->trim();
+
+            if ($titled->startsWith($noNumbersItem)) {
+                $titled = $titled->replace($noNumbersItem, '');
+            }
+
+            $noSpacesNoNumbersItem = $noSpacesItem->replaceMatches('/\d+/', '')
+                ->replace('  ', '')
+                ->trim();
+
+            if (! $titled->startsWith($noSpacesNoNumbersItem)) {
+                return;
+            }
+
+            $titled = $titled->replace($noSpacesNoNumbersItem, '');
+        });
+
+        $titled = $titled->replaceMatches('/^\d+\s*/', '')
             ->trim()
             ->ltrim('-')
+            ->rtrim('-')
             ->trim();
 
         /** @var Stringable $item */
@@ -145,6 +169,7 @@ final class TitleParserLibrary
                     '1080p',
                     '2160p',
                     'hevc',
+                    'x264',
                     'x265',
                     'mp4',
                     'wrb',
@@ -159,6 +184,9 @@ final class TitleParserLibrary
                     'worldmkv',
                     '[xv',
                     'xvid',
+                    ' tg',
+                    ' hd ',
+                    'webrip',
                 ],
                 ''
             )
@@ -209,22 +237,8 @@ final class TitleParserLibrary
             'granny' => $this->getGirlGeneric(),
             'in-law' => $this->getGeneric(),
             'in law' => $this->getGeneric(),
-            'family' => [
-                'group',
-                'friends',
-                'pals',
-                'coworkers',
-                'pupils',
-                'students',
-                'fans',
-                'influencers',
-                'strangers',
-                'associates',
-                'teammates',
-                'neighbor',
-                'clients',
-                '',
-            ],
+            'family' => $this->getGroupGeneric(),
+            'parents' => $this->getGroupGeneric(),
         ];
     }
 
@@ -264,6 +278,7 @@ final class TitleParserLibrary
             'performer',
             'volunteer',
             'vampire',
+            'assistant',
         ];
     }
 
@@ -297,6 +312,7 @@ final class TitleParserLibrary
                 'baroness',
                 'countess',
                 'stewardess',
+                'secretary',
             ]
         );
     }
@@ -336,6 +352,25 @@ final class TitleParserLibrary
                 'bartender',
             ]
         );
+    }
+
+    private function getGroupGeneric(): array
+    {
+        return [
+            'friends',
+            'pals',
+            'coworkers',
+            'pupils',
+            'students',
+            'fans',
+            'influencers',
+            'strangers',
+            'associates',
+            'teammates',
+            'neighbor',
+            'clients',
+            '',
+        ];
     }
 
     private function removeStartingNumbers(): self

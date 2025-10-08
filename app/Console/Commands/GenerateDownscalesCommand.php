@@ -6,9 +6,9 @@ namespace App\Console\Commands;
 
 use App\Jobs\GenerateDownscalesJob;
 use App\Libraries\MediaNamesLibrary;
+use App\Models\Media;
 use App\Services\GenerateDownscalesService;
 use Exception;
-use RuntimeException;
 
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
@@ -37,31 +37,26 @@ final class GenerateDownscalesCommand extends BaseEncodeCommand
             $contentId = (int) $this->argument('contentId');
             $content = $this->getContent($contentId);
 
-            $collection = MediaNamesLibrary::videos();
-            if ($content->hasMedia(MediaNamesLibrary::transcoded())) {
-                $collection = MediaNamesLibrary::transcoded();
+            if ($content->hasMedia(MediaNamesLibrary::downscaled())) {
+                if (! confirm('Media already has Downscaled videos. Continue?')) {
+                    return;
+                }
+
+                $content->getMedia(MediaNamesLibrary::downscaled())->each(function (Media $media) {
+                    $media->forceDelete();
+                });
             }
 
-            $medias = $content->getMedia($collection);
-            if ($medias->count() > 1
-                && ! confirm('Media already has Downscaled videos. Continue?')) {
-                return;
-            }
-
-            $mediaId = $medias->first()?->id;
-            if (blank($mediaId)) {
-                throw new RuntimeException('Media not found');
-            }
-
+            $media = $this->getMedia($content);
             if (confirm('Dispatch Job?', false)) {
-                GenerateDownscalesJob::dispatch($mediaId);
+                GenerateDownscalesJob::dispatch($media->id);
                 info('Job Dispatched');
 
                 return;
             }
 
             info('Executing service...');
-            $this->service->execute($mediaId);
+            $this->service->execute($media->id);
         } catch (Exception $e) {
             error($e->getMessage());
         } finally {

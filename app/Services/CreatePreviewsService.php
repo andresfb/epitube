@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Exceptions\ProcessRunningException;
 use App\Libraries\MediaNamesLibrary;
 use App\Models\Content;
 use App\Models\Feed;
@@ -25,10 +26,17 @@ final class CreatePreviewsService extends BaseEncodeService
      */
     public function execute(int $mediaId): void
     {
-        try {
-            Log::notice("Starting creating Preview videos for: $mediaId");
+        Log::notice("Starting creating Preview videos for: $mediaId");
 
+        try {
             $this->prepare($mediaId);
+        } catch (ProcessRunningException $exception) {
+            Log::error($exception->getMessage());
+
+            return;
+        }
+
+        try {
             $this->generate($this->videoLibrary->getContent());
 
             Log::notice('Done creating Preview videos');

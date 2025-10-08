@@ -6,6 +6,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\CreatePreviewsJob;
 use App\Libraries\MediaNamesLibrary;
+use App\Models\Media;
 use App\Services\CreatePreviewsService;
 use Exception;
 
@@ -36,10 +37,14 @@ final class CreatePreviewsCommand extends BaseEncodeCommand
             $contentId = (int) $this->argument('contentId');
             $content = $this->getContent($contentId);
 
-            /** @noinspection NotOptimalIfConditionsInspection */
-            if ($content->hasMedia(MediaNamesLibrary::previews())
-                && ! confirm('Media already has Previews. Continue?')) {
-                return;
+            if ($content->hasMedia(MediaNamesLibrary::previews())) {
+                if (! confirm('Media already has Previews. Continue?')) {
+                    return;
+                }
+
+                $content->getMedia(MediaNamesLibrary::previews())->each(function (Media $media) {
+                    $media->forceDelete();
+                });
             }
 
             $media = $this->getMedia($content);

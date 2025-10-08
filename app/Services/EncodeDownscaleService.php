@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Exceptions\ProcessRunningException;
 use App\Libraries\MediaNamesLibrary;
 use Exception;
 use FFMpeg\FFProbe;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 final class EncodeDownscaleService extends BaseEncodeService
@@ -18,11 +21,17 @@ final class EncodeDownscaleService extends BaseEncodeService
      */
     public function execute(int $resolution, int $mediaId): void
     {
+        Log::notice("Starting downscaling video for media: $mediaId to resolution: $resolution");
+
         try {
-            Log::notice("Starting downscaling video for media: $mediaId to resolution: $resolution");
+            $this->prepare($mediaId);
+        } catch (ProcessRunningException $exception) {
+            Log::error($exception->getMessage());
 
-            $this->prepare($mediaId, (string) $resolution);
+            return;
+        }
 
+        try {
             $ffProbe = FFProbe::create([
                 'ffprobe.binaries' => $this->ffProbe(),
             ]);
@@ -74,10 +83,17 @@ final class EncodeDownscaleService extends BaseEncodeService
             $outputFile,
         );
 
-        Log::info("Downscaling ffmpeg running command: $cmd");
-        Process::fromShellCommandline($cmd)
+        Log::info('Downscaling video');
+        Log::channel(Config::string('laravel-ffmpeg.log_channel'))
+            ->info("Downscaling ffmpeg running command: $cmd");
+
+        $process = Process::fromShellCommandline($cmd)
             ->setTimeout(0)
             ->mustRun();
+
+        if (! $process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
 
         Log::info('Downscaling video finished');
 
