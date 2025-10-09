@@ -26,6 +26,7 @@ final class TestAppCommand extends Command
         try {
             clear();
             intro('Starting test');
+
         } catch (Exception $e) {
             error($e->getMessage());
         } finally {

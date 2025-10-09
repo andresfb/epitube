@@ -17,7 +17,7 @@ abstract class BaseEncodeService
      */
     protected function prepare(int $mediaId, string $clasSuffix = ''): void
     {
-        $this->videoLibrary->prepare($mediaId, self::class.$clasSuffix);
+        $this->videoLibrary->prepare($mediaId, static::class.$clasSuffix);
 
         $this->flag = sprintf('%s/creating', $this->videoLibrary->getTempPath());
         $this->checkFlag(

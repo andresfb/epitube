@@ -57,6 +57,7 @@ final class GenerateDownscalesService
             ->filter(fn (int $resolution): bool => $resolution < $mediaHeight);
 
         foreach ($resolutions as $resolution) {
+            Log::notice("Queueing downscaling for resolution: $resolution");
             EncodeDownscaleJob::dispatch($resolution, $mediaId);
         }
 

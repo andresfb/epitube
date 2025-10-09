@@ -6,7 +6,6 @@ namespace App\Traits;
 
 use App\Exceptions\ProcessRunningException;
 use Illuminate\Support\Facades\Storage;
-use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
 
 trait Encodable
@@ -23,7 +22,7 @@ trait Encodable
         }
 
         throw new ProcessRunningException(
-            sprintf('%s | %s %s process already running.', $mediaId, $mediaName, self::class)
+            sprintf('%s | %s %s process already running.', $mediaId, $mediaName, static::class)
         );
     }
 

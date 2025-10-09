@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Jobs\ImportVideosJob;
 use App\Services\ImportVideosService;
 use Exception;
 use Illuminate\Console\Command;
 
 use function Laravel\Prompts\clear;
+use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
@@ -35,6 +37,13 @@ final class ImportVideosCommand extends Command
         try {
             clear();
             intro('Starting Import');
+
+            if (confirm('Dispatch Job?', app()->isProduction())) {
+                ImportVideosJob::dispatch();
+                info('Job Dispatched');
+
+                return;
+            }
 
             info('Executing service...');
             $service->execute();
