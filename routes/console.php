@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Jobs\CheckEncodingErrorsJob;
+use App\Jobs\ClearTemporaryDisksJob;
 use App\Jobs\CreateFeedJob;
 use App\Jobs\ImportRelatedVideosJob;
 use App\Jobs\ImportVideosJob;
@@ -14,8 +15,8 @@ Artisan::command('inspire', function (): void {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::job(new ImportVideosJob)->dailyAt('09:15');
-#Schedule::job(new ImportRelatedVideosJob)->dailyAt('01:45');
-#Schedule::job(new CreateFeedJob)->dailyAt('03:25');
-#Schedule::job(new CheckEncodingErrorsJob)->dailyAt('17:00');
-// TODO: add a job to clear all files from the "download" disk. Scheduled it to run at 21:30
+Schedule::job(app(ImportVideosJob::class))->twiceDailyAt(9, 17, 15); // at 9:15 AM and 5:15 PM
+//Schedule::job(new ImportRelatedVideosJob)->dailyAt('01:45');
+//Schedule::job(new CreateFeedJob)->dailyAt('03:25');
+Schedule::job(app(CheckEncodingErrorsJob::class))->dailyAt('23:45');
+Schedule::job(app(ClearTemporaryDisksJob::class))->dailyAt('23:55');

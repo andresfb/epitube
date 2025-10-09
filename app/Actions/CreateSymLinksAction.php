@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Models\Media;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 final readonly class CreateSymLinksAction
 {

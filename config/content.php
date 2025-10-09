@@ -6,6 +6,8 @@ return [
 
     'data_path' => env('CONTENT_DATA_PATH', '/content'),
 
+    'client_data_path' => env('CLIENT_CONTENT_DATA_PATH', ''),
+
     'max_import_videos' => (int) env('MAX_RAW_IMPORT', 2),
 
     'minimum_duration' => (int) env('MINIMUM_VIDEO_DURATION', 300), // 5 minutes

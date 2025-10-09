@@ -88,10 +88,12 @@ final class Content extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(MediaNamesLibrary::videos())
+            ->singleFile()
             ->acceptsMimeTypes(MimeType::list())
             ->useDisk(DiskNamesLibrary::content());
 
         $this->addMediaCollection(MediaNamesLibrary::transcoded())
+            ->singleFile()
             ->acceptsMimeTypes(['video/mp4'])
             ->useDisk(DiskNamesLibrary::media());
 
@@ -106,7 +108,7 @@ final class Content extends Model implements HasMedia
             ])
             ->useDisk(DiskNamesLibrary::media());
 
-        $this->addMediaCollection('thumbnails')
+        $this->addMediaCollection(MediaNamesLibrary::thumbnails())
             ->withResponsiveImages()
             ->acceptsMimeTypes([
                 'image/png',
@@ -129,6 +131,10 @@ final class Content extends Model implements HasMedia
 
         $content['id'] = $this->id;
         $content['category'] = $this->category->name;
+        $content['viewed'] = $this->viewed ?? false;
+        $content['liked'] = $this->liked ?? false;
+        $content['view_count'] = $this->view_count ?? 0;
+
         $content['tags'] = $this->tags->pluck('name')->toArray();
         $content['service_url'] = sprintf(
             Config::string('jellyfin.item_web_url'),

@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Libraries\JellyfinLibrary;
 use App\Models\Content;
 use App\Models\RelatedContent;
-use Exception;
 use Illuminate\Support\Facades\Log;
-use Modules\JellyfinApi\Facades\Jellyfin;
 
 final class ImportRelatedVideoService
 {
@@ -17,7 +16,7 @@ final class ImportRelatedVideoService
         $content = Content::where('id', $contentId)
             ->firstOrFail();
 
-        $items = $this->loadFromAPI($content->item_id);
+        $items =JellyfinLibrary::getSimilarItems($content->item_id);
         if ($items === []) {
             Log::error("No related videos found for $contentId");
 
@@ -42,35 +41,6 @@ final class ImportRelatedVideoService
                 'content_id' => $contentId,
                 'related_content_id' => $relatedContent->id,
             ]);
-        }
-    }
-
-    private function loadFromAPI(string $itemId): array
-    {
-        try {
-            Jellyfin::setProvider();
-            $provider = Jellyfin::getProvider();
-            $result = $provider->getSimilarItems($itemId);
-
-            if (blank($result)) {
-                Log::error('Api returned empty array');
-
-                return [];
-            }
-
-            if (blank($result['Items'])) {
-                Log::error('No items found');
-
-                return [];
-            }
-
-            Log::notice("Found {$result['TotalRecordCount']} items");
-
-            return $result['Items'];
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-
-            return [];
         }
     }
 }

@@ -13,7 +13,6 @@ use App\Libraries\TitleParserLibrary;
 use App\Models\Category;
 use App\Models\Content;
 use App\Models\Feed;
-use App\Models\Media;
 use App\Models\MimeType;
 use App\Models\Rejected;
 use FFMpeg\FFProbe;
@@ -22,6 +21,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 final readonly class ImportVideoService
@@ -74,9 +74,10 @@ final readonly class ImportVideoService
                 ? Config::string('constants.alt_category')
                 : Config::string('constants.main_category');
 
-            $content = Content::create([
-                'category_id' => Category::getId($category),
+            $content = Content::updateOrCreate([
                 'item_id' => $videoItem->Id,
+            ],[
+                'category_id' => Category::getId($category),
                 'file_hash' => $fileHash,
                 'title' => $tile,
                 'active' => true,
