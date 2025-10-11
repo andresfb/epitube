@@ -13,10 +13,7 @@ final class Category extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = [
-        'slug',
-        'name',
-    ];
+    protected $guarded = [];
 
     public static function getMain(): self
     {
@@ -30,12 +27,34 @@ final class Category extends Model
 
     public static function getId(string $slug): int
     {
-        return Cache::tags('categories')
+        return (int) Cache::tags('categories')
             ->remember(
-                md5(sprintf("%s:%s:%s", self::class, __FUNCTION__, $slug)),
+                md5(sprintf('%s:%s:%s', self::class, __FUNCTION__, $slug)),
                 now()->addDay(),
                 function () use ($slug): int {
                     return self::where('slug', $slug)->firstOrFail()->id;
+                });
+    }
+
+    public static function getName(string $slug): string
+    {
+        return Cache::tags('categories')
+            ->remember(
+                md5(sprintf('%s:%s:%s', self::class, __FUNCTION__, $slug)),
+                now()->addDay(),
+                function () use ($slug): string {
+                    return self::where('slug', $slug)->firstOrFail()->name;
+                });
+    }
+
+    public static function getIcon(string $slug): string
+    {
+        return Cache::tags('categories')
+            ->remember(
+                md5(sprintf('%s:%s:%s', self::class, __FUNCTION__, $slug)),
+                now()->addDay(),
+                function () use ($slug): string {
+                    return self::where('slug', $slug)->firstOrFail()->icon;
                 });
     }
 
@@ -52,7 +71,6 @@ final class Category extends Model
 
     public static function getRouterList(): array
     {
-//        return [];
         return Cache::tags('categories')
             ->remember(
                 md5(self::class.__FUNCTION__),
@@ -63,16 +81,12 @@ final class Category extends Model
 
                     return [[
                         'name' => $main->name,
-                        'route' => route(
-                            'switch.category',
-                            ['category' => $main->slug]
-                        )
+                        'slug' => $main->slug,
+                        'icon' => '♀️'
                     ], [
                         'name' => $alt->name,
-                        'route' => route(
-                            'switch.category',
-                            ['category' => $alt->slug]
-                        )
+                        'slug' => $alt->slug,
+                        'icon' => '🏳️‍🌈'
                     ]];
                 });
     }
