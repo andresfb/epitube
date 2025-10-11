@@ -22,6 +22,7 @@
         "meilisearch/meilisearch-php": "^1.16",
         "mongodb/laravel-mongodb": "^5.5",
         "nunomaduro/essentials": "^0.1.0",
+        "owenvoke/blade-entypo": "^2.3",
         "pbmedia/laravel-ffmpeg": "^8.7",
         "spatie/laravel-data": "^4.17",
         "spatie/laravel-medialibrary": "^11.14",

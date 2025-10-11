@@ -14,7 +14,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="../node_modules/flyonui/flyonui.js"></script>
 </head>
-<body class="min-h-screen bg-base-100">
+<body class="min-h-screen bg-base-300">
     <x-navbar />
 
     <main>

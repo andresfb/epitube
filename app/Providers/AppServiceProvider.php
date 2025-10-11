@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Category;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 final class AppServiceProvider extends ServiceProvider
@@ -21,6 +24,14 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::share(
+            'category',
+            session(
+                'category',
+                Config::string('constants.main_category')
+            ),
+        );
+
+        View::share('categories', Category::getRouterList());
     }
 }
