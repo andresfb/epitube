@@ -25,6 +25,19 @@ final class Rejected extends Model
         ], [
             'og_path' => $videoItem->Path,
             'reason' => $message,
+            'duration' => $videoItem->Duration,
+            'height' => $videoItem->Height,
+            'width' => $videoItem->Width,
         ]);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'duration' => 'integer',
+            'height' => 'integer',
+            'width' => 'integer',
+        ];
     }
 }

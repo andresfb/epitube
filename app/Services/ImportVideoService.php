@@ -62,7 +62,8 @@ final readonly class ImportVideoService
             return;
         }
 
-        if (! $this->validate($videoItem, $videoInfo->duration)) {
+        $videoItem = $videoItem->withVideoInfo($videoInfo);
+        if (! $this->validate($videoItem)) {
             return;
         }
 
@@ -112,12 +113,12 @@ final readonly class ImportVideoService
 
     private function getVideoInfo(ImportVideoItem $videoItem): VideoInfoItem
     {
-        if ($videoItem->RunTimeTicks > 0 && $videoItem->Width > 0 && $videoItem->Height > 0) {
+        if ($videoItem->Duration > 0 && $videoItem->Width > 0 && $videoItem->Height > 0) {
             return new VideoInfoItem(
                 status: true,
                 width: $videoItem->Width,
                 height: $videoItem->Height,
-                duration: (int) floor($videoItem->RunTimeTicks / 10000000),
+                duration: $videoItem->Duration,
             );
         }
 
@@ -197,14 +198,18 @@ final readonly class ImportVideoService
         return $tags->toArray();
     }
 
-    private function validate(ImportVideoItem $videoItem, int $duration): bool
+    private function validate(ImportVideoItem $videoItem): bool
     {
-        if ($duration < Config::integer('content.minimum_duration')) {
-            $message = sprintf(
-                "The video duration is too short: %s minutes",
-                number_format($duration / 60, 2)
-            );
+        if ($videoItem->Height > $videoItem->Width) {
+            $message = 'Vertical videos are not allowed';
+            Rejected::reject($videoItem, $message);
+            Log::error($message);
 
+            return false;
+        }
+
+        if ($videoItem->Duration < Config::integer('content.minimum_duration')) {
+            $message = "The video duration is too short: $videoItem->Duration seconds";
             Rejected::reject($videoItem, $message);
             Log::error($message);
 

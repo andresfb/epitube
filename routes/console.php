@@ -18,5 +18,5 @@ Artisan::command('inspire', function (): void {
 Schedule::job(app(ImportVideosJob::class))->twiceDailyAt(9, 17, 15); // at 9:15 AM and 5:15 PM
 //Schedule::job(new ImportRelatedVideosJob)->dailyAt('01:45');
 //Schedule::job(new CreateFeedJob)->dailyAt('03:25');
-Schedule::job(app(CheckEncodingErrorsJob::class))->dailyAt('23:45');
+//Schedule::job(app(CheckEncodingErrorsJob::class))->dailyAt('23:45');
 Schedule::job(app(ClearTemporaryDisksJob::class))->dailyAt('23:55');
