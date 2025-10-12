@@ -26,15 +26,11 @@ use Throwable;
 
 final readonly class ImportVideoService
 {
-    private array $bandedTags;
-
     public function __construct(
         private TitleParserLibrary $parserLibrary,
         private TranscodeMediaAction $transcodeAction,
         private CreateSymLinksAction $symLinksAction,
-    ) {
-        $this->bandedTags = Config::array('content.banded_tags');
-    }
+    ) {}
 
     /**
      * @throws Throwable
@@ -111,6 +107,40 @@ final readonly class ImportVideoService
         Log::notice('Done importing video');
     }
 
+    public function parseTags(Content $content, array $fileInfo): void
+    {
+        $tags = $this->extractTags($fileInfo);
+        if (! blank($tags)) {
+            $content->attachTags($tags, 'main');
+        }
+
+        $content->searchableSync();
+        Feed::updateIfExists($content);
+    }
+
+    public function extractTags(array $fileInfo): array
+    {
+        $directory = str($fileInfo['dirname'])
+            ->replace(config('content.data_path'), '')
+            ->lower();
+
+        $tags = collect();
+        str($directory)
+            ->replace("'", '')
+            ->replace('step', ' ')
+            ->replace('    ', ' ')
+            ->replace('   ', ' ')
+            ->replace('  ', ' ')
+            ->explode('/')
+            ->map(fn (string $tag): string => trim($tag))
+            ->reject(fn (string $part): bool => empty($part))
+            ->each(function (string $part) use (&$tags) {
+                $tags->push(ucwords($part));
+            });
+
+        return $tags->toArray();
+    }
+
     private function getVideoInfo(ImportVideoItem $videoItem): VideoInfoItem
     {
         if ($videoItem->Duration > 0 && $videoItem->Width > 0 && $videoItem->Height > 0) {
@@ -153,49 +183,6 @@ final readonly class ImportVideoService
             height: $height,
             duration: $duration,
         );
-    }
-
-    private function parseTags(Content $content, array $fileInfo): void
-    {
-        $tags = $this->extractTags($fileInfo);
-        if (blank($tags)) {
-            return;
-        }
-
-        $content->attachTags($tags);
-        $content->searchableSync();
-        Feed::updateIfExists($content);
-    }
-
-    private function extractTags(array $fileInfo): array
-    {
-        $directory = str($fileInfo['dirname'])
-            ->replace(config('content.data_path'), '')
-            ->lower();
-
-        $sections = str($this->parserLibrary->replaceWords($directory))
-            ->replace("'", '')
-            ->replace('-', ' ')
-            ->replace('step', ' ')
-            ->replace('    ', ' ')
-            ->replace('   ', ' ')
-            ->replace('  ', ' ')
-            ->explode('/')
-            ->map(fn (string $tag): string => trim($tag))
-            ->reject(fn (string $part): bool => empty($part));
-
-        $tags = collect();
-        foreach ($sections as $section) {
-            $tags = $tags->merge(
-                str($section)->explode(' ')
-                    ->map(fn (string $tag): string => trim($tag))
-                    ->reject(fn (string $part): bool => blank($part)
-                        || in_array($part, $this->bandedTags, true)
-                        || mb_strlen($part) <= 2)
-            );
-        }
-
-        return $tags->toArray();
     }
 
     private function validate(ImportVideoItem $videoItem): bool
