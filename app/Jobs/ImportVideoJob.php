@@ -11,6 +11,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -35,6 +36,8 @@ final class ImportVideoJob implements ShouldQueue
     {
         try {
             $service->execute($this->videoItem);
+        } catch (MaxAttemptsExceededException $e) {
+            Log::error($e->getMessage());
         } catch (Throwable $e) {
             $error = "Error importing file: {$this->videoItem->Path}: {$e->getMessage()}";
             Log::error($error);

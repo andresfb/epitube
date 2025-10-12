@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Jobs\CheckEncodingErrorsJob;
+use App\Jobs\CheckSelectedVideosJob;
 use App\Jobs\ClearTemporaryDisksJob;
 use App\Jobs\CreateFeedJob;
 use App\Jobs\ImportRelatedVideosJob;
@@ -20,3 +21,4 @@ Schedule::job(app(ImportVideosJob::class))->twiceDailyAt(9, 17, 15); // at 9:15 
 //Schedule::job(new CreateFeedJob)->dailyAt('03:25');
 //Schedule::job(app(CheckEncodingErrorsJob::class))->dailyAt('23:45');
 Schedule::job(app(ClearTemporaryDisksJob::class))->dailyAt('23:55');
+//Schedule::job(app(CheckSelectedVideosJob::class))->dailyAt('04:05');

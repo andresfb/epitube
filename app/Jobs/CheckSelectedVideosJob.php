@@ -1,11 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Jobs;
 
-use App\Libraries\Notifications;
-use App\Services\CreatePreviewsService;
+use App\Services\CheckSelectedVideosService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -15,32 +12,30 @@ use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-final class CreatePreviewsJob implements ShouldQueue
+class CheckSelectedVideosJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly int $mediaId)
+    public function __construct()
     {
-        $this->queue = 'encode';
-        $this->delay = now()->addSeconds(10);
+        $this->queue = 'default';
+        $this->delay = now()->addMinutes(5);
     }
 
     /**
      * @throws Exception
      */
-    public function handle(CreatePreviewsService $service): void
+    public function handle(CheckSelectedVideosService $service): void
     {
         try {
-            $service->execute($this->mediaId);
+            $service->execute();
         } catch (MaxAttemptsExceededException $e) {
             Log::error($e->getMessage());
         } catch (Exception $e) {
-            $error = "Previews generation error for Media Id: {$this->mediaId}: {$e->getMessage()}";
-            Log::error($error);
-            Notifications::error(self::class, $this->mediaId, $error);
+            Log::error($e->getMessage());
 
             throw $e;
         }

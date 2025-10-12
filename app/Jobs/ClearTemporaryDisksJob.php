@@ -10,6 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
@@ -39,6 +40,8 @@ class ClearTemporaryDisksJob implements ShouldQueue
             $this->directoryDiskService->execute(DiskNamesLibrary::processing());
 
             $this->directoryDiskService->execute(DiskNamesLibrary::transcode());
+        } catch (MaxAttemptsExceededException $e) {
+            Log::error($e->getMessage());
         } catch (Exception $e) {
             Log::error("Error clearing the Download disk: {$e->getMessage()}");
 

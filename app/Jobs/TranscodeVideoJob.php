@@ -11,6 +11,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
@@ -34,6 +35,8 @@ final class TranscodeVideoJob implements ShouldQueue
     {
         try {
             $service->execute($this->mediaId);
+        } catch (MaxAttemptsExceededException $e) {
+            Log::error($e->getMessage());
         } catch (Exception $e) {
             $error = "Error transcoding file for Media Id: $this->mediaId: {$e->getMessage()}";
             Log::error($error);
