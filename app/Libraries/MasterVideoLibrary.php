@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Libraries;
 
-use App\Models\Content;
-use App\Models\Media;
+use App\Models\Tube\Content;
+use App\Models\Tube\Media;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;

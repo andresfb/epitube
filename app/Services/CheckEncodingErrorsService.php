@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Mail\EncodeErrorsMail;
-use App\Models\Content;
+use App\Models\Tube\Content;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;

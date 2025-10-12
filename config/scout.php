@@ -144,7 +144,7 @@ return [
         'typoTolerance' => ['minWordSizeForTypos' => ['oneTypo' => 4, 'twoTypos' => 8]],
         'rankingRules' => ['words', 'typo', 'proximity', 'attribute', 'sort', 'exactness'],
         'index-settings' => [
-            App\Models\Content::class => [
+            \App\Models\Tube\Content::class => [
                 'filterableAttributes' => ['id', 'title', 'active', 'viewed', 'category', 'tags', '__soft_deleted'],
                 'sortableAttributes' => ['added_at', 'created_at', 'title', 'viewed', 'liked', 'view_count'],
                 'stopWords' => ['the', 'of', 'to'],

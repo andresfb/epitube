@@ -6,8 +6,8 @@ namespace App\Services;
 
 use App\Libraries\MasterVideoLibrary;
 use App\Libraries\MediaNamesLibrary;
-use App\Models\Content;
-use App\Models\MimeType;
+use App\Models\Tube\Content;
+use App\Models\Tube\MimeType;
 use Exception;
 use FFMpeg\Coordinate\Dimension;
 use FFMpeg\FFProbe;

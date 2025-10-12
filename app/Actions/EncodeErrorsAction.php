@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Dtos\EncodeErrorItem;
-use App\Models\Content;
+use App\Models\Tube\Content;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 

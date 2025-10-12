@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Dtos\ContentItem;
-use App\Models\Feed;
+use App\Models\Tube\Feed;
 use Illuminate\Support\Facades\Config;
 use Illuminate\View\View;
 

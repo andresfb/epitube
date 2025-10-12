@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Dtos;
 
 use App\Libraries\MediaNamesLibrary;
-use App\Models\Content;
-use App\Models\Media;
-use App\Models\RelatedContent;
+use App\Models\Tube\Content;
+use App\Models\Tube\Media;
+use App\Models\Tube\RelatedContent;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Data;
 

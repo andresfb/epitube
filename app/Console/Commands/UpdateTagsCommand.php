@@ -2,12 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Content;
-use App\Models\Feed;
+use App\Models\Tube\Content;
 use App\Services\ImportVideoService;
 use Illuminate\Console\Command;
 use Throwable;
-
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;

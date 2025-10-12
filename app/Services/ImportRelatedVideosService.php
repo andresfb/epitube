@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Jobs\ImportRelatedVideoJob;
-use App\Models\Content;
+use App\Models\Tube\Content;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 

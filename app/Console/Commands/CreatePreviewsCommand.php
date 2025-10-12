@@ -6,10 +6,9 @@ namespace App\Console\Commands;
 
 use App\Jobs\CreatePreviewsJob;
 use App\Libraries\MediaNamesLibrary;
-use App\Models\Media;
+use App\Models\Tube\Media;
 use App\Services\CreatePreviewsService;
 use Exception;
-
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;

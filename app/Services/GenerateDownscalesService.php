@@ -6,8 +6,8 @@ namespace App\Services;
 
 use App\Jobs\EncodeDownscaleJob;
 use App\Libraries\MasterVideoLibrary;
-use App\Models\Media;
-use App\Models\MimeType;
+use App\Models\Tube\Media;
+use App\Models\Tube\MimeType;
 use App\Traits\Encodable;
 use Exception;
 use FFMpeg\FFProbe;

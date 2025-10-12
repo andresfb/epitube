@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Libraries\MediaNamesLibrary;
-use App\Models\Content;
-use App\Models\Media;
+use App\Models\Tube\Content;
+use App\Models\Tube\Media;
 use Illuminate\Console\Command;
 use RuntimeException;
-
 use function Laravel\Prompts\text;
 
 abstract class BaseEncodeCommand extends Command

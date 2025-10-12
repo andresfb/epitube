@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Tube;
 
 use App\Dtos\ImportVideoItem;
 use Illuminate\Database\Eloquent\Model;

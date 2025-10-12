@@ -2,8 +2,8 @@
 
 namespace App\Libraries;
 
-use App\Models\Content;
-use App\Models\Media;
+use App\Models\Tube\Content;
+use App\Models\Tube\Media;
 use App\Notifications\EncodeErrorNotification;
 use Exception;
 use Illuminate\Support\Facades\Log;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Libraries\JellyfinLibrary;
-use App\Models\Content;
-use App\Models\RelatedContent;
+use App\Models\Tube\Content;
+use App\Models\Tube\RelatedContent;
 use Illuminate\Support\Facades\Log;
 
 final class ImportRelatedVideoService

@@ -6,8 +6,8 @@ namespace App\Actions;
 
 use App\Jobs\TranscodeVideoJob;
 use App\Libraries\Notifications;
-use App\Models\Media;
-use App\Models\MimeType;
+use App\Models\Tube\Media;
+use App\Models\Tube\MimeType;
 use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;

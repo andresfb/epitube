@@ -6,8 +6,8 @@ namespace App\Services;
 
 use App\Exceptions\ProcessRunningException;
 use App\Libraries\MediaNamesLibrary;
-use App\Models\Content;
-use App\Models\Feed;
+use App\Models\Tube\Content;
+use App\Models\Tube\Feed;
 use Exception;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\Filters\Video\VideoFilters;

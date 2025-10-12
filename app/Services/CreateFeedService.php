@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Content;
-use App\Models\Feed;
+use App\Models\Tube\Content;
+use App\Models\Tube\Feed;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 

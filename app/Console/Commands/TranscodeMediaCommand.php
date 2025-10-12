@@ -6,11 +6,10 @@ namespace App\Console\Commands;
 
 use App\Jobs\TranscodeVideoJob;
 use App\Libraries\MediaNamesLibrary;
-use App\Models\MimeType;
+use App\Models\Tube\MimeType;
 use App\Services\TranscodeVideoService;
 use RuntimeException;
 use Throwable;
-
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
