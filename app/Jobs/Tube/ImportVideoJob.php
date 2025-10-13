@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Jobs\Tube;
+
+use App\Dtos\Tube\ImportVideoItem;
+use App\Models\Tube\Rejected;
+use App\Services\Tube\ImportVideoService;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\MaxAttemptsExceededException;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Throwable;
+
+final class ImportVideoJob implements ShouldQueue
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(private readonly ImportVideoItem $videoItem)
+    {
+        $this->queue = 'ingestor';
+        $this->delay = now()->addSeconds(10);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function handle(ImportVideoService $service): void
+    {
+        try {
+            $service->execute($this->videoItem);
+        } catch (MaxAttemptsExceededException $e) {
+            Log::error($e->getMessage());
+        } catch (Throwable $e) {
+            $error = "Error importing file: {$this->videoItem->Path}: {$e->getMessage()}";
+            Log::error($error);
+            Rejected::reject($this->videoItem, $error);
+
+            throw $e;
+        }
+    }
+}

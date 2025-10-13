@@ -198,7 +198,7 @@ return [
                 'connection' => 'redis',
                 'queue' => ['ingestor'],
                 'balance' => 'auto',
-                'processes' => 1,
+                'minProcesses' => 1,
                 'maxProcesses' => 2,
                 'timeout' => 5400,
                 'tries' => 1,
@@ -222,6 +222,15 @@ return [
                 'maxProcesses' => 2,
                 'memory' => 512,
                 'timeout' => 7200,
+                'tries' => 1,
+            ],
+
+            'downloader-supervisor' => [
+                'connection' => 'redis',
+                'queue' => ['downloader'],
+                'balance' => 'auto',
+                'processes' => 1,
+                'timeout' => 1800,
                 'tries' => 1,
             ],
 
@@ -265,6 +274,15 @@ return [
                 'maxProcesses' => 2,
                 'memory' => 512,
                 'timeout' => 7200,
+                'tries' => 1,
+            ],
+
+            'downloader-supervisor' => [
+                'connection' => 'redis',
+                'queue' => ['downloader'],
+                'balance' => 'auto',
+                'processes' => 1,
+                'timeout' => 1800,
                 'tries' => 1,
             ],
 

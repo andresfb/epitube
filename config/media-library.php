@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Libraries\MediaFileNamer;
-use App\Libraries\MediaPathGenerator;
-use App\Models\Media;
+use App\Libraries\Tube\MediaFileNamer;
+use App\Libraries\Tube\MediaPathGenerator;
+use App\Models\Tube\Media;
 
 return [
 

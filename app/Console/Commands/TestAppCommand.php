@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Dtos\ContentItem;
-use App\Models\Content;
-use App\Models\Feed;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -30,17 +27,6 @@ final class TestAppCommand extends Command
             clear();
             intro('Starting test');
 
-//            $content = Content::where('id', 6)
-//                ->firstOrFail();
-//            dump(ContentItem::withRelated($content)->toArray());
-
-//            $content = Content::inRandomOrder()
-//                ->firstOrFail();
-//
-//            Feed::generate($content);
-
-            $feed = Feed::where('id', 8)->firstOrFail();
-            dump($feed->toArray());
         } catch (Exception $e) {
             error($e->getMessage());
         } finally {

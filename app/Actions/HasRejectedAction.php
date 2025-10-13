@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Models\Rejected;
+use App\Models\Tube\Rejected;
 
 final readonly class HasRejectedAction
 {

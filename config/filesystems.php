@@ -60,7 +60,7 @@ return [
 
         'transcode' => [
             'driver' => 'local',
-            'root' => storage_path('transcode'),
+            'root' => env('TRANSCODE_PATH'),
             'permissions' => [
                 'file' => [
                     'public' => 0777,
@@ -75,7 +75,7 @@ return [
 
         'processing' => [
             'driver' => 'local',
-            'root' => storage_path('processing'),
+            'root' => env('PROCESSING_PATH'),
             'permissions' => [
                 'file' => [
                     'public' => 0777,
@@ -90,7 +90,7 @@ return [
 
         'download' => [
             'driver' => 'local',
-            'root' => storage_path('download'),
+            'root' => env('DOWNLOAD_PATH'),
             'permissions' => [
                 'file' => [
                     'public' => 0777,

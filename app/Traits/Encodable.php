@@ -4,41 +4,44 @@ declare(strict_types=1);
 
 namespace App\Traits;
 
+use App\Exceptions\ProcessRunningException;
 use Illuminate\Support\Facades\Storage;
-use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
 
 trait Encodable
 {
-    private string $flag = '';
+    protected string $flag = '';
 
-    private function checkFlag(string $disk, int $mediaId, string $mediaName): void
+    /**
+     * @throws ProcessRunningException
+     */
+    protected function checkFlag(string $disk, int $mediaId, string $mediaName): void
     {
         if (! Storage::disk($disk)->exists($this->flag)) {
             return;
         }
 
-        throw new RuntimeException(
-            sprintf('%s | %s %s process already running.', $mediaId, $mediaName, self::class)
+        throw new ProcessRunningException(
+            sprintf('%s | %s %s process already running.', $mediaId, $mediaName, static::class)
         );
     }
 
-    private function createFlag(string $disk): void
+    protected function createFlag(string $disk): void
     {
         Storage::disk($disk)->put($this->flag, '1');
     }
 
-    private function deleteFlag(string $disk): void
+    protected function deleteFlag(string $disk): void
     {
         Storage::disk($disk)->delete($this->flag);
     }
 
-    private function ffMpeg(): string
+    protected function ffMpeg(): string
     {
         return (new ExecutableFinder)->find('ffmpeg', config('media-library.ffmpeg_path', 'ffmpeg'));
     }
 
-    private function ffProbe(): string
+    protected function ffProbe(): string
     {
         return (new ExecutableFinder)->find('ffprobe', config('media-library.ffprobe_path', 'ffprobe'));
     }

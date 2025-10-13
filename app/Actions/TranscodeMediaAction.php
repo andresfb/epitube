@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Jobs\TranscodeVideoJob;
-use App\Libraries\Notifications;
-use App\Models\Media;
-use App\Models\MimeType;
+use App\Jobs\Tube\TranscodeVideoJob;
+use App\Libraries\Tube\Notifications;
+use App\Models\Tube\Media;
+use App\Models\Tube\MimeType;
 use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
@@ -31,13 +31,13 @@ final readonly class TranscodeMediaAction
                 return;
             }
 
+            Log::info("Transcoding $media->model_id | $media->name");
+
             if (! Config::boolean('constants.enable_encode_jobs')) {
                 Log::notice('@TranscodeMediaAction.handle: Encode jobs disabled.');
 
                 return;
             }
-
-            Log::info("Transcoding $media->model_id | $media->name");
 
             TranscodeVideoJob::dispatch($media->id);
         } catch (Exception $e) {

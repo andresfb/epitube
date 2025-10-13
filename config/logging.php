@@ -75,6 +75,12 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'ffmpeg' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/ffmpeg.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

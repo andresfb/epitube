@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Traits;
+
+use App\Dtos\Tube\ImportVideoItem;
+
+trait ImportItemCreator
+{
+    private function createItem(array $apiItem): ImportVideoItem
+    {
+        $fileInfo = pathinfo((string) $apiItem['Path']);
+        $runTimeTicks = (int) ($apiItem['RunTimeTicks'] ?? 0);
+
+        return new ImportVideoItem(
+            Id: $apiItem['Id'],
+            Name: $fileInfo['filename'],
+            Path: $apiItem['Path'],
+            MimeType: mime_content_type($apiItem['Path']),
+            RunTimeTicks: $runTimeTicks,
+            Width: (int) ($apiItem['Width'] ?? 0),
+            Height: (int) ($apiItem['Height'] ?? 0),
+            Duration: (int) ceil($runTimeTicks / 10000000),
+        );
+    }
+}

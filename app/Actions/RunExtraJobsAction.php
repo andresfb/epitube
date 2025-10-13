@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Jobs\CreatePreviewsJob;
-use App\Jobs\ExtractThumbnailsJob;
-use App\Jobs\GenerateDownscalesJob;
+use App\Jobs\Tube\CreatePreviewsJob;
+use App\Jobs\Tube\ExtractThumbnailsJob;
+use App\Jobs\Tube\GenerateDownscalesJob;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
