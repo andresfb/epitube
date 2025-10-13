@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace App\Models\Tube;
 
-use App\Dtos\ContentItem;
+use App\Dtos\Tube\ContentItem;
 use DateTime;
 use MongoDB\Laravel\Eloquent\Model;
 use MongoDB\Laravel\Relations\BelongsTo;

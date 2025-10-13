@@ -2,12 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Jobs\CheckEncodingErrorsJob;
-use App\Jobs\CheckSelectedVideosJob;
-use App\Jobs\ClearTemporaryDisksJob;
-use App\Jobs\CreateFeedJob;
-use App\Jobs\ImportRelatedVideosJob;
-use App\Jobs\ImportVideosJob;
+use App\Jobs\Tube\ClearTemporaryDisksJob;
+use App\Jobs\Tube\ImportVideosJob;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;

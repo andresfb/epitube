@@ -3,8 +3,6 @@
 namespace App\Models\Boogie;
 
 use Carbon\CarbonInterface;
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
@@ -26,7 +24,7 @@ use Illuminate\Support\Facades\Config;
  * @property CarbonInterface|null $created_at
  * @property CarbonInterface|null $updated_at
  */
-class SelectedVideo extends Model
+class Video extends Model
 {
     use SoftDeletes;
 
@@ -36,29 +34,6 @@ class SelectedVideo extends Model
     {
         parent::__construct($attributes);
         $this->connection = Config::string('database.boogie');
-    }
-
-    #[Scope]
-    protected function pending(Builder $query): Builder
-    {
-        return $query->where('active', true)
-            ->where('used', false)
-            ->whereBetween('duration_numb', [300, 1200])
-            ->orderBy('id');
-    }
-
-    public function disable(): void
-    {
-        $this->update([
-            'active' => false,
-        ]);
-    }
-
-    public function markedUsed(): void
-    {
-        $this->update([
-            'used' => true,
-        ]);
     }
 
     protected function casts(): array

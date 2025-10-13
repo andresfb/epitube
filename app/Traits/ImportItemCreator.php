@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\Dtos\ImportVideoItem;
+use App\Dtos\Tube\ImportVideoItem;
 
 trait ImportItemCreator
 {

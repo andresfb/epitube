@@ -2,7 +2,7 @@
 
 namespace App\Models\Tube;
 
-use App\Dtos\ImportVideoItem;
+use App\Dtos\Tube\ImportVideoItem;
 use Illuminate\Database\Eloquent\Model;
 
 final class Rejected extends Model

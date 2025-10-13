@@ -12,7 +12,7 @@ return [
 
     'download_command' => env(
         'SELECTED_VIDEOS_DOWNLOAD_COMMAND',
-        '/usr/sbin/yt-dlp --no-mtime -o "%(title)s-[%(id)s].%(ext)s" --restrict-filenames -P %s --merge-output-format mp4 %s'
+        '/usr/sbin/yt-dlp --max-sleep-interval 5 --sleep-interval 3 --no-mtime -o "%(title)s-[%(id)s].%(ext)s" --restrict-filenames -P {0} --merge-output-format mp4 {1}'
     ),
 
 ];

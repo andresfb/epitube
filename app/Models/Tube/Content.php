@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\Tube;
 
-use App\Libraries\DiskNamesLibrary;
-use App\Libraries\MediaNamesLibrary;
+use App\Libraries\Tube\DiskNamesLibrary;
+use App\Libraries\Tube\MediaNamesLibrary;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;

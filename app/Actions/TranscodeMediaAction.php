@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Jobs\TranscodeVideoJob;
-use App\Libraries\Notifications;
+use App\Jobs\Tube\TranscodeVideoJob;
+use App\Libraries\Tube\Notifications;
 use App\Models\Tube\Media;
 use App\Models\Tube\MimeType;
 use Exception;
