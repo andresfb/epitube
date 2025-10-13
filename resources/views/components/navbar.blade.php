@@ -129,6 +129,39 @@
                     </ul>
                 </div>
                 <li>
+                    <button id="mega-menu-full-dropdown-button"
+                            data-collapse-toggle="mega-menu-full-dropdown"
+                            @class([
+                                'flex',
+                                'items-center',
+                                'justify-between',
+                                'w-full',
+                                'py-2',
+                                'px-3',
+                                'text-gray-900',
+                                'rounded-sm',
+                                'md:w-auto',
+                                'hover:bg-gray-100',
+                                'md:hover:bg-transparent',
+                                'md:border-0',
+                                'md:hover:text-blue-600',
+                                'md:p-0',
+                                'dark:text-white',
+                                'md:dark:hover:text-blue-500',
+                                'dark:hover:bg-gray-700',
+                                'dark:hover:text-blue-500',
+                                'md:dark:hover:bg-transparent',
+                                'dark:border-gray-700',
+                            ])>
+                        Tags
+                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                             fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="2" d="m1 1 4 4 4-4"/>
+                        </svg>
+                    </button>
+                </li>
+                <li>
                     <a href="#" @class([
                         'block',
                         'py-2',
@@ -183,4 +216,51 @@
             </ul>
         </div>
     </div>
+
+    <!-- Tags list display -->
+    <div id="mega-menu-full-dropdown"
+         @class([
+             'mt-1',
+             'border-gray-200',
+             'shadow-xs',
+             'bg-gray-50',
+             'md:bg-white',
+             'border-y',
+             'dark:bg-gray-800',
+             'dark:border-gray-600',
+             'hidden',
+         ])>
+        <div
+            @class([
+                'max-w-screen-xl',
+                'px-4',
+                'py-5',
+                'mx-auto',
+                'text-sm',
+                'text-gray-900',
+                'dark:text-white',
+                'md:px-6',
+            ])>
+            <ul class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            @for($i=1; $i<49; $i++)
+                <li>
+                    <a href="#" class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <div class="font-semibold">Tag {{ $i }}</div>
+                    </a>
+                </li>
+            @endfor
+                <li>
+                    <a href="#" class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <div class="font-semibold">I Came in your Girlfriend's Ass</div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <div class="font-semibold"><x-bi-tags class="inline mr-2" />All Tags</div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
 </nav>

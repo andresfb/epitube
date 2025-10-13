@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\EncodeErrorsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SwitchCategoryController;
-use App\Models\Category;
+use App\Models\Tube\Category;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
