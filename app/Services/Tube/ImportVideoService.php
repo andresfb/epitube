@@ -125,6 +125,8 @@ final readonly class ImportVideoService
             ->lower();
 
         $tags = collect();
+        $sharedTags = Config::array('content.shared_tags');
+
         str($directory)
             ->replace("'", '')
             ->replace('step', ' ')
@@ -134,12 +136,19 @@ final readonly class ImportVideoService
             ->explode('/')
             ->map(fn (string $tag): string => trim($tag))
             ->reject(fn (string $part): bool => empty($part))
-            ->each(function (string $part) use (&$tags) {
+            ->each(function (string $part) use (&$tags, $sharedTags) {
                 if ($this->isHash($part)) {
                     return;
                 }
 
-                $tags->push(ucwords($part));
+                $tag = ucwords($part);
+                $tags->push($tag);
+
+                if (array_key_exists($tag, $sharedTags)) {
+                    foreach ($sharedTags[$tag] as $sharedTag) {
+                        $tags->push($sharedTag);
+                    }
+                }
             });
 
         return $tags->toArray();
