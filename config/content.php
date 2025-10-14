@@ -2,6 +2,16 @@
 
 declare(strict_types=1);
 
+$sharedTags = [];
+try {
+    $rawData = env('CONTENT_SHARED_TAGS');
+    if (! blank($rawData)) {
+        $sharedTags = (array) json_decode(base64_decode($rawData), false, 512, JSON_THROW_ON_ERROR);
+    }
+} catch (JsonException $e) {
+    $sharedTags = [];
+}
+
 return [
 
     'data_path' => env('CONTENT_DATA_PATH', '/content'),
@@ -43,5 +53,7 @@ return [
             'a,an,i,he,she,they,them,his,hers,theirs,that,this,then,where,to,me,the,has,have,are,is,of'
         )
     ),
+
+    'shared_tags' => $sharedTags,
 
 ];

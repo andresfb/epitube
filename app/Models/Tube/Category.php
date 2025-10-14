@@ -7,15 +7,13 @@ namespace App\Models\Tube;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 final class Category extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = [
-        'slug',
-        'name',
-    ];
+    protected $guarded = [];
 
     public static function getMain(): self
     {
@@ -29,7 +27,68 @@ final class Category extends Model
 
     public static function getId(string $slug): int
     {
-        return self::where('slug', $slug)->firstOrFail()->id;
+        return (int) Cache::tags('categories')
+            ->remember(
+                md5(sprintf('%s:%s:%s', self::class, __FUNCTION__, $slug)),
+                now()->addDay(),
+                function () use ($slug): int {
+                    return self::where('slug', $slug)->firstOrFail()->id;
+                });
+    }
+
+    public static function getName(string $slug): string
+    {
+        return Cache::tags('categories')
+            ->remember(
+                md5(sprintf('%s:%s:%s', self::class, __FUNCTION__, $slug)),
+                now()->addDay(),
+                function () use ($slug): string {
+                    return self::where('slug', $slug)->firstOrFail()->name;
+                });
+    }
+
+    public static function getIcon(string $slug): string
+    {
+        return Cache::tags('categories')
+            ->remember(
+                md5(sprintf('%s:%s:%s', self::class, __FUNCTION__, $slug)),
+                now()->addDay(),
+                function () use ($slug): string {
+                    return self::where('slug', $slug)->firstOrFail()->icon;
+                });
+    }
+
+    public static function getSlugs(): array
+    {
+        return Cache::tags('categories')
+            ->remember(
+                md5(self::class.__FUNCTION__),
+                now()->addDay(),
+                function (): array {
+                    return self::all()->pluck('slug')->toArray();
+                });
+    }
+
+    public static function getRouterList(): array
+    {
+        return Cache::tags('categories')
+            ->remember(
+                md5(self::class.__FUNCTION__),
+                now()->addDay(),
+                function (): array {
+                    $main = self::getMain();
+                    $alt = self::getAlt();
+
+                    return [[
+                        'name' => $main->name,
+                        'slug' => $main->slug,
+                        'icon' => '♀️'
+                    ], [
+                        'name' => $alt->name,
+                        'slug' => $alt->slug,
+                        'icon' => '🏳️‍🌈'
+                    ]];
+                });
     }
 
     public function contents(): HasMany|self
