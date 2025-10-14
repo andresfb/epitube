@@ -1,0 +1,51 @@
+To order tags by usage count in Spatie Tags, you need to query the tags with a count of their related models. Here are the approaches:
+
+  Using Query Builder with Joins
+
+  use Spatie\Tags\Tag;
+
+  // Get tags ordered by usage count (most used first)
+  $popularTags = Tag::query()
+      ->withCount(['taggables' => function ($query) {
+          $query->where('taggable_type', \App\Models\Tube\Content::class);
+      }])
+      ->orderByDesc('taggables_count')
+      ->get();
+
+  // Or for all taggable types combined
+  $popularTags = Tag::withCount('taggables')
+      ->orderByDesc('taggables_count')
+      ->get();
+
+  Alternative with Raw SQL
+
+  use Spatie\Tags\Tag;
+  use Illuminate\Support\Facades\DB;
+
+  $popularTags = Tag::select('tags.*', DB::raw('COUNT(taggables.tag_id) as usage_count'))
+      ->leftJoin('taggables', 'tags.id', '=', 'taggables.tag_id')
+      ->where('taggables.taggable_type', \App\Models\Tube\Content::class)
+      ->groupBy('tags.id')
+      ->orderByDesc('usage_count')
+      ->get();
+
+  From a Specific Model's Perspective
+
+  use App\Models\Tube\Content;
+
+  // Get all tags used by Content, ordered by popularity
+  $popularTags = Content::query()
+      ->with('tags')
+      ->get()
+      ->pluck('tags')
+      ->flatten()
+      ->countBy('id')
+      ->sortDesc()
+      ->keys()
+      ->map(fn($id) => Tag::find($id));
+
+  The withCount() method is the cleanest Laravel approach and will add a taggables_count attribute to each tag that you can access in your views:
+
+  @foreach($popularTags as $tag)
+      <span>{{ $tag->name }} ({{ $tag->taggables_count }})</span>
+  @endforeach
