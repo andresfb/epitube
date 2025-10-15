@@ -6,6 +6,8 @@ namespace App\Models\Tube;
 
 use App\Libraries\Tube\DiskNamesLibrary;
 use App\Libraries\Tube\MediaNamesLibrary;
+use App\Observers\ContentObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -19,11 +21,11 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
+#[ObservedBy([ContentObserver::class])]
 final class Content extends Model implements HasMedia
 {
     use HasTags;
     use InteractsWithMedia;
-    use Searchable;
     use SoftDeletes;
     use Notifiable;
 
@@ -31,9 +33,10 @@ final class Content extends Model implements HasMedia
 
     protected $with = ['category', 'tags', 'media', 'related'];
 
-    public static function fileHashExists(string $hash): bool
+    public static function isDifferentFileVersion(string $hash, string $ogPath): bool
     {
         return self::where('file_hash', $hash)
+            ->where('og_path', '!=', $ogPath)
             ->exists();
     }
 
@@ -117,12 +120,7 @@ final class Content extends Model implements HasMedia
             ->useDisk(DiskNamesLibrary::media());
     }
 
-    public function searchableAs(): string
-    {
-        return 'epitube_content_index';
-    }
-
-    public function toSearchableArray(): ?array
+    public function toFeedArray(): ?array
     {
         $content = $this->except([
             'item_id',
@@ -136,6 +134,8 @@ final class Content extends Model implements HasMedia
         $content['view_count'] = $this->view_count ?? 0;
 
         $content['tags'] = $this->tags->pluck('name')->toArray();
+        $content['tag_slugs'] = $this->tags->pluck('slug')->toArray();
+
         $content['service_url'] = sprintf(
             Config::string('jellyfin.item_web_url'),
             $this->item_id,
@@ -148,7 +148,7 @@ final class Content extends Model implements HasMedia
 
         $media = $this->getMedia($collection)->first();
         if ($media !== null) {
-            $content['duration'] = (int) $media->getCustomProperty('duration', 0);
+            $content['duration'] = (int)$media->getCustomProperty('duration', 0);
             $content['height'] = sprintf('%sp', $media->getCustomProperty('height', 0));
         }
 
@@ -169,8 +169,8 @@ final class Content extends Model implements HasMedia
     protected function viewCount(): Attribute
     {
         return Attribute::make(
-            get: static fn ($value): int|float => $value / 1000,
-            set: static fn ($value): int|float => $value * 1000,
+            get: static fn($value): int|float => $value / 1000,
+            set: static fn($value): int|float => $value * 1000,
         );
     }
 }

@@ -82,11 +82,11 @@ final class Category extends Model
                     return [[
                         'name' => $main->name,
                         'slug' => $main->slug,
-                        'icon' => '♀️'
+                        'icon' => $main->icon,
                     ], [
                         'name' => $alt->name,
                         'slug' => $alt->slug,
-                        'icon' => '🏳️‍🌈'
+                        'icon' => $alt->icon
                     ]];
                 });
     }

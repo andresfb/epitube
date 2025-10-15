@@ -31,4 +31,27 @@ trait DirectoryChecker
         // If the remaining array is empty, the directory has no contents
         return count($files) === 0;
     }
+
+    private function isHash(string $value): bool
+    {
+        $value = trim($value);
+
+        // Hex‑only hashes (MD5, SHA‑1, SHA‑256, SHA‑512)
+        $hexLengths = [32, 40, 64, 128];
+        if (ctype_xdigit($value) && in_array(strlen($value), $hexLengths, true)) {
+            return true;
+        }
+
+        // bcrypt: $2a$, $2b$, or $2y$ followed by cost and 53‑char salt+hash
+        if (preg_match('/^\$2[aby]\$\d{2}\$[.\/A-Za-z0-9]{53}$/', $value)) {
+            return true;
+        }
+
+        // Argon2i / Argon2id
+        if (preg_match('/^\$(argon2i|argon2id)\$[^$]+\$[^$]+\$[A-Za-z0-9\/+.=]+$/', $value)) {
+            return true;
+        }
+
+        return false;
+    }
 }

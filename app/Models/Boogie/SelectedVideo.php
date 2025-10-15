@@ -2,10 +2,12 @@
 
 namespace App\Models\Boogie;
 
+use App\Interfaces\DownloadableVideoInterface;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 
@@ -26,7 +28,7 @@ use Illuminate\Support\Facades\Config;
  * @property CarbonInterface|null $created_at
  * @property CarbonInterface|null $updated_at
  */
-class SelectedVideo extends Model
+class SelectedVideo extends Model implements DownloadableVideoInterface
 {
     use SoftDeletes;
 
@@ -38,13 +40,24 @@ class SelectedVideo extends Model
         $this->connection = Config::string('database.boogie');
     }
 
-    #[Scope]
-    protected function pending(Builder $query): Builder
+    public function parent(): BelongsTo
     {
-        return $query->where('active', true)
-            ->where('used', false)
-            ->whereBetween('duration_numb', [300, 1200])
-            ->orderBy('id');
+        return $this->belongsTo(Video::class, 'hash', 'hash');
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getUrl(): string
+    {
+        return $this->url;
+    }
+
+    public function getHash(): string
+    {
+        return $this->hash;
     }
 
     public function disable(): void
@@ -54,7 +67,7 @@ class SelectedVideo extends Model
         ]);
     }
 
-    public function markedUsed(): void
+    public function markUsed(): void
     {
         $this->update([
             'used' => true,
@@ -69,5 +82,14 @@ class SelectedVideo extends Model
             'active' => 'boolean',
             'used' => 'boolean',
         ];
+    }
+
+    #[Scope]
+    protected function pending(Builder $query): Builder
+    {
+        return $query->where('active', true)
+            ->where('used', false)
+            ->whereBetween('duration_numb', [300, 1200])
+            ->orderBy('id');
     }
 }

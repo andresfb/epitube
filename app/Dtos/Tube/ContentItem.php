@@ -52,7 +52,7 @@ final class ContentItem extends Data
 
     public static function withContent(Content $content): self
     {
-        $contentArray = $content->toSearchableArray();
+        $contentArray = $content->toFeedArray();
         $contentArray['expires_at'] = now()->addDay()->subSecond();
 
         $contentArray[MediaNamesLibrary::thumbnails()] = $content->getMedia(MediaNamesLibrary::thumbnails())

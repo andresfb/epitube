@@ -3,8 +3,10 @@
 namespace App\Services\Boogie;
 
 use App\Dtos\Boogie\DownloadStatusItem;
+use App\Dtos\Boogie\ImportSelectedVideoItem;
 use App\Jobs\Boogie\CheckSelectedVideosJob;
 use App\Jobs\Boogie\DownloadSelectedVideoJob;
+use App\Jobs\Boogie\ImportSelectedVideoJob;
 use App\Libraries\Boogie\DownloadVideoLibrary;
 use App\Models\Boogie\SelectedVideo;
 use Illuminate\Support\Facades\Cache;
@@ -78,7 +80,12 @@ final readonly class DownloadSelectedVideoService
             return;
         }
 
-        // TODO: dispatch a new job to import the video
+        ImportSelectedVideoJob::dispatch(
+            new ImportSelectedVideoItem(
+                videoId: $video->id,
+                downloadPath: $this->downloadLibrary->getDownloadPath(),
+            )
+        );
     }
 
     private function dispatchJob(DownloadStatusItem $status): void

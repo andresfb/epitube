@@ -12,9 +12,9 @@ use App\Libraries\Tube\MediaNamesLibrary;
 use App\Libraries\Tube\TitleParserLibrary;
 use App\Models\Tube\Category;
 use App\Models\Tube\Content;
-use App\Models\Tube\Feed;
 use App\Models\Tube\MimeType;
 use App\Models\Tube\Rejected;
+use App\Traits\DirectoryChecker;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -26,6 +26,8 @@ use Throwable;
 
 final readonly class ImportVideoService
 {
+    use DirectoryChecker;
+
     public function __construct(
         private TitleParserLibrary $parserLibrary,
         private TranscodeMediaAction $transcodeAction,
@@ -35,14 +37,14 @@ final readonly class ImportVideoService
     /**
      * @throws Throwable
      */
-    public function execute(ImportVideoItem $videoItem): void
+    public function execute(ImportVideoItem $videoItem): int
     {
         Log::notice("Importing video for file: $videoItem->Path");
 
         $fileInfo = pathinfo($videoItem->Path);
         $fileHash = File::hash($videoItem->Path);
 
-        if (Content::fileHashExists($fileHash)) {
+        if (Content::isDifferentFileVersion($fileHash, $videoItem->Path)) {
             Log::notice("Video already imported: $videoItem->Path");
 
             $this->parseTags(
@@ -50,22 +52,25 @@ final readonly class ImportVideoService
                 $fileInfo
             );
 
-            return;
+            return 0;
         }
 
         $videoInfo = $this->getVideoInfo($videoItem);
         if (! $videoInfo->status) {
-            return;
+            return 0;
         }
 
         $videoItem = $videoItem->withVideoInfo($videoInfo);
         if (! $this->validate($videoItem)) {
-            return;
+            return 0;
         }
 
         Log::notice('Saving content');
         $media = DB::transaction(function () use ($videoItem, $fileHash, $fileInfo, $videoInfo): Media {
-            $needsTranscode = MimeType::needsTranscode($videoItem->MimeType);
+            if ($videoItem->FromDownload) {
+                $fileInfo['filename'] = $videoItem->Name;
+            }
+
             $tile = $this->parserLibrary->parseFileName($fileInfo)->title()->toString();
             $category = $this->parserLibrary->getRootDirectory() === Config::string('constants.alt_category')
                 ? Config::string('constants.alt_category')
@@ -85,6 +90,7 @@ final readonly class ImportVideoService
             $this->parseTags($content, $fileInfo);
 
             Log::notice('Adding media');
+            $needsTranscode = MimeType::needsTranscode($videoItem->MimeType);
             $media = $content->addMedia($videoItem->Path)
                 ->withCustomProperties([
                     'width' => $videoInfo->width,
@@ -103,29 +109,31 @@ final readonly class ImportVideoService
         });
 
         $this->transcodeAction->handle($media);
-
         Log::notice('Done importing video');
+
+        return $media->model_id;
     }
 
     public function parseTags(Content $content, array $fileInfo): void
     {
         $tags = $this->extractTags($fileInfo);
-        if (! blank($tags)) {
-            $content->attachTags($tags, 'main');
+        if (blank($tags)) {
+            return;
         }
 
-        $content->searchableSync();
-        Feed::updateIfExists($content);
+        $content->attachTags($tags, 'main');
     }
 
     public function extractTags(array $fileInfo): array
     {
         $directory = str($fileInfo['dirname'])
             ->replace(config('content.data_path'), '')
+            ->replace(config('selected-videos.download_path'), '')
             ->lower();
 
         $tags = collect();
         $sharedTags = Config::array('content.shared_tags');
+        $bandedTags = Config::array('content.banded_tags');
 
         str($directory)
             ->replace("'", '')
@@ -134,21 +142,29 @@ final readonly class ImportVideoService
             ->replace('   ', ' ')
             ->replace('  ', ' ')
             ->explode('/')
-            ->map(fn (string $tag): string => trim($tag))
-            ->reject(fn (string $part): bool => empty($part))
-            ->each(function (string $part) use (&$tags, $sharedTags) {
-                if ($this->isHash($part)) {
+            ->map(fn (string $text): string => trim($text))
+            ->reject(function (string $text) use($bandedTags): bool {
+                return blank($text) || in_array($text, $bandedTags, true);
+            })
+            ->each(function (string $text) use (&$tags, $sharedTags) {
+                if ($this->isHash($text)) {
                     return;
                 }
 
-                $tag = ucwords($part);
-                $tags->push($tag);
+                str($text)
+                    ->explode(' - ')
+                    ->map(fn (string $text): string => trim($text))
+                    ->reject(fn (string $text): bool => blank($text))
+                    ->each(function (string $text) use (&$tags, $sharedTags) {
+                        $tag = ucwords($text);
+                        $tags->push($tag);
 
-                if (array_key_exists($tag, $sharedTags)) {
-                    foreach ($sharedTags[$tag] as $sharedTag) {
-                        $tags->push($sharedTag);
-                    }
-                }
+                        if (array_key_exists($tag, $sharedTags)) {
+                            foreach ($sharedTags[$tag] as $sharedTag) {
+                                $tags->push($sharedTag);
+                            }
+                        }
+                    });
             });
 
         return $tags->toArray();
@@ -231,28 +247,5 @@ final readonly class ImportVideoService
         }
 
         return true;
-    }
-
-    private function isHash(string $value): bool
-    {
-        $value = trim($value);
-
-        // Hex‑only hashes (MD5, SHA‑1, SHA‑256, SHA‑512)
-        $hexLengths = [32, 40, 64, 128];
-        if (ctype_xdigit($value) && in_array(strlen($value), $hexLengths, true)) {
-            return true;
-        }
-
-        // bcrypt: $2a$, $2b$, or $2y$ followed by cost and 53‑char salt+hash
-        if (preg_match('/^\$2[aby]\$\d{2}\$[.\/A-Za-z0-9]{53}$/', $value)) {
-            return true;
-        }
-
-        // Argon2i / Argon2id
-        if (preg_match('/^\$(argon2i|argon2id)\$[^$]+\$[^$]+\$[A-Za-z0-9\/+.=]+$/', $value)) {
-            return true;
-        }
-
-        return false;
     }
 }

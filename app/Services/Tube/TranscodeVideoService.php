@@ -212,9 +212,6 @@ final class TranscodeVideoService
             ])
             ->toMediaCollection(MediaNamesLibrary::transcoded());
 
-        $content->searchableSync();
-        Feed::updateIfExists($content);
-
         return $media->id;
     }
 }

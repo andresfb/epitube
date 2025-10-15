@@ -14,4 +14,6 @@ return [
 
     'enable_encode_jobs' => (bool) env('ENABLE_ENCODE_JOBS', true),
 
+    'main_tags_limit' => (int) env('MAIN_TAGS_LIMIT', 50),
+
 ];

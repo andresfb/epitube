@@ -7,6 +7,7 @@ namespace App\Models\Tube;
 
 use App\Dtos\Tube\ContentItem;
 use DateTime;
+use Laravel\Scout\Searchable;
 use MongoDB\Laravel\Eloquent\Model;
 use MongoDB\Laravel\Relations\BelongsTo;
 
@@ -21,6 +22,7 @@ use MongoDB\Laravel\Relations\BelongsTo;
  * @property int $view_count
  * @property string $service_url
  * @property array $tags
+ * @property array $tag_slugs
  * @property array $videos
  * @property array $previews
  * @property array $thumbnails
@@ -30,6 +32,8 @@ use MongoDB\Laravel\Relations\BelongsTo;
  */
 final class Feed extends Model
 {
+    use Searchable;
+
     protected $connection = 'mongodb';
 
     protected $guarded = [];
@@ -56,6 +60,16 @@ final class Feed extends Model
         return $this->belongsTo(Content::class);
     }
 
+    public function searchableAs(): string
+    {
+        return 'epitube_feed_index';
+    }
+
+    public function toSearchableArray(): ?array
+    {
+        return $this->toArray();
+    }
+
     protected function casts(): array
     {
         return [
@@ -64,6 +78,7 @@ final class Feed extends Model
             'liked' => 'boolean',
             'view_count' => 'integer',
             'tags' => 'array',
+            'tag_slugs' => 'array',
             'videos' => 'array',
             'previews' => 'array',
             'thumbnails' => 'array',

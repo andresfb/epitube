@@ -3,8 +3,9 @@
 namespace App\Libraries\Boogie;
 
 use App\Dtos\Boogie\DownloadStatusItem;
-use App\Models\Boogie\SelectedVideo;
+use App\Interfaces\DownloadableVideoInterface;
 use App\Traits\DirectoryChecker;
+use App\Traits\DomainNameExtractor;
 use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
@@ -15,6 +16,7 @@ use Symfony\Component\Process\Process;
 final class DownloadVideoLibrary
 {
     use DirectoryChecker;
+    use DomainNameExtractor;
 
     private bool $downloaded = false;
 
@@ -30,24 +32,16 @@ final class DownloadVideoLibrary
         return $this->downloadPath;
     }
 
-    public function download(SelectedVideo $video, DownloadStatusItem $status): DownloadStatusItem
+    public function download(DownloadableVideoInterface $video, DownloadStatusItem $status): DownloadStatusItem
     {
-        Log::notice("Starting download process for video: $video->url on video $video->id");
+        Log::notice("Starting download process for video: {$video->getUrl()} on video {$video->getId()}");
 
         $this->downloaded = false;
-        $this->downloadPath = '';
-
-        if (! filter_var($video->url, FILTER_VALIDATE_URL)) {
-            Log::error("Invalid URL: $video->url on video $video->id");
-            $video->disable();
-
-            return $status;
-        }
-
         $this->downloadPath = sprintf(
-            "%s/%s",
+            "%s/%s/%s",
             Config::string('selected-videos.download_path'),
-            $video->hash,
+            $this->getDomainRoot($video->getUrl()),
+            $video->getHash(),
         );
 
         if (! is_dir($this->downloadPath) && ! mkdir($this->downloadPath, 0777, true) && ! is_dir($this->downloadPath)) {
@@ -56,7 +50,7 @@ final class DownloadVideoLibrary
 
         $cmd = str(Config::string('selected-videos.download_command'))
             ->replace('{0}', $this->downloadPath)
-            ->replace('{1}', $video->url)
+            ->replace('{1}', $video->getUrl())
             ->toString();
 
         Log::channel(Config::string('laravel-ffmpeg.log_channel'))
@@ -73,15 +67,15 @@ final class DownloadVideoLibrary
                 throw new RuntimeException($process->getErrorOutput());
             }
         } catch (Exception $e) {
-            Log::error("Error downloading video $video->id: {$e->getMessage()}");
+            Log::error("Error downloading video {$video->getId()}: {$e->getMessage()}");
             $video->disable();
             $this->deleteTempFolder();
 
             return $status->incrementRuns();
         }
 
-        Log::info("Video $video->id downloaded successfully");
-        $video->markedUsed();
+        Log::info("Video {$video->getId()} downloaded successfully");
+        $video->markUsed();
         $this->downloaded = true;
 
         return $status->increment();

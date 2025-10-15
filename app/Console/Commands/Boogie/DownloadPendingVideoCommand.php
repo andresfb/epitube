@@ -3,13 +3,16 @@
 namespace App\Console\Commands\Boogie;
 
 use App\Dtos\Boogie\DownloadStatusItem;
+use App\Dtos\Boogie\ImportSelectedVideoItem;
 use App\Libraries\Boogie\DownloadVideoLibrary;
 use App\Models\Boogie\SelectedVideo;
-use App\Models\Tube\Content;
-use Exception;
+use App\Services\Boogie\ImportSelectedVideoService;
+use App\Traits\LanguageChecker;
 use Illuminate\Console\Command;
+use LanguageDetector\LanguageDetector;
 use RuntimeException;
 
+use Throwable;
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
@@ -17,12 +20,17 @@ use function Laravel\Prompts\outro;
 
 class DownloadPendingVideoCommand extends Command
 {
+    use LanguageChecker;
+
     protected $signature = 'download:pending';
 
     protected $description = 'Download one of the Pending Videos in the Boogie database';
 
-    public function __construct(private readonly DownloadVideoLibrary $downloadLibrary)
-    {
+    public function __construct(
+        private readonly DownloadVideoLibrary $downloadLibrary,
+        private readonly LanguageDetector $detector,
+        private readonly ImportSelectedVideoService $importService
+    ) {
         parent::__construct();
     }
 
@@ -32,25 +40,26 @@ class DownloadPendingVideoCommand extends Command
         intro('Starting downloading pending video');
 
         try {
-            $run = 0;
-            $makRuns = 100000;
-            $pending = null;
-            $continue = true;
+            $this->line('Finding pending video');
+            $pending = SelectedVideo::query()
+                ->pending()
+                ->firstOrFail();
 
-            while ($continue) {
-                if ($run >= $makRuns) {
-                    throw new RuntimeException('Too many runs trying to find a pending video');
-                }
+            $this->newLine();
+            $this->line('Checking video');
 
-                $pending = SelectedVideo::query()
-                    ->pending()
-                    ->firstOrFail();
+            if (! filter_var($pending->url, FILTER_VALIDATE_URL)) {
+                error("Invalid URL: $pending->url on video: $pending->id");
+                $pending->disable();
 
-                $continue = Content::query()
-                    ->where('item_id', $pending->hash)
-                    ->exists();
+                return;
+            }
 
-                $run++;
+            if ($this->containsNonLatin($pending->title)) {
+                error("Title is not on Latin characters for video: $pending->id");
+                $pending->disable();
+
+                return;
             }
 
             $this->line("Downloading pending video $pending->id | $pending->title");
@@ -65,8 +74,16 @@ class DownloadPendingVideoCommand extends Command
                 throw new RuntimeException('Video not downloaded');
             }
 
-            dump($this->downloadLibrary->getDownloadPath());
-        } catch (Exception $e) {
+            $this->line('Video downloaded. Importing...');
+            $this->importService->execute(
+                new ImportSelectedVideoItem(
+                    videoId: $pending->id,
+                    downloadPath: $this->downloadLibrary->getDownloadPath(),
+                )
+            );
+
+            info('Import successful');
+        } catch (Throwable $e) {
             error($e->getMessage());
         } finally {
             $this->newLine();

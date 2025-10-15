@@ -242,20 +242,15 @@
                 'md:px-6',
             ])>
             <ul class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-            @for($i=1; $i<49; $i++)
+            @foreach($tags as $tag)
                 <li>
-                    <a href="#" class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <div class="font-semibold">Tag {{ $i }}</div>
+                    <a href="{{ route('tags', ['slug' => $tag->slug]) }}" class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <div class="font-semibold">{{ $tag->name }}</div>
                     </a>
                 </li>
-            @endfor
+            @endforeach
                 <li>
-                    <a href="#" class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <div class="font-semibold">I Came in your Girlfriend's Ass</div>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <a href="{{ route('tags.list') }}" class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                         <div class="font-semibold"><x-bi-tags class="inline mr-2" />All Tags</div>
                     </a>
                 </li>

@@ -59,9 +59,6 @@ final class ExtractThumbnailsService extends BaseEncodeService
                 ])
                 ->toMediaCollection(MediaNamesLibrary::thumbnails());
         }
-
-        $content->searchableSync();
-        Feed::updateIfExists($content);
     }
 
     /**

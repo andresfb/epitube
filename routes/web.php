@@ -14,5 +14,13 @@ Route::get('/switch/{category}', SwitchCategoryController::class)
     ->name('switch.category')
     ->whereIn('category', Category::getSlugs());
 
+Route::get('/tags/{slug}', static function (string $slug) {
+    echo $slug;
+})->name('tags');
+
+Route::get('/tags/list', static function () {
+    echo 'tag list';
+})->name('tags.list');
+
 Route::get('/encoding/errors', EncodeErrorsController::class)
     ->name('encoding.errors');

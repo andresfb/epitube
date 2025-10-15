@@ -17,6 +17,7 @@ final class ImportVideoItem extends Data
         public int $Width = 0,
         public int $Height = 0,
         public int $Duration = 0,
+        public bool $FromDownload = false,
     ) {}
 
     public function withVideoInfo(VideoInfoItem $infoItem): self

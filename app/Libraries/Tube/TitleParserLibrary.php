@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Libraries\Tube;
 
+use App\Traits\DirectoryChecker;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -11,6 +12,8 @@ use Illuminate\Support\Stringable;
 
 final class TitleParserLibrary
 {
+    use DirectoryChecker;
+
     private string $title;
 
     private string $rootDirectory = '';
@@ -52,6 +55,52 @@ final class TitleParserLibrary
         return $titled->toString();
     }
 
+    public function removeWords(Stringable|string $source): Stringable
+    {
+        $titled = $source instanceof Stringable ? $source : Str::of($source);
+        return $titled->replace(
+            [
+                'step',
+                'step-',
+                'xxx',
+                '240p',
+                '360p',
+                '480p',
+                '720p',
+                '1080p',
+                '2160p',
+                'hevc',
+                'x264',
+                'x265',
+                'mp4',
+                'wrb',
+                '-wr',
+                ' rq',
+                'internal',
+                'vsex',
+                '-vs',
+                'prt',
+                'kt',
+                'xleech',
+                'worldmkv',
+                '[xv',
+                '.xvid',
+                '-xvid',
+                '_xvid',
+                'xvid1',
+                'xvid-',
+                ' tg',
+                ' hd ',
+                'webrip',
+            ], '')
+            ->replace('...', '.')
+            ->replace('..', '.')
+            ->trim()
+            ->rtrim('vs')
+            ->rtrim('v')
+            ->rtrim('-');
+    }
+
     private function cleanString(string $value, string $replace = ' '): self
     {
         $this->title = Str::of($value)
@@ -85,7 +134,11 @@ final class TitleParserLibrary
         $dirList = Str::of($directory)
             ->explode('/')
             ->map(fn ($item): Stringable => $this->cleanString($item, '')->removeSpaces())
-            ->reject(fn ($item): bool => empty(trim((string) $item)));
+            ->reject(function (Stringable $item): bool {
+                $value = $item->toString();
+
+                return blank($value) || $this->isHash($value);
+            });
 
         $dirList->shift();
         $this->rootDirectory = str($dirList->first())->lower()->toString();
@@ -156,48 +209,9 @@ final class TitleParserLibrary
 
     private function changeWords(): self
     {
-        $titled = Str::of($this->title)
-            ->replace(
-                [
-                    'step',
-                    'step-',
-                    'xxx',
-                    '240p',
-                    '360p',
-                    '480p',
-                    '720p',
-                    '1080p',
-                    '2160p',
-                    'hevc',
-                    'x264',
-                    'x265',
-                    'mp4',
-                    'wrb',
-                    '-wr',
-                    ' rq',
-                    'internal',
-                    'vsex',
-                    '-vs',
-                    'prt',
-                    'kt',
-                    'xleech',
-                    'worldmkv',
-                    '[xv',
-                    'xvid',
-                    ' tg',
-                    ' hd ',
-                    'webrip',
-                ],
-                ''
-            )
-            ->replace('...', '.')
-            ->replace('..', '.')
-            ->trim()
-            ->rtrim('vs')
-            ->rtrim('v')
-            ->rtrim('-');
-
-        $this->title = $this->replaceWords($titled);
+        $this->title = $this->replaceWords(
+            $this->removeWords($this->title)
+        );
 
         return $this;
     }
@@ -217,6 +231,7 @@ final class TitleParserLibrary
             'father' => $this->getBoyGeneric(),
             'dad' => $this->getBoyGeneric(),
             'daddy' => $this->getBoyGeneric(),
+            'papi' => $this->getBoyGeneric(),
             'son' => $this->getBoyGeneric(),
             's0n' => $this->getBoyGeneric(),
             'hijastro' => $this->getBoyGeneric(),
@@ -224,6 +239,7 @@ final class TitleParserLibrary
             'mother' => $this->getGirlGeneric(),
             'mom' => $this->getGirlGeneric(),
             'mommy' => $this->getGirlGeneric(),
+            'mami' => $this->getGirlGeneric(),
             'daughter' => $this->getGirlGeneric(),
             'd@ughter' => $this->getGirlGeneric(),
             'hijastra' => $this->getGirlGeneric(),

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Models\Tube\Category;
+use App\Models\Tube\Tag;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
@@ -51,6 +52,7 @@ final class AppServiceProvider extends ServiceProvider
                 'category' => Category::getName($slug),
                 'icon' => Category::getIcon($slug),
                 'categories' => Category::getRouterList(),
+                'tags' => Tag::getMainList(),
             ]);
         });
     }
@@ -81,5 +83,4 @@ final class AppServiceProvider extends ServiceProvider
     {
         Vite::useAggressivePrefetching();
     }
-
 }

@@ -13,6 +13,8 @@ final class RelatedContent extends Model
 
     protected $with = ['related'];
 
+    protected $touches = ['related', 'content'];
+
     public function content(): BelongsTo
     {
         return $this->belongsTo(Content::class);

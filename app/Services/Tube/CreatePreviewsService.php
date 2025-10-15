@@ -78,9 +78,6 @@ final class CreatePreviewsService extends BaseEncodeService
                         ->toMediaCollection(MediaNamesLibrary::previews());
                 }
             }
-
-            $content->searchableSync();
-            Feed::updateIfExists($content);
         } catch (Exception $e) {
             File::deleteDirectory($this->videoLibrary->getProcessingPath());
             $content->getMedia(MediaNamesLibrary::previews())
