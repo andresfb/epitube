@@ -2,13 +2,14 @@
 
 namespace App\Console\Commands\Tube;
 
+use App\Models\Tube\Tag;
+use App\Traits\TagsProcessor;
 use Exception;
 use FilesystemIterator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Spatie\Tags\Tag;
 
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
@@ -17,6 +18,8 @@ use function Laravel\Prompts\outro;
 
 class CreateTagsFromPathCommand extends Command
 {
+    use TagsProcessor;
+
     protected $signature = 'create:tags';
 
     protected $description = 'Create Tags using the folder name where the content is stored';
@@ -31,14 +34,42 @@ class CreateTagsFromPathCommand extends Command
                 Config::string('content.data_path')
             );
 
-            foreach ($directories as $directory) {
-                Tag::updateOrCreate([
-                    'name' => $directory,
-                ], [
-                    'type' => 'main',
-                ]);
+            $sharedTags = $this->prepareSharedTags();
+            $bandedTags = Config::array('content.banded_tags');
 
-                echo '.';
+            foreach ($directories as $directory) {
+                $tags = collect();
+
+                str($directory)
+                    ->trim()
+                    ->lower()
+                    ->replace("'", '')
+                    ->replace('step', ' ')
+                    ->replace('    ', ' ')
+                    ->replace('   ', ' ')
+                    ->replace('  ', ' ')
+                    ->explode(' - ')
+                    ->map(fn (string $text): string => trim($text))
+                    ->reject(function (string $text) use($bandedTags): bool {
+                        return blank($text) || in_array($text, $bandedTags, true);
+                    })
+                    ->unique()
+                    ->each(function (string $text) use ($sharedTags, &$tags): void {
+                        $this->collectTags($text, $tags, $sharedTags);
+                    });
+
+                $tags->each(function (string $tag) {
+                    if (Tag::findFromStringOfAnyType($tag)->isNotEmpty()) {
+                        return;
+                    }
+
+                    Tag::create([
+                        'name' => $tag,
+                        'type' => 'main',
+                    ]);
+
+                    echo '.';
+                });
             }
 
             $this->newLine();

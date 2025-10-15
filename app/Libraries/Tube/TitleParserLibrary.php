@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Libraries\Tube;
 
 use App\Traits\DirectoryChecker;
+use App\Traits\TagsProcessor;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -13,14 +14,24 @@ use Illuminate\Support\Stringable;
 final class TitleParserLibrary
 {
     use DirectoryChecker;
+    use TagsProcessor;
 
     private string $title;
 
     private string $rootDirectory = '';
 
+    private array $extraTags = [];
+
+    public function getExtraTags(): array
+    {
+        return $this->extraTags;
+    }
+
     public function parseFileName(array $fileInfo): Stringable
     {
         Log::notice("Parsing Title for file: {$fileInfo['filename']}");
+
+        $this->processTitleTags($fileInfo['filename']);
 
         return $this->cleanString($fileInfo['filename'])
             ->removeDashes()
@@ -97,6 +108,7 @@ final class TitleParserLibrary
             ->replace('..', '.')
             ->trim()
             ->rtrim('vs')
+            ->rtrim('full')
             ->rtrim('v')
             ->rtrim('-');
     }
@@ -439,5 +451,25 @@ final class TitleParserLibrary
             ->rtrim('- ', '')
             ->rtrim('-', '')
             ->trim();
+    }
+
+    private function processTitleTags(string $filename): void
+    {
+        $this->extraTags = [];
+
+        $titleTags = $this->prepareTitleTags();
+        if (blank($titleTags)) {
+            return;
+        }
+
+        $title = str($filename)->lower()->trim();
+
+        foreach ($titleTags as $key => $tag) {
+            if (! $title->contains($key)) {
+                continue;
+            }
+
+            $this->extraTags[] = $tag;
+        }
     }
 }

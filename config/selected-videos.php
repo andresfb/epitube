@@ -8,7 +8,7 @@ return [
 
     'download_status_key' => env('SELECTED_VIDEOS_DOWNLOAD_STATUS_KEY', 'SELECTED:VIDEOS:DOWNLOAD:STATUS'),
 
-    'download_path' => env('SELECTED_VIDEOS_DOWNLOAD_PATH', '/downloads'),
+    'download_path' => env('SELECTED_VIDEOS_DOWNLOAD_PATH', ''),
 
     'download_command' => env(
         'SELECTED_VIDEOS_DOWNLOAD_COMMAND',

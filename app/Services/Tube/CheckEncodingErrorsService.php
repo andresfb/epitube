@@ -22,7 +22,7 @@ class CheckEncodingErrorsService
         }
 
         Mail::to(
-            users: Config::get('constants.admin_email'),
+            users: Config::string('constants.admin_email'),
         )->send(
             mailable: new EncodeErrorsMail($pendingNotifications)
         );

@@ -33,6 +33,7 @@ final class ContentItem extends Data
         public Carbon $expires_at,
         public Carbon $added_at,
         public array $tags = [],
+        public array $tag_slugs = [],
         public array $videos = [],
         public array $previews = [],
         public array $thumbnails = [],

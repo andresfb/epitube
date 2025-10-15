@@ -16,4 +16,6 @@ return [
 
     'main_tags_limit' => (int) env('MAIN_TAGS_LIMIT', 50),
 
+    'admin_email' => env('ADMIN_EMAIL', ''),
+
 ];

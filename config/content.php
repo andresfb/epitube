@@ -14,7 +14,7 @@ try {
 
 return [
 
-    'data_path' => env('CONTENT_DATA_PATH', '/content'),
+    'data_path' => env('CONTENT_DATA_PATH', ''),
 
     'client_data_path' => env('CLIENT_CONTENT_DATA_PATH', ''),
 
@@ -49,5 +49,7 @@ return [
     'banded_tags' => explode(',', env('CONTENT_BANDED_TAGS', '')),
 
     'shared_tags' => $sharedTags,
+
+    'title_tags' => env('CONTENT_TITLE_TAGS', ''),
 
 ];

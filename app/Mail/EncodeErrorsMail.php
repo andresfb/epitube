@@ -28,8 +28,7 @@ class EncodeErrorsMail extends Mailable implements ShouldQueue
         return new Content(
             markdown: 'emails.encode-errors',
             with: [
-                // TODO: change this to the error list route
-                'url' => route('home'),
+                'url' => route('encoding.errors'),
                 'count' => $this->pendingCount,
             ],
         );

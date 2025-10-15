@@ -15,6 +15,7 @@ use App\Models\Tube\Content;
 use App\Models\Tube\MimeType;
 use App\Models\Tube\Rejected;
 use App\Traits\DirectoryChecker;
+use App\Traits\TagsProcessor;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -27,6 +28,7 @@ use Throwable;
 final readonly class ImportVideoService
 {
     use DirectoryChecker;
+    use TagsProcessor;
 
     public function __construct(
         private TitleParserLibrary $parserLibrary,
@@ -116,6 +118,7 @@ final readonly class ImportVideoService
 
     public function parseTags(Content $content, array $fileInfo): void
     {
+        Log::notice('Parsing tags');
         $tags = $this->extractTags($fileInfo);
         if (blank($tags)) {
             return;
@@ -132,7 +135,7 @@ final readonly class ImportVideoService
             ->lower();
 
         $tags = collect();
-        $sharedTags = Config::array('content.shared_tags');
+        $sharedTags = $this->prepareSharedTags();
         $bandedTags = Config::array('content.banded_tags');
 
         str($directory)
@@ -156,16 +159,21 @@ final readonly class ImportVideoService
                     ->map(fn (string $text): string => trim($text))
                     ->reject(fn (string $text): bool => blank($text))
                     ->each(function (string $text) use (&$tags, $sharedTags) {
-                        $tag = ucwords($text);
-                        $tags->push($tag);
-
-                        if (array_key_exists($tag, $sharedTags)) {
-                            foreach ($sharedTags[$tag] as $sharedTag) {
-                                $tags->push($sharedTag);
-                            }
-                        }
+                        $this->collectTags($text, $tags, $sharedTags);
                     });
             });
+
+        if (blank($this->parserLibrary->getExtraTags())) {
+            return $tags->toArray();
+        }
+
+        foreach ($this->parserLibrary->getExtraTags() as $tag) {
+            if ($tags->contains($tag)) {
+                continue;
+            }
+
+            $tags->push($tag);
+        }
 
         return $tags->toArray();
     }
