@@ -4,24 +4,16 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Dtos\Tube\ContentItem;
-use App\Models\Tube\Feed;
-use Illuminate\Support\Facades\Config;
+use App\Actions\FeedAction;
 use Illuminate\View\View;
 
 final class HomeController extends Controller
 {
-    public function __invoke(): View
+    public function __invoke(FeedAction $feedAction): View
     {
-        $feed = Feed::query()
-            ->where('category_id', 1)
-            ->where('expires_at', '>', now())
-            ->paginate(
-                Config::integer('feed.per_page')
-            )->map(function (Feed $item) {
-                return ContentItem::from($item->content);
-            });
-
-        return view('home');
+        return view(
+            'home',
+            ['feed' => $feedAction->handle(request('page', 1))]
+        );
     }
 }

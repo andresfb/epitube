@@ -30,7 +30,6 @@ final class ContentItem extends Data
         public bool $liked,
         public int $view_count,
         public string $service_url,
-        public Carbon $expires_at,
         public Carbon $added_at,
         public array $tags = [],
         public array $tag_slugs = [],
@@ -54,7 +53,6 @@ final class ContentItem extends Data
     public static function withContent(Content $content): self
     {
         $contentArray = $content->toFeedArray();
-        $contentArray['expires_at'] = now()->addDay()->subSecond();
 
         $contentArray[MediaNamesLibrary::thumbnails()] = $content->getMedia(MediaNamesLibrary::thumbnails())
             ->map(fn (Media $media): ThumbnailItem => new ThumbnailItem(

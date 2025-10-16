@@ -1,12 +1,11 @@
 <?php
-/** @noinspection SelfClassReferencingInspection */
 
 declare(strict_types=1);
 
 namespace App\Models\Tube;
 
 use App\Dtos\Tube\ContentItem;
-use DateTime;
+use Carbon\CarbonInterface;
 use Laravel\Scout\Searchable;
 use MongoDB\Laravel\Eloquent\Model;
 use MongoDB\Laravel\Relations\BelongsTo;
@@ -19,6 +18,8 @@ use MongoDB\Laravel\Relations\BelongsTo;
  * @property bool $active
  * @property bool $viewed
  * @property bool $liked
+ * @property bool $published
+ * @property int $order
  * @property int $view_count
  * @property string $service_url
  * @property array $tags
@@ -27,8 +28,7 @@ use MongoDB\Laravel\Relations\BelongsTo;
  * @property array $previews
  * @property array $thumbnails
  * @property array $related
- * @property DateTime $expires_at
- * @property DateTime $added_at
+ * @property CarbonInterface $added_at
  */
 final class Feed extends Model
 {
@@ -38,21 +38,36 @@ final class Feed extends Model
 
     protected $guarded = [];
 
-    public static function updateIfExists(Content $content): void
+    protected static function boot(): void
     {
-        if (! Feed::where('content_id', $content->id)->exists()) {
-            return;
-        }
+        parent::boot();
 
-        self::generate($content);
+        self::creating(static function (Feed $model) {
+            $model->order = 0;
+            $model->published = false;
+        });
     }
 
     public static function generate(Content $content): void
     {
-        Feed::updateOrCreate(
+        self::query()->updateOrCreate(
             ['content_id' => $content->id],
             ContentItem::withRelated($content)->toArray(),
         );
+    }
+
+    public static function activateFeed(int $contentId, int $index): void
+    {
+        if (! self::query()->where('content_id', $contentId)->exists()) {
+            return;
+        }
+
+        self::query()
+            ->where('content_id', $contentId)
+            ->update([
+                'order' => $index,
+                'published' => true,
+            ]);
     }
 
     public function content(): BelongsTo
@@ -67,7 +82,10 @@ final class Feed extends Model
 
     public function toSearchableArray(): ?array
     {
-        return $this->toArray();
+        return $this->except([
+            'order',
+            'published',
+        ]);
     }
 
     protected function casts(): array
@@ -76,14 +94,15 @@ final class Feed extends Model
             'active' => 'boolean',
             'viewed' => 'boolean',
             'liked' => 'boolean',
+            'published' => 'boolean',
             'view_count' => 'integer',
+            'order' => 'integer',
             'tags' => 'array',
             'tag_slugs' => 'array',
             'videos' => 'array',
             'previews' => 'array',
             'thumbnails' => 'array',
             'related' => 'array',
-            'expires_at' => 'datetime',
             'added_at' => 'datetime',
         ];
     }

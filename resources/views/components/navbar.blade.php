@@ -1,5 +1,15 @@
 <nav class="bg-zinc-50 border-gray-200 dark:bg-gray-900">
-    <div class="sm:max-w-screen lg:max-w-screen-xl xl:max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <div @class([
+        'sm:max-w-screen',
+        'lg:max-w-screen-xl',
+        'xl:max-w-screen-2xl',
+        'flex',
+        'flex-wrap',
+        'items-center',
+        'justify-between',
+        'mx-auto',
+        'p-4',
+    ])>
         <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
             <x-entypo-video class="h-8 text-blue-700" />
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
@@ -26,15 +36,32 @@
                         'p-2.5',
                         'me-1',
                     ])>
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                <svg class="w-5 h-5"
+                     aria-hidden="true"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 20 20">
+                    <path stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                 </svg>
                 <span class="sr-only">Search</span>
             </button>
             <div class="relative hidden md:block">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    <svg @class([
+                        'w-4',
+                        'h-4',
+                        'text-gray-500',
+                        'dark:text-gray-400',
+                    ]) aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                     </svg>
                     <span class="sr-only">Search icon</span>
                 </div>
@@ -86,16 +113,29 @@
                     aria-controls="navbar-search"
                     aria-expanded="false">
                 <span class="sr-only">Open main menu</span>
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+                <svg class="w-5 h-5"
+                     aria-hidden="true"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 17 14">
+                    <path stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M1 1h15M1 7h15M1 13h15"/>
                 </svg>
             </button>
         </div>
         <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-search">
             <div class="relative mt-3 md:hidden">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                         aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                     </svg>
                 </div>
                 <input type="text"
@@ -144,8 +184,8 @@
                 '2d:dark:bg-gray-900',
                 'dark:border-gray-700',
             ])>
-                <button id="dropdownNavbarLink"
-                        data-dropdown-toggle="dropdownNavbar"
+                <button id="categoryDropdownLink"
+                        data-dropdown-toggle="categoryDropdown"
                         @class([
                             'flex',
                             'items-center',
@@ -167,13 +207,36 @@
                             'md:dark:hover:bg-transparent',
                         ])>
                     {{ $category }} {{ $icon }}
-                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                    <svg class="w-2.5 h-2.5 ms-2.5"
+                         aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="2" d="m1 1 4 4 4-4"/>
                     </svg>
                 </button>
                 <!-- Dropdown menu -->
-                <div id="dropdownNavbar" class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
-                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownLargeButton">
+                <div id="categoryDropdown"
+                     @class([
+                         'z-10',
+                         'hidden',
+                         'font-normal',
+                         'bg-white',
+                         'divide-y',
+                         'divide-gray-100',
+                         'rounded-lg',
+                         'shadow-sm',
+                         'w-44',
+                         'dark:bg-gray-700',
+                         'dark:divide-gray-600',
+                     ])>
+                    <ul @class([
+                        'py-2',
+                        'text-sm',
+                        'text-gray-700',
+                        'dark:text-gray-200',
+                    ]) aria-labelledby="dropdownLargeButton">
                     @foreach($categories as $category)
                         <li>
                             <a href="{{ route('switch.category', ['category' => $category['slug']]) }}"
@@ -238,25 +301,82 @@
 {{--                        'md:dark:text-blue-500',--}}
 {{--                    ]) aria-current="page">Home</a>--}}
 {{--                </li>--}}
-                <li>
-                    <a href="#" @class([
-                        'block',
+                <button id="toolsDropdownLink"
+                        data-dropdown-toggle="toolsDropdown"
+                    @class([
+                        'flex',
+                        'items-center',
+                        'justify-between',
+                        'w-full',
                         'py-2',
                         'px-3',
                         'text-gray-900',
-                        'rounded-sm',
                         'hover:bg-gray-100',
                         'md:hover:bg-transparent',
+                        'md:border-0',
                         'md:hover:text-blue-700',
                         'md:p-0',
-                        'md:dark:hover:text-blue-500',
+                        'md:w-auto',
                         'dark:text-white',
+                        'md:dark:hover:text-blue-500',
+                        'dark:focus:text-white',
                         'dark:hover:bg-gray-700',
-                        'dark:hover:text-white',
                         'md:dark:hover:bg-transparent',
-                        'dark:border-gray-700',
-                    ])>Request Download</a>
-                </li>
+                    ])>
+                    Tools
+                    <svg class="w-2.5 h-2.5 ms-2.5"
+                         aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg>
+                </button>
+                <div id="toolsDropdown"
+                    @class([
+                        'z-10',
+                        'hidden',
+                        'font-normal',
+                        'bg-white',
+                        'divide-y',
+                        'divide-gray-100',
+                        'rounded-lg',
+                        'shadow-sm',
+                        'w-44',
+                        'dark:bg-gray-700',
+                        'dark:divide-gray-600',
+                    ])>
+                    <ul @class([
+                        'py-2',
+                        'text-sm',
+                        'text-gray-700',
+                        'dark:text-gray-200',
+                    ]) aria-labelledby="dropdownLargeButton">
+                        <li>
+                            <a href="#" @class([
+                               'block',
+                               'px-4',
+                               'py-2',
+                               'text-lg',
+                               'hover:bg-gray-100',
+                               'dark:hover:bg-gray-600',
+                               'dark:hover:text-white',
+                            ])>❤️ Favorites</a>
+                        </li>
+                        <li>
+                            <a href="#" @class([
+                               'block',
+                               'px-4',
+                               'py-2',
+                               'text-lg',
+                               'hover:bg-gray-100',
+                               'dark:hover:bg-gray-600',
+                               'dark:hover:text-white',
+                            ])>📥 Downloads</a>
+                        </li>
+                    </ul>
+                </div>
             </ul>
         </div>
     </div>
@@ -288,13 +408,15 @@
             <ul class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             @foreach($tags as $tag)
                 <li>
-                    <a href="{{ route('tags', ['slug' => $tag->slug]) }}" class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <a href="{{ route('tags', ['slug' => $tag->slug]) }}"
+                       class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                         <div class="font-semibold">{{ $tag->name }}</div>
                     </a>
                 </li>
             @endforeach
                 <li>
-                    <a href="{{ route('tags.list') }}" class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <a href="{{ route('tags.list') }}"
+                       class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                         <div class="font-semibold"><x-bi-tags class="inline mr-2" />All Tags</div>
                     </a>
                 </li>
