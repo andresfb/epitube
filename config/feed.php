@@ -8,4 +8,6 @@ return [
 
     'per_page' => (int) env('MAX_PER_PAGE', 24),
 
+    'max_feed_runs' => (int) env('MAX_FEED_RUNS', 10),
+
 ];

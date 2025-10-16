@@ -52,4 +52,6 @@ return [
 
     'title_tags' => env('CONTENT_TITLE_TAGS', ''),
 
+    'de_title_words' => explode(',', env('CONTENT_DE_TITLE_WORDS', '')),
+
 ];

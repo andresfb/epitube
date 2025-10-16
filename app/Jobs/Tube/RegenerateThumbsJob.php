@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Tube;
 
-use App\Services\Tube\SyncFeedService;
+use App\Services\Tube\RegenerateThumbsService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,7 +12,7 @@ use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class SyncFeedJob implements ShouldQueue
+class RegenerateThumbsJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -22,13 +22,13 @@ class SyncFeedJob implements ShouldQueue
     public function __construct(private readonly int $contentId)
     {
         $this->queue = 'default';
-        $this->delay = now()->addSeconds(20);
+        $this->delay = now()->addSeconds(15);
     }
 
     /**
      * @throws Exception
      */
-    public function handle(SyncFeedService $service): void
+    public function handle(RegenerateThumbsService $service): void
     {
         try {
             $service->execute($this->contentId);

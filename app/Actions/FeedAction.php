@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Dtos\Tube\ContentItem;
+use App\Jobs\Tube\CreateFeedJob;
 use App\Models\Tube\Category;
 use App\Models\Tube\Feed;
 use Illuminate\Support\Collection;
@@ -17,7 +18,7 @@ final readonly class FeedAction
     /**
      * @return Collection<ContentItem>
      */
-    public function handle(int $page): Collection
+    public function handle(int $page, bool $fromRequest = true): Collection
     {
         $cateSlug = Session::get(
             'category',
@@ -27,7 +28,7 @@ final readonly class FeedAction
         $perPage = Config::integer('feed.per_page');
         $cacheKey = "FEED:PAGE:$page:$perPage";
 
-        return Cache::tags('feed')
+        $feed = Cache::tags('feed')
             ->remember(
                 md5($cacheKey),
                 now()->addHour(),
@@ -44,5 +45,13 @@ final readonly class FeedAction
                             return ContentItem::from($item->content);
                         });
                 });
+
+        if ($feed->isEmpty()) {
+            CreateFeedJob::dispatch(
+                fromRequest: $fromRequest
+            );
+        }
+
+        return $feed;
     }
 }

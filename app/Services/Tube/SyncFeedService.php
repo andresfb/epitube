@@ -4,6 +4,7 @@ namespace App\Services\Tube;
 
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
+use Illuminate\Support\Facades\Log;
 
 class SyncFeedService
 {
@@ -11,7 +12,13 @@ class SyncFeedService
     {
         $content = Content::query()
             ->where('id', $contentId)
-            ->firstOrFail();
+            ->first();
+
+        if ($content === null) {
+            Log::error("No content found for {$contentId}");
+
+            return;
+        }
 
         Feed::generate($content);
     }

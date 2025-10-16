@@ -57,7 +57,6 @@ final class EncodeDownscaleService extends BaseEncodeService
                 ])
                 ->toMediaCollection(MediaNamesLibrary::downscaled());
 
-            $this->videoLibrary->getContent()->searchableSync();
             Log::notice('Done Downscaling video');
         } finally {
             $this->videoLibrary->deleteTempFiles();

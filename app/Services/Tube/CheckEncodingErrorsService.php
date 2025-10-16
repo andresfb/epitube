@@ -17,7 +17,7 @@ class CheckEncodingErrorsService
             ->where('read_at', null)
             ->count();
 
-        if (blank($pendingNotifications)) {
+        if ($pendingNotifications <= 0) {
             return;
         }
 

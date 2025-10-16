@@ -7,12 +7,15 @@ namespace App\Console\Commands\Tube;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Media;
+use App\Traits\MediaGetter;
 use Illuminate\Console\Command;
 use RuntimeException;
 use function Laravel\Prompts\text;
 
 abstract class BaseEncodeCommand extends Command
 {
+    use MediaGetter;
+
     abstract public function handle(): void;
 
     protected function getContent(int $contentId = 0): Content
@@ -28,18 +31,5 @@ abstract class BaseEncodeCommand extends Command
         }
 
         return Content::where('id', $contentId)->firstOrFail();
-    }
-
-    protected function getMedia(Content $content): Media
-    {
-        $collection = MediaNamesLibrary::videos();
-        if ($content->hasMedia(MediaNamesLibrary::transcoded())) {
-            $collection = MediaNamesLibrary::transcoded();
-        }
-
-        return Media::where('model_id', $content->id)
-            ->where('model_type', Content::class)
-            ->where('collection_name', $collection)
-            ->firstOrFail();
     }
 }

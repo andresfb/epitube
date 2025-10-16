@@ -23,7 +23,7 @@ final class ExtractThumbnailsService extends BaseEncodeService
      */
     public function execute(int $mediaId): void
     {
-        Log::notice("Starting extracting thumbnails for: $mediaId");
+        Log::notice("Starting extracting thumbnails for Media Id: $mediaId");
 
         try {
             $this->prepare($mediaId);
@@ -36,7 +36,7 @@ final class ExtractThumbnailsService extends BaseEncodeService
         try {
             $this->generate($this->videoLibrary->getContent());
 
-            Log::notice("Finished extracting thumbnails for: $mediaId");
+            Log::notice("Finished extracting thumbnails for Media Id: $mediaId");
         } finally {
             $this->videoLibrary->deleteTempFiles();
 
@@ -76,7 +76,7 @@ final class ExtractThumbnailsService extends BaseEncodeService
 
         for ($i = 1; $i <= $numberThumbnails; $i++) {
             $image = sprintf(
-                '%s/%s.png',
+                '%s/%s.jpg',
                 $this->videoLibrary->getTempPath(),
                 mb_str_pad((string) $i, 2, '0', STR_PAD_LEFT)
             );

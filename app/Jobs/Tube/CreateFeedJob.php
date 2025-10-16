@@ -12,6 +12,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
 final class CreateFeedJob implements ShouldQueue
@@ -21,10 +23,13 @@ final class CreateFeedJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct()
+    private readonly int $maxRuns;
+
+    public function __construct(private readonly bool $fromRequest = false)
     {
         $this->queue = 'default';
         $this->delay = now()->addSeconds(5);
+        $this->maxRuns = Config::integer('feed.max_feed_runs');
     }
 
     /**
@@ -33,6 +38,12 @@ final class CreateFeedJob implements ShouldQueue
     public function handle(CreateFeedService $service): void
     {
         try {
+            if (! $this->hasTooManyRuns()) {
+                Log::warning('CreateFeedJob ran too many times today');
+
+                return;
+            }
+
             $service->execute();
         } catch (MaxAttemptsExceededException $e) {
             Log::error($e->getMessage());
@@ -41,5 +52,28 @@ final class CreateFeedJob implements ShouldQueue
 
             throw $e;
         }
+    }
+
+    private function hasTooManyRuns(): bool
+    {
+        if (! $this->fromRequest) {
+            return false;
+        }
+
+        $key = md5(__CLASS__);
+        if (! Cache::has($key)) {
+            Cache::put($key, 1, now()->endOfDay());
+
+            return false;
+        }
+
+        $runs = (int) Cache::get($key);
+        if ($runs >= $this->maxRuns) {
+            return true;
+        }
+
+        Cache::increment($key);
+
+        return false;
     }
 }

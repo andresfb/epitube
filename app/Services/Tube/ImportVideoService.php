@@ -73,7 +73,10 @@ final readonly class ImportVideoService
                 $fileInfo['filename'] = $videoItem->Name;
             }
 
-            $tile = $this->parserLibrary->parseFileName($fileInfo)->title()->toString();
+            $tile = $this->deTitle(
+                $this->parserLibrary->parseFileName($fileInfo)->title()
+            );
+
             $category = $this->parserLibrary->getRootDirectory() === Config::string('constants.alt_category')
                 ? Config::string('constants.alt_category')
                 : Config::string('constants.main_category');

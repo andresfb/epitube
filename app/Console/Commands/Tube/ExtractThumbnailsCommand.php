@@ -44,8 +44,7 @@ final class ExtractThumbnailsCommand extends BaseEncodeCommand
                 $content->getMedia(MediaNamesLibrary::thumbnails())
                     ->each(function (Media $media) {
                         $media->forceDelete();
-                    }
-                );
+                    });
             }
 
             $media = $this->getMedia($content);
