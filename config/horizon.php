@@ -191,11 +191,11 @@ return [
                 'balance' => 'auto',
                 'minProcesses' => 1,
                 'maxProcesses' => 5,
-                'tries' => 2,
+                'tries' => 1,
             ],
 
             'ingestor-supervisor' => [
-                'connection' => 'redis',
+                'connection' => 'ingestor',
                 'queue' => ['ingestor'],
                 'balance' => 'auto',
                 'minProcesses' => 1,
@@ -205,7 +205,7 @@ return [
             ],
 
             'media-supervisor' => [
-                'connection' => 'redis',
+                'connection' => 'media',
                 'queue' => ['media'],
                 'balance' => 'auto',
                 'minProcesses' => 1,
@@ -215,7 +215,7 @@ return [
             ],
 
             'encoder-supervisor' => [
-                'connection' => 'redis',
+                'connection' => 'encoder',
                 'queue' => ['encode'],
                 'balance' => 'auto',
                 'minProcesses' => 1,
@@ -226,7 +226,7 @@ return [
             ],
 
             'downloader-supervisor' => [
-                'connection' => 'redis',
+                'connection' => 'downloader',
                 'queue' => ['downloader'],
                 'balance' => 'auto',
                 'processes' => 1,
@@ -243,11 +243,11 @@ return [
                 'balance' => 'auto',
                 'minProcesses' => 1,
                 'maxProcesses' => 5,
-                'tries' => 2,
+                'tries' => 1,
             ],
 
             'ingestor-supervisor' => [
-                'connection' => 'redis',
+                'connection' => 'ingestor',
                 'queue' => ['ingestor'],
                 'balance' => 'auto',
                 'processes' => 1,
@@ -257,7 +257,7 @@ return [
             ],
 
             'media-supervisor' => [
-                'connection' => 'redis',
+                'connection' => 'media',
                 'queue' => ['media'],
                 'balance' => 'auto',
                 'minProcesses' => 1,
@@ -267,7 +267,7 @@ return [
             ],
 
             'encoder-supervisor' => [
-                'connection' => 'redis',
+                'connection' => 'encoder',
                 'queue' => ['encode'],
                 'balance' => 'auto',
                 'minProcesses' => 1,
@@ -278,7 +278,7 @@ return [
             ],
 
             'downloader-supervisor' => [
-                'connection' => 'redis',
+                'connection' => 'downloader',
                 'queue' => ['downloader'],
                 'balance' => 'auto',
                 'processes' => 1,

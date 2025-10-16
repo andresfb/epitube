@@ -69,17 +69,45 @@ return [
             'driver' => 'redis',
             'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
             'queue' => env('REDIS_QUEUE', 'default'),
-            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 90),
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 7210),
             'block_for' => null,
             'after_commit' => false,
         ],
 
-        'encode' => [
+        'ingestor' => [
             'driver' => 'redis',
-            'connection' => 'encode',
-            'queue' => env('ENCODE_REDIS_QUEUE', 'primus'),
-            'retry_after' => 5555,
-            'block_for' => 5,
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => env('REDIS_QUEUE', 'ingestor'),
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 5410),
+            'block_for' => null,
+            'after_commit' => false,
+        ],
+
+        'media' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => env('REDIS_QUEUE', 'media'),
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 1810),
+            'block_for' => null,
+            'after_commit' => false,
+        ],
+
+        'encoder' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => env('REDIS_QUEUE', 'encoder'),
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 7210),
+            'block_for' => null,
+            'after_commit' => false,
+        ],
+
+        'downloader' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => env('REDIS_QUEUE', 'downloader'),
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 1810),
+            'block_for' => null,
+            'after_commit' => false,
         ],
 
     ],
