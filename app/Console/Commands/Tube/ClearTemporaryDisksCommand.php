@@ -15,7 +15,7 @@ use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class ClearTemporaryDisksCommand extends Command
+final class ClearTemporaryDisksCommand extends Command
 {
     protected $signature = 'clear:temps';
 

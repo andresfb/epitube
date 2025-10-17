@@ -8,12 +8,15 @@ use App\Actions\CreateSymLinksAction;
 use App\Actions\TranscodeMediaAction;
 use App\Dtos\Tube\ImportVideoItem;
 use App\Dtos\Tube\VideoInfoItem;
+use App\Enums\SpecialTagType;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Libraries\Tube\TitleParserLibrary;
 use App\Models\Tube\Category;
 use App\Models\Tube\Content;
 use App\Models\Tube\MimeType;
 use App\Models\Tube\Rejected;
+use App\Models\Tube\SharedTag;
+use App\Models\Tube\SpecialTag;
 use App\Traits\DirectoryChecker;
 use App\Traits\TagsProcessor;
 use App\Traits\VideoValidator;
@@ -140,8 +143,8 @@ final class ImportVideoService
             ->lower();
 
         $tags = collect();
-        $sharedTags = $this->prepareSharedTags();
-        $bandedTags = Config::array('content.banded_tags');
+        $sharedTags = SharedTag::getList();
+        $bandedTags = SpecialTag::getList(SpecialTagType::BANDED);
 
         str($directory)
             ->replace("'", '')

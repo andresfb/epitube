@@ -16,7 +16,7 @@ use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\warning;
 
-class RegenerateThumbsCommand extends Command
+final class RegenerateThumbsCommand extends Command
 {
     protected $signature = 'regenerate:thumbs';
 

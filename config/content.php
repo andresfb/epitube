@@ -48,10 +48,9 @@ return [
 
     'banded_tags' => explode(',', env('CONTENT_BANDED_TAGS', '')),
 
-    'shared_tags' => $sharedTags,
+    'de_title_words' => explode(',', env('CONTENT_DE_TITLE_WORDS', '')),
 
     'title_tags' => env('CONTENT_TITLE_TAGS', ''),
 
-    'de_title_words' => explode(',', env('CONTENT_DE_TITLE_WORDS', '')),
-
+    'shared_tags' => $sharedTags,
 ];

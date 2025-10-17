@@ -11,7 +11,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class UpdateTagsCommand extends Command
+final class UpdateTagsCommand extends Command
 {
     protected $signature = 'update:tags';
 

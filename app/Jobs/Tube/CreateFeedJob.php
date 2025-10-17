@@ -37,6 +37,12 @@ final class CreateFeedJob implements ShouldQueue
     public function handle(CreateFeedService $service): void
     {
         try {
+            if (Config::string('queue.default') === 'sync' || app()->isLocal()) {
+                Log::warning('Cannot run Feed Job on this environment');
+
+                return;
+            }
+
             if (! $this->hasTooManyRuns()) {
                 Log::warning('CreateFeedJob ran too many times today');
 

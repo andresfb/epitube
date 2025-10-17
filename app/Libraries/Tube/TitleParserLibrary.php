@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Libraries\Tube;
 
+use App\Models\Tube\TitleTag;
 use App\Traits\DirectoryChecker;
 use App\Traits\TagsProcessor;
 use Illuminate\Support\Collection;
@@ -108,11 +109,12 @@ final class TitleParserLibrary
             ->replace('...', '.')
             ->replace('..', '.')
             ->trim()
-            ->rtrim('vs')
-            ->rtrim('full')
-            ->rtrim('v')
-            ->rtrim('xvid')
+            ->rtrim(' vs')
+            ->rtrim(' full')
+            ->rtrim(' v')
+            ->rtrim(' xvid')
             ->rtrim(' mp')
+            ->rtrim(' nbq')
             ->rtrim('-');
     }
 
@@ -460,7 +462,7 @@ final class TitleParserLibrary
     {
         $this->extraTags = [];
 
-        $titleTags = $this->prepareTitleTags();
+        $titleTags = TitleTag::getList();
         if (blank($titleTags)) {
             return;
         }

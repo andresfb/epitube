@@ -18,7 +18,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class DownloadPendingVideoCommand extends Command
+final class DownloadPendingVideoCommand extends Command
 {
     use LanguageChecker;
 

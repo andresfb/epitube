@@ -12,7 +12,7 @@ use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class RegenerateThumbsJob implements ShouldQueue
+final class RegenerateThumbsJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

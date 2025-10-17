@@ -12,7 +12,7 @@ use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class SyncFeedJob implements ShouldQueue
+final class SyncFeedJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

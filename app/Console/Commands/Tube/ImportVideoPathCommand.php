@@ -20,7 +20,7 @@ use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\text;
 
-class ImportVideoPathCommand extends Command
+final class ImportVideoPathCommand extends Command
 {
     use ImportItemCreator;
 

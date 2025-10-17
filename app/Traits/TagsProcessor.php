@@ -2,39 +2,13 @@
 
 namespace App\Traits;
 
+use App\Enums\SpecialTagType;
+use App\Models\Tube\SpecialTag;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Stringable;
 
 trait TagsProcessor
 {
-    private function prepareSharedTags(): array
-    {
-        $hashedTags = [];
-        $sharedTags = Config::array('content.shared_tags');
-
-        foreach ($sharedTags as $key => $tags) {
-            $newKey = str($key)->lower()->hash('md5')->toString();
-            $hashedTags[$newKey] = $tags;
-        }
-
-        return $hashedTags;
-    }
-
-    private function prepareTitleTags(): array
-    {
-        $tags = [];
-
-        str(Config::string('content.title_tags'))
-            ->explode(',')
-            ->each(function (string $section) use (&$tags) {
-                $parts = explode('|', $section);
-                $tags[$parts[0]] = $parts[1];
-            });
-
-        return $tags;
-    }
-
     private function collectTags(string $text, Collection $tags, array $sharedTags): void
     {
         $tag =  str($text)->title();
@@ -56,7 +30,7 @@ trait TagsProcessor
 
     private function deTitle(Stringable $text): string
     {
-        $deTitleWords = Config::array('content.de_title_words');
+        $deTitleWords = SpecialTag::getList(SpecialTagType::TITLE_WORDS);
         foreach ($deTitleWords as $word) {
             $text = $text->replace(
                 sprintf(" %s ", ucfirst($word)), " $word "
@@ -67,7 +41,7 @@ trait TagsProcessor
             ->replace('Xxx', 'XXX')
             ->replace(' 70S ', " 70's ")
             ->replace(' 1St ', ' 1st ')
-            ->replace(' 1Nd ', ' 2nd ')
+            ->replace(' 2Nd ', ' 2nd ')
             ->replace('Hd ', 'HD ')
             ->replace(' Hd', ' HD');
 

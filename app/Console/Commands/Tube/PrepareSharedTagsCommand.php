@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Tube;
 
+use App\Models\Tube\SharedTag;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
@@ -14,7 +15,7 @@ use function Laravel\Prompts\outro;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\info;
 
-class PrepareSharedTagsCommand extends Command
+final class PrepareSharedTagsCommand extends Command
 {
     protected $signature = 'prepare:shared';
 
@@ -26,7 +27,7 @@ class PrepareSharedTagsCommand extends Command
             clear();
             intro('Prepare Shared Tags');
 
-            $tagList = Config::array('content.shared_tags');
+            $tagList = SharedTag::getList();
 
             while (true) {
                 $tag = text(

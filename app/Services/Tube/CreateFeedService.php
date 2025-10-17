@@ -21,6 +21,7 @@ final class CreateFeedService
             ->hasThumbnails()
             ->where('active', true)
             ->where('viewed', false)
+            ->where('created_at', '<=', now()->addHours(5))
             ->inRandomOrder()
             ->limit(
                 (int) floor(Config::integer('feed.max_feed_limit') * 1.5)

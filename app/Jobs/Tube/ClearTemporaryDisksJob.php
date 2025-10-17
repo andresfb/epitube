@@ -21,10 +21,8 @@ final class ClearTemporaryDisksJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(
-        private readonly ClearDownloadDiskService  $downloadDiskService,
-        private readonly ClearDirectoryDiskService $directoryDiskService,
-    ) {
+    public function __construct()
+    {
         $this->queue = 'ingestor';
         $this->delay = now()->addSeconds(10);
     }
@@ -32,14 +30,17 @@ final class ClearTemporaryDisksJob implements ShouldQueue
     /**
      * @throws Exception
      */
-    public function handle(): void
+    public function handle(
+        ClearDownloadDiskService $downloadDiskService,
+        ClearDirectoryDiskService $directoryDiskService
+    ): void
     {
         try {
-            $this->downloadDiskService->execute();
+            $downloadDiskService->execute();
 
-            $this->directoryDiskService->execute(DiskNamesLibrary::processing());
+            $directoryDiskService->execute(DiskNamesLibrary::processing());
 
-            $this->directoryDiskService->execute(DiskNamesLibrary::transcode());
+            $directoryDiskService->execute(DiskNamesLibrary::transcode());
         } catch (MaxAttemptsExceededException $e) {
             Log::error($e->getMessage());
         } catch (Exception $e) {

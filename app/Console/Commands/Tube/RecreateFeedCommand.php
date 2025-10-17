@@ -16,7 +16,7 @@ use function Laravel\Prompts\outro;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\warning;
 
-class RecreateFeedCommand extends Command
+final class RecreateFeedCommand extends Command
 {
     protected $signature = 'recreate:feed';
 

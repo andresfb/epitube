@@ -2,6 +2,9 @@
 
 namespace App\Console\Commands\Tube;
 
+use App\Enums\SpecialTagType;
+use App\Models\Tube\SharedTag;
+use App\Models\Tube\SpecialTag;
 use App\Models\Tube\Tag;
 use App\Traits\TagsProcessor;
 use Exception;
@@ -16,7 +19,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class CreateTagsFromPathCommand extends Command
+final class CreateTagsFromPathCommand extends Command
 {
     use TagsProcessor;
 
@@ -34,8 +37,8 @@ class CreateTagsFromPathCommand extends Command
                 Config::string('content.data_path')
             );
 
-            $sharedTags = $this->prepareSharedTags();
-            $bandedTags = Config::array('content.banded_tags');
+            $sharedTags = SharedTag::getList();
+            $bandedTags = SpecialTag::getList(SpecialTagType::BANDED);
 
             foreach ($directories as $directory) {
                 $tags = collect();
