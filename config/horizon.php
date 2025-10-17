@@ -189,8 +189,8 @@ return [
                 'connection' => 'redis',
                 'queue' => ['default'],
                 'balance' => 'auto',
-                'minProcesses' => 1,
-                'maxProcesses' => 5,
+                'minProcesses' => 2,
+                'maxProcesses' => 6,
                 'tries' => 1,
             ],
 
@@ -241,8 +241,8 @@ return [
                 'connection' => 'redis',
                 'queue' => ['default'],
                 'balance' => 'auto',
-                'minProcesses' => 1,
-                'maxProcesses' => 5,
+                'minProcesses' => 2,
+                'maxProcesses' => 6,
                 'tries' => 1,
             ],
 

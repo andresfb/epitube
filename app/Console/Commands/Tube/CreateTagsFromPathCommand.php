@@ -49,7 +49,7 @@ class CreateTagsFromPathCommand extends Command
                     ->replace('   ', ' ')
                     ->replace('  ', ' ')
                     ->explode(' - ')
-                    ->map(fn (string $text): string => trim($text))
+                    ->map(fn (string $text): string => mb_trim($text))
                     ->reject(function (string $text) use($bandedTags): bool {
                         return blank($text) || in_array($text, $bandedTags, true);
                     })

@@ -112,6 +112,7 @@ final class TitleParserLibrary
             ->rtrim('full')
             ->rtrim('v')
             ->rtrim('xvid')
+            ->rtrim(' mp')
             ->rtrim('-');
     }
 
@@ -135,7 +136,7 @@ final class TitleParserLibrary
     {
         // replace dashes that are presided by words (i.e., solo-company = solo company)
         $titled = preg_replace('/(?<=\w)-(?=\w)/', ' ', $this->title);
-        $this->title = trim((string) $titled);
+        $this->title = mb_trim((string) $titled);
 
         return $this;
     }
@@ -216,7 +217,7 @@ final class TitleParserLibrary
         $str = preg_replace('/\s+\./', '.', (string) $str);
 
         // 4. Trim leading / trailing spaces
-        $this->title = trim((string) $str);
+        $this->title = mb_trim((string) $str);
 
         return $this;
     }
@@ -410,7 +411,7 @@ final class TitleParserLibrary
             return $this;
         }
 
-        $this->title = trim(
+        $this->title = mb_trim(
             str_replace($matches[0], '', $this->title)
         );
 
@@ -424,7 +425,7 @@ final class TitleParserLibrary
             return $this;
         }
 
-        $this->title = trim(
+        $this->title = mb_trim(
             str_replace($matches[0], '', $this->title)
         );
 

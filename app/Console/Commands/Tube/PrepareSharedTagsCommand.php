@@ -45,7 +45,7 @@ class PrepareSharedTagsCommand extends Command
 
                 $tagList[$tag] = str($childTags)
                     ->explode(',')
-                    ->map(fn(string $tag) => ucwords(trim($tag)))
+                    ->map(fn(string $tag) => ucwords(mb_trim($tag)))
                     ->toArray();
 
                 if (! confirm('Add more Tags?')) {

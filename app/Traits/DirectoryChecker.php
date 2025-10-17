@@ -34,7 +34,7 @@ trait DirectoryChecker
 
     private function isHash(string $value): bool
     {
-        $value = trim($value);
+        $value = mb_trim($value);
 
         // Hex‑only hashes (MD5, SHA‑1, SHA‑256, SHA‑512)
         $hexLengths = [32, 40, 64, 128];

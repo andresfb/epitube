@@ -26,10 +26,11 @@ trait VideoValidator
     private function validate(ImportVideoItem $videoItem): bool
     {
         $fileInfo = pathinfo($videoItem->Path);
-        if (! in_array($fileInfo['extension'], $this->getExtensions(), true)) {
+        $extension = mb_strtolower(mb_trim($fileInfo['extension']));
+        if (! in_array($extension, $this->getExtensions(), true)) {
             $message = sprintf(
                 "File extension: %s is not supported",
-                $fileInfo['extension']
+                $extension
             );
 
             Rejected::reject($videoItem, $message);

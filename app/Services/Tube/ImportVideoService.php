@@ -150,7 +150,7 @@ final class ImportVideoService
             ->replace('   ', ' ')
             ->replace('  ', ' ')
             ->explode('/')
-            ->map(fn (string $text): string => trim($text))
+            ->map(fn (string $text): string => mb_trim($text))
             ->reject(function (string $text) use($bandedTags): bool {
                 return blank($text) || in_array($text, $bandedTags, true);
             })
@@ -161,7 +161,7 @@ final class ImportVideoService
 
                 str($text)
                     ->explode(' - ')
-                    ->map(fn (string $text): string => trim($text))
+                    ->map(fn (string $text): string => mb_trim($text))
                     ->reject(fn (string $text): bool => blank($text))
                     ->each(function (string $text) use (&$tags, $sharedTags) {
                         $this->collectTags($text, $tags, $sharedTags);
