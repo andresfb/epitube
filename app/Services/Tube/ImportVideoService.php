@@ -16,6 +16,7 @@ use App\Models\Tube\MimeType;
 use App\Models\Tube\Rejected;
 use App\Traits\DirectoryChecker;
 use App\Traits\TagsProcessor;
+use App\Traits\VideoValidator;
 use FFMpeg\FFProbe;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -25,15 +26,16 @@ use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
-final readonly class ImportVideoService
+final class ImportVideoService
 {
     use DirectoryChecker;
     use TagsProcessor;
+    use VideoValidator;
 
     public function __construct(
-        private TitleParserLibrary $parserLibrary,
-        private TranscodeMediaAction $transcodeAction,
-        private CreateSymLinksAction $symLinksAction,
+        private readonly TitleParserLibrary   $parserLibrary,
+        private readonly TranscodeMediaAction $transcodeAction,
+        private readonly CreateSymLinksAction $symLinksAction,
     ) {}
 
     /**
@@ -223,40 +225,5 @@ final readonly class ImportVideoService
             height: $height,
             duration: $duration,
         );
-    }
-
-    private function validate(ImportVideoItem $videoItem): bool
-    {
-        if ($videoItem->Height > $videoItem->Width) {
-            $message = 'Vertical videos are not allowed';
-            Rejected::reject($videoItem, $message);
-            Log::error($message);
-
-            return false;
-        }
-
-        if ($videoItem->Duration < Config::integer('content.minimum_duration')) {
-            $message = "The video duration is too short: $videoItem->Duration seconds";
-            Rejected::reject($videoItem, $message);
-            Log::error($message);
-
-            return false;
-        }
-
-        $extensions = MimeType::extensions();
-        $fileInfo = pathinfo($videoItem->Path);
-        if (! in_array($fileInfo['extension'], $extensions, true)) {
-            $message = sprintf(
-                "File extension: %s is not supported",
-                $fileInfo['extension']
-            );
-
-            Rejected::reject($videoItem, $message);
-            Log::error($message);
-
-            return false;
-        }
-
-        return true;
     }
 }

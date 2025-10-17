@@ -6,6 +6,9 @@ namespace App\Models\Tube;
 
 use App\Dtos\Tube\ContentItem;
 use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
+use Laravel\Scout\Scout;
 use Laravel\Scout\Searchable;
 use MongoDB\Laravel\Eloquent\Model;
 use MongoDB\Laravel\Relations\BelongsTo;
@@ -56,14 +59,14 @@ final class Feed extends Model
         );
     }
 
-    public static function activateFeed(int $contentId, int $index): void
+    public static function activateFeed(Content $content, int $index): void
     {
-        if (! self::query()->where('content_id', $contentId)->exists()) {
-            return;
+        if (self::query()->where('content_id', $content->id)->doesntExist()) {
+            self::generate($content);
         }
 
         self::query()
-            ->where('content_id', $contentId)
+            ->where('content_id', $content->id)
             ->update([
                 'order' => $index,
                 'published' => true,
@@ -86,6 +89,35 @@ final class Feed extends Model
             'order',
             'published',
         ]);
+    }
+
+    /**
+     * @param Collection $models
+     */
+    public function queueMakeSearchable($models): void
+    {
+        if ($models->isEmpty()) {
+            return;
+        }
+
+        $cacheKey = md5(sprintf(
+            "FEED:MAKE:SEARCHABLE:%s",
+            $models->pluck('id')->implode(',')
+        ));
+
+        if (Cache::has($cacheKey)) {
+            return;
+        }
+
+        Cache::put($cacheKey, true, now()->addSeconds(5));
+
+        if (! config('scout.queue')) {
+            $this->syncMakeSearchable($models);
+        }
+
+        dispatch((new Scout::$makeSearchableJob($models))
+            ->onQueue($models->first()->syncWithSearchUsingQueue())
+            ->onConnection($models->first()->syncWithSearchUsing()));
     }
 
     protected function casts(): array

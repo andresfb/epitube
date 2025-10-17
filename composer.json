@@ -21,7 +21,6 @@
         "laravel/scout": "^10.19",
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "*",
-        "livewire/volt": "^1.7.0",
         "meilisearch/meilisearch-php": "^1.16",
         "mongodb/laravel-mongodb": "^5.5",
         "nunomaduro/essentials": "^0.1.0",

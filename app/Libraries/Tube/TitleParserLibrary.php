@@ -102,6 +102,7 @@ final class TitleParserLibrary
                 'xvid-',
                 ' tg',
                 ' hd ',
+                ' bbc',
                 'webrip',
             ], '')
             ->replace('...', '.')
@@ -110,6 +111,7 @@ final class TitleParserLibrary
             ->rtrim('vs')
             ->rtrim('full')
             ->rtrim('v')
+            ->rtrim('xvid')
             ->rtrim('-');
     }
 
@@ -121,7 +123,7 @@ final class TitleParserLibrary
                 ['.', '_', '~', '?', ':', ','],
                 $replace
             )
-            ->replace(['|', '/'], '')
+            ->replace(['|', '｜', '/'], '')
             ->replace('@', '')
             ->trim()
             ->toString();

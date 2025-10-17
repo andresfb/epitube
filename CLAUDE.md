@@ -66,13 +66,13 @@ Content uses multiple Spatie Media Library collections:
 
 ### Backend Stack
 - **Laravel 12** with streamlined structure
-- **Livewire 3** + **Volt 1** for interactive components
 - **Laravel Horizon 5** for queue management
 - **Pest 4** for testing (with browser testing capabilities)
 
 ### Frontend Stack
 - **Tailwind CSS 4** for styling
-- **Alpine.js** (included with Livewire)
+- **Alpine.js**
+- **htmx**
 - **Vite** for asset building
 
 ### Media Processing

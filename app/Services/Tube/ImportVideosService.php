@@ -10,6 +10,7 @@ use App\Libraries\Tube\JellyfinLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Rejected;
 use App\Traits\ImportItemCreator;
+use App\Traits\VideoValidator;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 final class ImportVideosService
 {
     use ImportItemCreator;
+    use VideoValidator;
 
     private int $maxFiles;
 
@@ -79,7 +81,12 @@ final class ImportVideosService
                 continue;
             }
 
-            $videos->add($this->createItem($item));
+            $videoItem = $this->createItem($item);
+            if (! $this->validate($videoItem)) {
+                continue;
+            }
+
+            $videos->add($videoItem);
             $this->scanned++;
         }
 

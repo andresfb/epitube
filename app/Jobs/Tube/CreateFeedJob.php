@@ -28,7 +28,6 @@ final class CreateFeedJob implements ShouldQueue
     public function __construct(private readonly bool $fromRequest = false)
     {
         $this->queue = 'default';
-        $this->delay = now()->addSeconds(5);
         $this->maxRuns = Config::integer('feed.max_feed_runs');
     }
 

@@ -44,6 +44,7 @@ final class CreateFeedService
         }
 
         Feed::query()
+            ->where('published', true)
             ->update([
                 'order' => 0,
                 'published' => false,
@@ -51,7 +52,7 @@ final class CreateFeedService
 
         $index = 1;
         foreach ($contents as $content) {
-            Feed::activateFeed($content->id, $index);
+            Feed::activateFeed($content, $index);
             $index++;
         }
 
