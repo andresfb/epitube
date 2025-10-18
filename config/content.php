@@ -44,6 +44,8 @@ return [
 
         'section_length' => (int) env('PREVIEW_SECTION_LENGTH', 3),
 
+        'max_preview_length' => (int) env('PREVIEW_MAX_LENGTH', 21),
+
     ],
 
     'banded_tags' => explode(',', env('CONTENT_BANDED_TAGS', '')),

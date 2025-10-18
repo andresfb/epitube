@@ -154,12 +154,19 @@ final class CreatePreviewsService extends BaseEncodeService
             - ($duration * (Config::integer('content.preview_options.padding_time') / 100));
         $sectionDuration = Config::integer('content.preview_options.section_length');
         $sectionsPerInterval = Config::integer('content.preview_options.sections');
+        $maxPreviewLength = Config::integer('content.preview_options.max_preview_length');
         $intervalDuration = 20 * 60; // 20 minutes in seconds
 
+        // Calculate maximum number of sections based on max preview length
+        $maxSections = (int) floor($maxPreviewLength / $sectionDuration);
+
         // Calculate the total number of sections needed
-        $totalSections = max(
-            $sectionsPerInterval, // minimum 3 sections
-            ceil($trimmedDuration / $intervalDuration) * $sectionsPerInterval
+        $totalSections = min(
+            $maxSections,
+            max(
+                $sectionsPerInterval, // minimum 3 sections
+                ceil($trimmedDuration / $intervalDuration) * $sectionsPerInterval
+            )
         );
 
         // Calculate spacing between sections

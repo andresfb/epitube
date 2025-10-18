@@ -214,9 +214,30 @@ return [
                 'tries' => 1,
             ],
 
+            'thumbnailer-supervisor' => [
+                'connection' => 'thumbs',
+                'queue' => ['thumbs'],
+                'balance' => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 4,
+                'timeout' => 900,
+                'tries' => 1,
+            ],
+
             'encoder-supervisor' => [
-                'connection' => 'encoder',
+                'connection' => 'encoder',  // shared connection with transcoder as setting match
                 'queue' => ['encode'],
+                'balance' => 'auto',
+                'minProcesses' => 1,
+                'maxProcesses' => 2,
+                'memory' => 512,
+                'timeout' => 7200,
+                'tries' => 1,
+            ],
+
+            'transcoder-supervisor' => [
+                'connection' => 'encoder', // shared connection with encoder as setting match
+                'queue' => ['transcode'],
                 'balance' => 'auto',
                 'minProcesses' => 1,
                 'maxProcesses' => 2,

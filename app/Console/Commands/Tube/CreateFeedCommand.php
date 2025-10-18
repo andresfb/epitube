@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Tube;
 
 use App\Services\Tube\CreateFeedService;
 use Illuminate\Console\Command;
 use Throwable;
-
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;

@@ -25,7 +25,7 @@ final class EncodeDownscaleJob implements ShouldQueue
         private readonly int $resolution,
         private readonly int $mediaId,
     ) {
-        $this->queue = 'encode';
+        $this->queue = 'transcode';
         $this->delay = now()->addSeconds(10);
     }
 

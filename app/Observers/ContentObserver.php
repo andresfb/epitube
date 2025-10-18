@@ -16,7 +16,7 @@ class ContentObserver implements ShouldHandleEventsAfterCommit
             return;
         }
 
-        Cache::put($cacheKey, true, now()->addSeconds(5));
+        Cache::put($cacheKey, true, now()->addSeconds(6));
         SyncFeedJob::dispatch($content->id);
     }
 }
