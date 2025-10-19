@@ -37,7 +37,7 @@ final class CreateFeedService
             Log::error('No unplayed contents found in the Alt Category');
         }
 
-        $contents->append($altContents);
+        $contents = $contents->merge($altContents);
         if ($contents->isEmpty()) {
             Log::error('No unplayed contents found');
 

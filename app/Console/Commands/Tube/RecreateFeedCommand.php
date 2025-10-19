@@ -20,7 +20,7 @@ final class RecreateFeedCommand extends Command
 {
     protected $signature = 'recreate:feed';
 
-    protected $description = 'Command description';
+    protected $description = 'Clear all records and recreate the Feed';
 
     public function handle(): void
     {

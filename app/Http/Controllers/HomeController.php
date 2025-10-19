@@ -12,10 +12,13 @@ final class HomeController extends Controller
 {
     public function __invoke(FeedAction $feedAction): View
     {
+        $feedItem = $feedAction->handle((int) request('page', 1));
+
         return view(
             'home',
             [
-                'feed' => $feedAction->handle(request('page', 1)),
+                'feed' => $feedItem->feed,
+                'links' => $feedItem->links,
                 'timeout' => Config::integer('feed.not_found_timeout', 5000),
                 'maxRefresh' => Config::integer('feed.max_not_foud_runs', 3),
             ]

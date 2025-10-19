@@ -43,7 +43,7 @@ final class CreateFeedJob implements ShouldQueue
                 return;
             }
 
-            if (! $this->hasTooManyRuns()) {
+            if ($this->hasTooManyRuns()) {
                 Log::warning('CreateFeedJob ran too many times today');
 
                 return;

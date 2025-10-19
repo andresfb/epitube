@@ -17,13 +17,13 @@
     <x-navbar />
 
     <main class="flex-1 bg-white rounded-md shadow-sm m-2 dark:bg-gray-800">
-        <div class="w-full mx-auto sm:max-w-screen lg:max-w-screen-xl xl:max-w-screen-2xl p-4 md:flex md:items-center md:justify-between">
+        <div class="w-full max-w-[90%] mx-auto sm:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl 2xl:max-w-[90%] py-2 md:p-4 flex flex-wrap items-center justify-between">
             {{ $slot }}
         </div>
     </main>
 
     <footer class="bg-zinc-50 rounded-md shadow-sm mx-2 mb-2 dark:bg-gray-800">
-        <div class="w-full mx-auto sm:max-w-screen lg:max-w-screen-xl xl:max-w-screen-2xl p-4 md:flex md:items-center md:justify-between">
+        <div class="w-full max-w-[90%] mx-auto sm:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl 2xl:max-w-[90%] py-2 md:p-4 flex flex-wrap items-center justify-between">
             <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
             © {{ now()->year }} {{ config('constants.admin_name') }}
             </span>

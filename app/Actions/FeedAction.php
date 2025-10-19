@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Dtos\Tube\ContentItem;
+use App\Dtos\Tube\FeedActionItem;
+use App\Dtos\Tube\FeedItem;
 use App\Jobs\Tube\CreateFeedJob;
 use App\Models\Tube\Category;
 use App\Models\Tube\Feed;
-use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 
 final readonly class FeedAction
 {
-    /**
-     * @return Collection<ContentItem>
-     */
-    public function handle(int $page, bool $fromRequest = true): Collection
+    public function handle(int $page, bool $fromRequest = true): FeedActionItem
     {
         $cateSlug = Session::get(
             'category',
@@ -32,7 +30,7 @@ final readonly class FeedAction
             ->remember(
                 md5($cacheKey),
                 now()->addHour(),
-                function () use ($perPage, $cateSlug): Collection {
+                function () use ($perPage, $cateSlug): LengthAwarePaginator {
                     return Feed::query()
                         ->where('category_id', Category::getId($cateSlug))
                         ->where('active', true)
@@ -40,10 +38,7 @@ final readonly class FeedAction
                         ->where('published', true)
                         ->orderBy('order')
                         ->limit(Config::integer('feed.max_feed_limit'))
-                        ->paginate($perPage)
-                        ->map(function (Feed $item) {
-                            return ContentItem::from($item->content);
-                        });
+                        ->paginate($perPage);
                 });
 
         if ($feed->isEmpty()) {
@@ -52,6 +47,9 @@ final readonly class FeedAction
             );
         }
 
-        return $feed;
+        return new FeedActionItem(
+            $feed->map(fn(Feed $feed) => FeedItem::forListing($feed)),
+            $feed->links(),
+        );
     }
 }

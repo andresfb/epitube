@@ -1,15 +1,5 @@
 <nav class="bg-zinc-50 border-gray-200 dark:bg-gray-900">
-    <div @class([
-        'sm:max-w-screen',
-        'lg:max-w-screen-xl',
-        'xl:max-w-screen-2xl',
-        'flex',
-        'flex-wrap',
-        'items-center',
-        'justify-between',
-        'mx-auto',
-        'p-4',
-    ])>
+    <div class="w-full max-w-[90%] mx-auto sm:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl 2xl:max-w-[90%] py-2 md:p-4 flex flex-wrap items-center justify-between">
         <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
             <x-entypo-video class="h-8 text-blue-700" />
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">

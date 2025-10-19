@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Models\Tube;
 
 use App\Dtos\Tube\ContentItem;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Scout\Scout;
 use Laravel\Scout\Searchable;
 use MongoDB\Laravel\Eloquent\Model;
-use MongoDB\Laravel\Relations\BelongsTo;
 
 /**
  * @property int $content_id
@@ -27,6 +27,7 @@ use MongoDB\Laravel\Relations\BelongsTo;
  * @property string $service_url
  * @property array $tags
  * @property array $tag_slugs
+ * @property array $tag_array
  * @property array $videos
  * @property array $previews
  * @property array $thumbnails
@@ -73,11 +74,6 @@ final class Feed extends Model
             ]);
     }
 
-    public function content(): BelongsTo
-    {
-        return $this->belongsTo(Content::class);
-    }
-
     public function searchableAs(): string
     {
         return 'epitube_feed_index';
@@ -120,6 +116,14 @@ final class Feed extends Model
             ->onConnection($models->first()->syncWithSearchUsing()));
     }
 
+    public function toArray(): array
+    {
+        $item = $this->toSearchableArray();
+        $item['added_at'] = CarbonImmutable::parse($this->added_at->toDateTimeString());
+
+        return $item;
+    }
+
     protected function casts(): array
     {
         return [
@@ -131,6 +135,7 @@ final class Feed extends Model
             'order' => 'integer',
             'tags' => 'array',
             'tag_slugs' => 'array',
+            'tag_array' => 'array',
             'videos' => 'array',
             'previews' => 'array',
             'thumbnails' => 'array',

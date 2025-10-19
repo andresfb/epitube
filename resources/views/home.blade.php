@@ -1,5 +1,3 @@
 <x-layouts.app>
-    <div class="container mx-auto px-4 py-8">
-        <x-content-list :items="$feed" :timeout="$timeout" :maxRefresh="$maxRefresh" />
-    </div>
+    <x-content-list :items="$feed" :links="$links" :timeout="$timeout" :maxRefresh="$maxRefresh" />
 </x-layouts.app>

@@ -1,13 +1,16 @@
-@props(['items', 'timeout' => 5000, 'maxRefresh' => 3, 'reloadTimer' => true])
+@props([
+    'items',
+    'links',
+    'timeout' => 5000,
+    'maxRefresh' => 3,
+    'reloadTimer' => true
+    ])
 
-<div class="grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
 @forelse($items as $item)
-    <div class="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
-        {{-- Add your feed item content here --}}
-        <div class="p-4">
-            @dump($item)
-        </div>
-    </div>
+{{--    <div class="overflow-hidden rounded-md bg-white shadow dark:bg-gray-800">--}}
+        <x-content-item :item="$item" />
+{{--    </div>--}}
     @once
     <script>
         // Clear refresh counter when content loads successfully
@@ -33,4 +36,9 @@
         </div>
     @endif
 @endforelse
+</div>
+<div class="container w-full lg:w-1/2 xl:w-1/3 mx-auto px-4 pt-9 pb-3">
+@if ($links !== null)
+    {!! $links !!}
+@endif
 </div>

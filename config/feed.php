@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 return [
 
-    'max_feed_limit' => (int) env('MAX_RAW_FEED', 480),
+    'max_feed_limit' => (int) env('MAX_RAW_FEED', 500),
 
-    'per_page' => (int) env('MAX_PER_PAGE', 24),
+    'per_page' => (int) env('MAX_PER_PAGE', 25),
 
     'max_feed_runs' => (int) env('MAX_FEED_RUNS', 10),
 

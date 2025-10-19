@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Config;
-use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
@@ -135,6 +134,7 @@ final class Content extends Model implements HasMedia
 
         $content['tags'] = $this->tags->pluck('name')->toArray();
         $content['tag_slugs'] = $this->tags->pluck('slug')->toArray();
+        $content['tag_array'] = $this->tags->pluck('name', 'slug')->toArray();
 
         $content['service_url'] = sprintf(
             Config::string('jellyfin.item_web_url'),
