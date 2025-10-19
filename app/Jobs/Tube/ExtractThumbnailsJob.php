@@ -38,7 +38,7 @@ final class ExtractThumbnailsJob implements ShouldQueue
         } catch (MaxAttemptsExceededException $e) {
             Log::error($e->getMessage());
         } catch (Exception $e) {
-            $error = "Thumbnail extraction error for Media Id: {$this->mediaId}: {$e->getMessage()}";
+            $error = "Thumbnail extraction error for Media Id: $this->mediaId: {$e->getMessage()}";
             Log::error($error);
             Notifications::error(self::class, $this->mediaId, $error);
 

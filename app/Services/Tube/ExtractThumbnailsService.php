@@ -7,7 +7,6 @@ namespace App\Services\Tube;
 use App\Exceptions\ProcessRunningException;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
-use App\Models\Tube\Feed;
 use Exception;
 use FFMpeg\Coordinate\TimeCode;
 use Illuminate\Support\Facades\Config;
@@ -39,7 +38,6 @@ final class ExtractThumbnailsService extends BaseEncodeService
             Log::notice("Finished extracting thumbnails for Media Id: $mediaId");
         } finally {
             $this->videoLibrary->deleteTempFiles();
-
             $this->deleteFlag($this->videoLibrary->getProcessingDisk());
         }
     }
@@ -82,12 +80,14 @@ final class ExtractThumbnailsService extends BaseEncodeService
             );
 
             $time = TimeCode::fromSeconds($timeCode * $i);
+            $thumbnail = Storage::disk($this->videoLibrary->getProcessingDisk())->path($image);
+
             $cmd = sprintf(
                 '"%s" -hide_banner -y -v error -ss "%s" -i "%s" -vframes 1 -f image2 -vf "scale=\'trunc(ih*dar):ih\',setsar=1/1" "%s"',
                 $this->ffMpeg(),
                 $time,
                 $this->videoLibrary->getMasterFile(),
-                Storage::disk($this->videoLibrary->getProcessingDisk())->path($image),
+                $thumbnail,
             );
 
             Log::notice("Generating $image");
@@ -95,14 +95,27 @@ final class ExtractThumbnailsService extends BaseEncodeService
                 ->info("Generating $image with cmd: $cmd");
 
             $process = Process::fromShellCommandline($cmd)
+                ->enableOutput()
                 ->setTimeout(0)
                 ->mustRun();
+
+            $output = $process->getOutput();
+            if (! blank($output)) {
+                Log::channel(Config::string('laravel-ffmpeg.log_channel'))
+                    ->info("The command generated this output: $output");
+            }
 
             if (! $process->isSuccessful()) {
                 throw new ProcessFailedException($process);
             }
 
-            $images[] = Storage::disk($this->videoLibrary->getProcessingDisk())->path($image);
+            if (! file_exists($thumbnail)) {
+                Log::error("Thumbnail $thumbnail not created");
+
+                continue;
+            }
+
+            $images[] = $thumbnail;
         }
 
         Log::notice('Done extracting thumbnails');
