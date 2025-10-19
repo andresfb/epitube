@@ -1,3 +1,134 @@
+video preview
+--------------
+webkit-playsinline="true"
+
+<div class="group relative w-64 h-36 overflow-hidden rounded-lg bg-gray-900">
+  <!-- Static thumbnail (fallback) -->
+  <img src="thumb.jpg"
+       alt="Video thumbnail"
+       class="absolute inset-0 w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-0">
+
+  <!-- Preview video -->
+  <video src="preview.mp4"
+         class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-200"
+         muted
+         playsinline
+         preload="metadata"
+         loop
+         id="preview-1"></video>
+</div>
+
+// Helper to toggle the preview video on hover (desktop) and tap (mobile)
+document.querySelectorAll('.group').forEach(container => {
+  const video = container.querySelector('video');
+
+  // Play on mouseenter / touchstart
+  const start = () => {
+    video.style.opacity = '1';
+    video.play();
+  };
+
+  // Pause & hide on mouseleave / touchend / touchcancel
+  const stop = () => {
+    video.pause();
+    video.currentTime = 0;          // reset to first frame
+    video.style.opacity = '0';
+  };
+
+  // Desktop hover
+  container.addEventListener('mouseenter', start);
+  container.addEventListener('mouseleave', stop);
+
+  // Mobile tap – toggle on each tap
+  let tapped = false;
+  container.addEventListener('touchstart', e => {
+    e.preventDefault();            // prevent double‑tap zoom
+    tapped ? stop() : start();
+    tapped = !tapped;
+  });
+  // Clean up if the finger leaves the element
+  container.addEventListener('touchend', stop);
+  container.addEventListener('touchcancel', stop);
+});
+
+
+ALPINE
+======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tailwind + Alpine video preview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Alpine 3 -->
+  <script defer src="https://unpkg.com/alpinejs@3.x/dist/cdn.min.js"></script>
+  <style>
+    /* Hide native video controls */
+    video::-webkit-media-controls { display:none !important; }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+
+  <!-- -------------------------------------------------
+       Thumbnail preview component
+       ------------------------------------------------- -->
+  <div
+    x-data="preview()"
+    @mouseenter="play()"
+    @mouseleave="reset()"
+    @touchstart.prevent="toggle()"
+    @touchend="reset()"
+    @touchcancel="reset()"
+    class="group relative w-64 h-36 overflow-hidden rounded-lg bg-gray-900"
+  >
+    <!-- Static image (fallback) -->
+    <img src="thumb.jpg"
+         alt="Video thumbnail"
+         class="absolute inset-0 w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-0">
+
+    <!-- Preview video -->
+    <video
+      x-ref="vid"
+      src="preview.mp4"
+      muted
+      playsinline
+      preload="metadata"
+      loop
+      class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-200"
+    ></video>
+  </div>
+
+  <script>
+    function preview() {
+      return {
+        playing: false,
+        play() {
+          const v = this.$refs.vid;
+          v.style.opacity = '1';
+          v.play();
+          this.playing = true;
+        },
+        reset() {
+          const v = this.$refs.vid;
+          v.pause();
+          v.currentTime = 0;
+          v.style.opacity = '0';
+          this.playing = false;
+        },
+        toggle() {
+          // Mobile tap: start if stopped, otherwise stop
+          this.playing ? this.reset() : this.play();
+        }
+      };
+    }
+  </script>
+</body>
+</html>
+
+
+
+Tags listing
+-------------
 To order tags by usage count in Spatie Tags, you need to query the tags with a count of their related models. Here are the approaches:
 
   Using Query Builder with Joins
