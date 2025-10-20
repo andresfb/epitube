@@ -42,6 +42,9 @@ trait TagsProcessor
             ->replace(' 70S ', " 70's ")
             ->replace(' 1St ', ' 1st ')
             ->replace(' 2Nd ', ' 2nd ')
+            ->replace(' tv ', ' TV ')
+            ->replace(' dp ', ' DP ')
+            ->replace(' mvp ', ' MVP ')
             ->replace('Hd ', 'HD ')
             ->replace(' Hd', ' HD');
 

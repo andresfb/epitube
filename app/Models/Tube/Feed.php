@@ -84,6 +84,11 @@ final class Feed extends Model
         return $this->except([
             'order',
             'published',
+            'tag_array',
+            'videos',
+            'previews',
+            'thumbnails',
+            'service_url',
         ]);
     }
 

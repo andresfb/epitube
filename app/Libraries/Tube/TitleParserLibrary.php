@@ -70,7 +70,8 @@ final class TitleParserLibrary
     public function removeWords(Stringable|string $source): Stringable
     {
         $titled = $source instanceof Stringable ? $source : Str::of($source);
-        return $titled->replace(
+
+        $title = $titled->replace(
             [
                 'step',
                 'step-',
@@ -103,19 +104,28 @@ final class TitleParserLibrary
                 'xvid-',
                 ' tg',
                 ' hd ',
-                ' bbc',
                 'webrip',
             ], '')
             ->replace('...', '.')
             ->replace('..', '.')
             ->trim()
-            ->rtrim(' vs')
-            ->rtrim(' full')
-            ->rtrim(' v')
-            ->rtrim(' xvid')
-            ->rtrim(' mp')
-            ->rtrim(' nbq')
-            ->rtrim('-');
+            ->toString();
+
+        $trailingWords = [
+            ' vs',
+            ' full',
+            ' v',
+            ' xvid',
+            ' mp',
+            ' nbq',
+            '-',
+        ];
+
+        foreach ($trailingWords as $word) {
+            $title = $this->removeTrailingWord($title, $word);
+        }
+
+        return Str::of($title);
     }
 
     private function cleanString(string $value, string $replace = ' '): self
@@ -123,7 +133,7 @@ final class TitleParserLibrary
         $this->title = Str::of($value)
             ->lower()
             ->replace(
-                ['.', '_', '~', '?', ':', ','],
+                ['.', '_', '~', '?', ':', '：', ','],
                 $replace
             )
             ->replace(['|', '｜', '/'], '')
@@ -219,7 +229,7 @@ final class TitleParserLibrary
         $str = preg_replace('/\s+\./', '.', (string) $str);
 
         // 4. Trim leading / trailing spaces
-        $this->title = mb_trim((string) $str);
+        $this->title = mb_trim($str);
 
         return $this;
     }
@@ -476,5 +486,17 @@ final class TitleParserLibrary
 
             $this->extraTags[] = $tag;
         }
+    }
+
+    private function removeTrailingWord(string $text, string $word): string
+    {
+        // Escape any regex meta‑characters in the word
+        $escaped = preg_quote($word, '/');
+
+        // Pattern: optional whitespace, the word, then end‑of‑string
+        $pattern = '/\s*' . $escaped . '$/i';
+
+        // Remove it (replace with empty string) and trim any leftover space
+        return trim(preg_replace($pattern, '', $text));
     }
 }

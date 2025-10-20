@@ -2,7 +2,6 @@
 
 namespace App\Models\Tube;
 
-use App\Models\SharedTagItem;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

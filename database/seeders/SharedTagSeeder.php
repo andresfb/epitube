@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\SharedTagItem;
 use App\Models\Tube\SharedTag;
+use App\Models\Tube\SharedTagItem;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;

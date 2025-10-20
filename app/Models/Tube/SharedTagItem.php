@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Tube;
 
-use App\Models\Tube\SharedTag;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
