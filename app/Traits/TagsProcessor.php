@@ -30,6 +30,7 @@ trait TagsProcessor
 
     private function deTitle(Stringable $text): string
     {
+        // These words will be changed back to lower case
         $deTitleWords = SpecialTag::getList(SpecialTagType::TITLE_WORDS);
         foreach ($deTitleWords as $word) {
             $text = $text->replace(
@@ -37,15 +38,23 @@ trait TagsProcessor
             );
         }
 
+        // These words will be capitalized
         $value = $text->replace('Xx', 'XX')
             ->replace('Xxx', 'XXX')
             ->replace(' 70S ', " 70's ")
             ->replace(' 1St ', ' 1st ')
             ->replace(' 2Nd ', ' 2nd ')
-            ->replace(' tv ', ' TV ')
-            ->replace(' dp ', ' DP ')
-            ->replace(' mvp ', ' MVP ')
+            ->replace(' Tv ', ' TV ')
+            ->replace(' Dp ', ' DP ')
+            ->replace(' Mvp ', ' MVP ')
+            ->replace(' Kpop ', ' KPop ')
+            ->replace(' Lut ', ' LUT ')
+            ->replace(' Hq ', ' HQ ')
             ->replace('Hd ', 'HD ')
+            ->replace('- the ', '- The ')
+            ->replace('- a ', '- A ')
+            ->replace('- in ', '- In ')
+            ->replace(' S ', "'s ")
             ->replace(' Hd', ' HD');
 
         if ($value->is('Ai')) {

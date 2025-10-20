@@ -24,7 +24,7 @@ final class GenerateDownscalesJob implements ShouldQueue
 
     public function __construct(private readonly int $mediaId)
     {
-        $this->queue = 'encode';
+        $this->queue = 'ingestor';
         $this->delay = now()->addSeconds(10);
     }
 
@@ -38,7 +38,7 @@ final class GenerateDownscalesJob implements ShouldQueue
         } catch (MaxAttemptsExceededException $e) {
             Log::error($e->getMessage());
         } catch (Exception $e) {
-            $error = "Downscales error for Media Id: {$this->mediaId}: {$e->getMessage()}";
+            $error = "Downscales error for Media Id: $this->mediaId: {$e->getMessage()}";
             Log::error($error);
             Notifications::error(self::class, $this->mediaId, $error);
 

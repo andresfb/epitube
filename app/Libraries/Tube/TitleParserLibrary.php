@@ -82,6 +82,7 @@ final class TitleParserLibrary
                 '720p',
                 '1080p',
                 '2160p',
+                '4k',
                 'hevc',
                 'x264',
                 'x265',
@@ -103,7 +104,6 @@ final class TitleParserLibrary
                 'xvid1',
                 'xvid-',
                 ' tg',
-                ' hd ',
                 'webrip',
             ], '')
             ->replace('...', '.')
