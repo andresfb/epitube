@@ -89,6 +89,7 @@ final class Feed extends Model
             'previews',
             'thumbnails',
             'service_url',
+            'related',
         ]);
     }
 
