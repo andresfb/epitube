@@ -49,11 +49,13 @@ trait TagsProcessor
             ->replace(' Mvp ', ' MVP ')
             ->replace(' Kpop ', ' KPop ')
             ->replace(' Lut ', ' LUT ')
+            ->replace(' Bbc ', ' BBC ')
             ->replace(' Hq ', ' HQ ')
             ->replace('Hd ', 'HD ')
             ->replace('- the ', '- The ')
             ->replace('- a ', '- A ')
             ->replace('- in ', '- In ')
+            ->replace('- my ', '- My ')
             ->replace(' S ', "'s ")
             ->replace(' Hd', ' HD');
 
@@ -65,6 +67,11 @@ trait TagsProcessor
             $value = $value->replace('Ai ', 'AI ');
         }
 
-        return $value->toString();
+        return $this->normalizeAgeString($value->toString());
+    }
+
+    private function normalizeAgeString(string $s): string {
+        // 1‑3 digits at the start, followed by “yo” (any case) and nothing else
+        return preg_replace('/^(\d{1,3})Yo$/i', '$1yo', $s);
     }
 }

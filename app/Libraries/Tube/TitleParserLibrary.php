@@ -119,6 +119,7 @@ final class TitleParserLibrary
             ' mp',
             ' nbq',
             '-',
+            ' [',
         ];
 
         foreach ($trailingWords as $word) {

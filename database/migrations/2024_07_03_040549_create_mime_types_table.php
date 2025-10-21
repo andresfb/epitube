@@ -63,6 +63,7 @@ return new class extends Migration
             m4v,video/m4v,0
             ogm,video/ogg,1
             rmvb,application/vnd.rn-realmedia-vbr,1
+            rmvb,application/vnd.rn-realmedia,1
             *,application/octet-stream,1';
     }
 };
