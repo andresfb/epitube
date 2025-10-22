@@ -83,6 +83,7 @@ final class TitleParserLibrary
                 '1080p',
                 '2160p',
                 '4k',
+                '2k',
                 'hevc',
                 'x264',
                 'x265',
@@ -105,6 +106,7 @@ final class TitleParserLibrary
                 'xvid-',
                 ' tg',
                 'webrip',
+                '.com',
             ], '')
             ->replace('...', '.')
             ->replace('..', '.')
@@ -248,24 +250,24 @@ final class TitleParserLibrary
     {
         return [
             'brother' => $this->getBoyGeneric(),
-            ' bro ' => $this->getBoyGeneric(),
+            ' bro ' => $this->addTrailingSpaces($this->getBoyGeneric()),
             'hermano' => $this->getBoyGeneric(),
             'hermanastro' => $this->getBoyGeneric(),
             'sister' => $this->getGirlGeneric(),
-            ' sis ' => $this->getGirlGeneric(),
+            ' sis ' => $this->addTrailingSpaces($this->getGirlGeneric()),
             'hermana' => $this->getGirlGeneric(),
             'hermanastra' => $this->getGirlGeneric(),
             'padrastro' => $this->getBoyGeneric(),
             'father' => $this->getBoyGeneric(),
-            ' dad ' => $this->getBoyGeneric(),
+            ' dad ' => $this->addTrailingSpaces($this->getBoyGeneric()),
             'daddy' => $this->getBoyGeneric(),
             'papi' => $this->getBoyGeneric(),
-            ' son ' => $this->getBoyGeneric(),
+            ' son ' => $this->addTrailingSpaces($this->getBoyGeneric()),
             's0n' => $this->getBoyGeneric(),
             'hijastro' => $this->getBoyGeneric(),
             'madrastra' => $this->getGirlGeneric(),
             'mother' => $this->getGirlGeneric(),
-            ' mom ' => $this->getGirlGeneric(),
+            ' mom ' => $this->addTrailingSpaces($this->getGirlGeneric()),
             'mommy' => $this->getGirlGeneric(),
             'mami' => $this->getGirlGeneric(),
             'daughter' => $this->getGirlGeneric(),
@@ -334,8 +336,6 @@ final class TitleParserLibrary
                 'wife',
                 'mistress',
                 'girlfriend',
-                'sister-in-law',
-                'mother-in-law',
                 'bride',
                 'duchess',
                 'governess',
@@ -499,5 +499,15 @@ final class TitleParserLibrary
 
         // Remove it (replace with empty string) and trim any leftover space
         return trim(preg_replace($pattern, '', $text));
+    }
+
+    private function addTrailingSpaces(array $words): array
+    {
+        $list = [];
+        foreach ($words as $word) {
+            $list[] = " $word ";
+        }
+
+        return $list;
     }
 }

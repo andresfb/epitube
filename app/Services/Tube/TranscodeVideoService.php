@@ -6,18 +6,20 @@ namespace App\Services\Tube;
 
 use App\Actions\RunExtraJobsAction;
 use App\Exceptions\ProcessRunningException;
+use App\Libraries\Tube\MasterVideoLibrary;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
-use App\Models\Tube\Feed;
 use App\Models\Tube\Media;
 use App\Traits\Encodable;
 use Exception;
 use FFMpeg\FFProbe;
 use FFMpeg\FFProbe\DataMapping\Stream;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -37,7 +39,10 @@ final class TranscodeVideoService
 
     private ?Stream $video = null;
 
-    public function __construct(private readonly RunExtraJobsAction $action) {}
+    public function __construct(
+        private readonly RunExtraJobsAction $action,
+        private readonly MasterVideoLibrary $videoLibrary
+    ) {}
 
     /**
      * @throws Exception
@@ -72,9 +77,17 @@ final class TranscodeVideoService
             Log::info('Executing Transcoding process');
             $info = $this->transcode();
 
-            $this->action->handle(
-                $this->addNewMedia($info)
-            );
+            Log::info('Adding transcoded video to Media');
+            $newMedia = $this->addNewMedia($info);
+
+            $this->videoLibrary->prepareDownloadPath($newMedia);
+            $masterPath = $this->videoLibrary->getMasterFile();
+
+            Log::info("Moving the video to download folder: $masterPath");
+            File::move($info['out_file'], $masterPath);
+
+            Log::info('Processing the rest of the Encoding jobs');
+            $this->action->handle($newMedia->id);
         } finally {
             $this->deleteFlag(self::TRANSCODE_DISK);
 
@@ -154,7 +167,6 @@ final class TranscodeVideoService
             $outputFile
         );
 
-        Log::info("Transcoding video");
         Log::channel(Config::string('laravel-ffmpeg.log_channel'))
             ->info("Transcoding ffmpeg running command: $cmd");
 
@@ -195,12 +207,13 @@ final class TranscodeVideoService
     /**
      * @throws Exception
      */
-    private function addNewMedia(array $info): int
+    private function addNewMedia(array $info): SpatieMedia|Media
     {
         $content = Content::where('id', $this->media->model_id)
             ->firstOrFail();
 
-        $media = $content->addMedia($info['out_file'])
+        return $content->addMedia($info['out_file'])
+            ->preservingOriginal()
             ->withProperties(['name' => $this->media->name])
             ->withCustomProperties([
                 'width' => (int) $info['width'],
@@ -211,7 +224,5 @@ final class TranscodeVideoService
                 'transcoded' => true,
             ])
             ->toMediaCollection(MediaNamesLibrary::transcoded());
-
-        return $media->id;
     }
 }

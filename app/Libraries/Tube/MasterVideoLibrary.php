@@ -129,6 +129,17 @@ final class MasterVideoLibrary
             return;
         }
 
+        $this->prepareDownloadPath($media);
+
+        if (! File::exists($this->masterFile)) {
+            // download the video from S3
+            Log::notice("Downloading video file: $this->masterFile");
+            $this->filesystem->copyFromMediaLibrary($media, $this->masterFile);
+        }
+    }
+
+    public function prepareDownloadPath(Media $media): void
+    {
         $this->downloadDisk = DiskNamesLibrary::download();
 
         // prepare a local file
@@ -141,12 +152,6 @@ final class MasterVideoLibrary
         $videoFileName = pathinfo($media->file_name, PATHINFO_BASENAME);
         $this->masterFile = sprintf('%s%s%s', $masterDownloadPath, DIRECTORY_SEPARATOR, $videoFileName);
         $this->relativeVideoPath = sprintf('%s%s%s', $tempMasterPath, DIRECTORY_SEPARATOR, $videoFileName);
-
-        if (! File::exists($this->masterFile)) {
-            // download the video from S3
-            Log::notice("Downloading video file: $this->masterFile");
-            $this->filesystem->copyFromMediaLibrary($media, $this->masterFile);
-        }
     }
 
     public function deleteTempFiles(): void

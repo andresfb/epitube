@@ -14,7 +14,7 @@ use Laravel\Scout\Searchable;
 use MongoDB\Laravel\Eloquent\Model;
 
 /**
- * @property int $content_id
+ * @property int $id
  * @property int $category_id
  * @property string $category
  * @property string $slug
@@ -55,24 +55,20 @@ final class Feed extends Model
 
     public static function generate(Content $content): void
     {
-        self::query()
-            ->where('content_id', $content->id)
-            ->delete();
-
-        $contentArray = ContentItem::withRelated($content)->toArray();
-        $contentArray['content_id'] = $content->id;
-
-        self::query()->create($contentArray);
+        self::query()->updateOrCreate(
+            ['id' => $content->id],
+            ContentItem::withRelated($content)->toArray()
+        );
     }
 
     public static function activateFeed(Content $content, int $index): void
     {
-        if (self::query()->where('content_id', $content->id)->doesntExist()) {
+        if (self::query()->where('id', $content->id)->doesntExist()) {
             self::generate($content);
         }
 
         self::query()
-            ->where('content_id', $content->id)
+            ->where('id', $content->id)
             ->update([
                 'order' => $index,
                 'published' => true,
