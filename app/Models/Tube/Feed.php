@@ -39,8 +39,6 @@ final class Feed extends Model
 {
     use Searchable;
 
-    protected $primaryKey = 'slug';
-
     protected $connection = 'mongodb';
 
     protected $guarded = [];
@@ -58,7 +56,7 @@ final class Feed extends Model
     public static function generate(Content $content): void
     {
         self::query()->updateOrCreate(
-            ['slug' => $content->slug],
+            ['content_id' => $content->id],
             ContentItem::withRelated($content)->toArray(),
         );
     }

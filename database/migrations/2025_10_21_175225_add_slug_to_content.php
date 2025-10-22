@@ -12,7 +12,7 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::table('content', static function (Blueprint $table) {
+        Schema::table('contents', static function (Blueprint $table) {
             $table->string('slug')
                 ->nullable()
                 ->after('file_hash');
@@ -20,7 +20,7 @@ return new class extends Migration
 
         $this->updateRecords();
 
-        Schema::table('content', static function (Blueprint $table) {
+        Schema::table('contents', static function (Blueprint $table) {
             $table->string('slug')->nullable(false)->change();
             $table->unique('slug');
         });
@@ -28,16 +28,16 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('content', static function (Blueprint $table) {
+        Schema::table('contents', static function (Blueprint $table) {
             $table->dropColumn('slug');
         });
     }
 
     private function updateRecords(): void
     {
-        Content::withTrashed()->all()->each(static function (Content $content) {
+        Content::withTrashed()->get()->each(static function (Content $content) {
             $content->slug = self::generateUniqueId();
-            $content->save();
+            $content->saveQuietly();
         });
     }
 };

@@ -10,6 +10,7 @@ class FeedItem extends Data
 {
     public function __construct(
         public int $id,
+        public string $slug,
         public int $category_id,
         public string $category,
         public string $title,
@@ -32,7 +33,7 @@ class FeedItem extends Data
     {
         return Cache::tags('feed')
             ->remember(
-                md5("FEED:LISTING:ITEM:$feed->content_id"),
+                md5("FEED:LISTING:ITEM:$feed->slug"),
                 now()->addMinutes(5),
                 static function () use ($feed): static {
                     $feedArray = $feed->toArray();
