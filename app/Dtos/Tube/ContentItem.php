@@ -6,11 +6,9 @@ namespace App\Dtos\Tube;
 
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
-use App\Models\Tube\Feed;
 use App\Models\Tube\Media;
 use App\Models\Tube\RelatedContent;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cache;
 use Spatie\LaravelData\Data;
 
 final class ContentItem extends Data
@@ -24,6 +22,7 @@ final class ContentItem extends Data
      */
     public function __construct(
         public int $id,
+        public string $slug,
         public int $category_id,
         public string $category,
         public string $title,
@@ -100,25 +99,5 @@ final class ContentItem extends Data
         $contentArray[MediaNamesLibrary::videos()] = $videos->merge($downscales)->toArray();
 
         return self::from($contentArray);
-    }
-
-    public static function withRandomThumbnail(Feed $feed): self
-    {
-        $key = md5("FEED:CONTENT:ITEM:$feed->content_id");
-        $item = Cache::get($key);
-        if ($item !== null) {
-            return $item;
-        }
-
-        $feedArray = $feed->toArray();
-        $thumbs = collect($feed->thumbnails)->random();
-
-        $feedArray['thumbnails'] = [];
-        $feedArray['thumbnails'][] = $thumbs;
-
-        $item = self::from($feedArray);
-        Cache::put($key, $item, now()->addMinutes(10));
-
-        return $item;
     }
 }

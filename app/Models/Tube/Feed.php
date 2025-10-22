@@ -17,6 +17,7 @@ use MongoDB\Laravel\Eloquent\Model;
  * @property int $content_id
  * @property int $category_id
  * @property string $category
+ * @property string $slug
  * @property string $title
  * @property bool $active
  * @property bool $viewed
@@ -38,6 +39,8 @@ final class Feed extends Model
 {
     use Searchable;
 
+    protected $primaryKey = 'slug';
+
     protected $connection = 'mongodb';
 
     protected $guarded = [];
@@ -55,7 +58,7 @@ final class Feed extends Model
     public static function generate(Content $content): void
     {
         self::query()->updateOrCreate(
-            ['content_id' => $content->id],
+            ['slug' => $content->slug],
             ContentItem::withRelated($content)->toArray(),
         );
     }
@@ -72,6 +75,11 @@ final class Feed extends Model
                 'order' => $index,
                 'published' => true,
             ]);
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
     }
 
     public function searchableAs(): string

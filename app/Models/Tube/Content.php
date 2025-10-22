@@ -7,6 +7,8 @@ namespace App\Models\Tube;
 use App\Libraries\Tube\DiskNamesLibrary;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Observers\ContentObserver;
+use App\Traits\ContentIdGenerator;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -20,6 +22,24 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
+/**
+ * @property int $id
+ * @property int $category_id
+ * @property string $item_id
+ * @property string $file_hash
+ * @property string $slug
+ * @property string $title
+ * @property bool $active
+ * @property bool $viewed
+ * @property bool $liked
+ * @property int $view_content
+ * @property string $og_path
+ * @property string $notes
+ * @property CarbonImmutable $added_at
+ * @property CarbonImmutable $deleted_at
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable $updated_at
+ */
 #[ObservedBy([ContentObserver::class])]
 final class Content extends Model implements HasMedia
 {
@@ -27,10 +47,16 @@ final class Content extends Model implements HasMedia
     use InteractsWithMedia;
     use SoftDeletes;
     use Notifiable;
+    use ContentIdGenerator;
 
     protected $guarded = [];
 
     protected $with = ['category', 'tags', 'media', 'related'];
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     public static function isDifferentFileVersion(string $hash, string $ogPath): bool
     {
@@ -153,6 +179,15 @@ final class Content extends Model implements HasMedia
         }
 
         return $content;
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::creating(static function (Content $content) {
+            $content->slug = self::generateUniqueId();
+        });
     }
 
     protected function casts(): array
