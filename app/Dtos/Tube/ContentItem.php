@@ -82,6 +82,10 @@ final class ContentItem extends Data
                 height: (int) $media->getCustomProperty('height'),
             ));
 
+        if ($videos->isEmpty()) {
+            $videos = collect();
+        }
+
         if (! $content->hasMedia(MediaNamesLibrary::downscaled())) {
             $contentArray[MediaNamesLibrary::videos()] = $videos->toArray();
 

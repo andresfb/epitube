@@ -5,13 +5,18 @@ namespace App\Console\Commands\Tube;
 use App\Dtos\Tube\ImportVideoItem;
 use App\Jobs\Tube\ImportVideoJob;
 use App\Libraries\Tube\JellyfinLibrary;
+use App\Models\Tube\Content;
+use App\Models\Tube\Media;
+use App\Models\Tube\Rejected;
 use App\Services\Tube\ImportVideoService;
 use App\Traits\ImportItemCreator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use RuntimeException;
+use Symfony\Component\Console\Exception\InvalidOptionException;
 use Throwable;
+
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
@@ -19,6 +24,7 @@ use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\text;
+use function Laravel\Prompts\warning;
 
 final class ImportVideoPathCommand extends Command
 {
@@ -40,6 +46,9 @@ final class ImportVideoPathCommand extends Command
             $importItem = $this->findItem($path);
             info('Video found');
 
+            $this->checkRejected($importItem);
+            $this->checkImported($importItem);
+
             if (confirm('Dispatch Job?', app()->isProduction())) {
                 ImportVideoJob::dispatch($importItem);
                 info('Job Dispatched');
@@ -49,7 +58,11 @@ final class ImportVideoPathCommand extends Command
 
             info('Executing service...');
             $service->execute($importItem);
+        } catch (InvalidOptionException) {
+            $this->newLine();
+            warning('User cancelled');
         } catch (Throwable $e) {
+            $this->newLine();
             error($e->getMessage());
         } finally {
             $this->newLine();
@@ -100,5 +113,36 @@ final class ImportVideoPathCommand extends Command
         }
 
         throw new RuntimeException("Item $path found on Jellyfin");
+    }
+
+    private function checkImported(ImportVideoItem $importItem): void
+    {
+        $content = Content::query()
+            ->where('item_id', $importItem->Id)
+            ->where('og_path', $importItem->Path)
+            ->first();
+
+        if ($content === null) {
+            return;
+        }
+
+        if (! confirm('Content already imported, overwrite?')) {
+            throw new InvalidOptionException('');
+        }
+
+        $content->getMedia()->each(fn (Media $media) => $media->forceDelete());
+    }
+
+    private function checkRejected(ImportVideoItem $importItem): void
+    {
+        $rejected = Rejected::query()
+            ->where('item_id', $importItem->Id)
+            ->first();
+
+        if ($rejected === null) {
+            return;
+        }
+
+        throw new RuntimeException("Item $importItem->Path rejected because \"$rejected->reason\"");
     }
 }
