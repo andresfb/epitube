@@ -20,11 +20,10 @@ readonly class CheckSelectedVideosService
 
     public function execute(): void
     {
+        $checkLimit = Config::integer('selected-videos.limit_run');
         $selected = SelectedVideo::query()
             ->pending()
-            ->limit(
-                Config::integer('selected-videos.limit_run') * 2
-            )
+            ->limit($checkLimit * 2)
             ->get();
 
         if ($selected->isEmpty()) {
@@ -33,10 +32,13 @@ readonly class CheckSelectedVideosService
             return;
         }
 
-        Log::notice('Starting checking selected videos');
-        $processKey = md5(Config::string('selected-videos.process_key'));
+        Log::notice("Found {$selected->count()} Videos to download");
 
-        $selected->each(function (SelectedVideo $selectedVideo) use($processKey): void {
+        $processedCount = 0;
+        $processKey = md5(Config::string('selected-videos.process_key'));
+        Redis::del($processKey);
+
+        $selected->each(function (SelectedVideo $selectedVideo) use($processKey, &$processedCount): void {
             if (! filter_var($selectedVideo->url, FILTER_VALIDATE_URL)) {
                 Log::error("Invalid URL: $selectedVideo->url on video $selectedVideo->id");
                 $selectedVideo->disable();
@@ -52,11 +54,13 @@ readonly class CheckSelectedVideosService
             }
 
             Redis::rpush($processKey, $selectedVideo->id);
+            ++$processedCount;
         });
 
+        Log::notice("Queued $processedCount Videos for download");
         Redis::expire(
-            md5(Config::string('selected-videos.process_key')),
-            3300 // 55 minutes
+            $processKey,
+            (int) ceil($checkLimit * 5 * 1.5 * 60)
         );
 
         $this->dispatchJob();
@@ -78,7 +82,7 @@ readonly class CheckSelectedVideosService
         Cache::put(
             $statusKey,
             $status,
-            now()->endOfDay()->subSeconds(5),
+            now()->endOfDay()->subSecond(),
         );
 
         DownloadSelectedVideoJob::dispatch();

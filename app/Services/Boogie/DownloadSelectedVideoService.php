@@ -30,7 +30,7 @@ final readonly class DownloadSelectedVideoService
         $status = Cache::get($this->statusKey);
         if (! $status instanceof DownloadStatusItem) {
             Log::error('Download status not found');
-            Redis::unlink($processKey);
+            Redis::del($processKey);
 
             return;
         }
@@ -38,33 +38,34 @@ final readonly class DownloadSelectedVideoService
         $limitRun = Config::integer('selected-videos.limit_run');
         if ($status->runs >= $limitRun * 5) {
             Log::warning('Concurrent runs limit reached');
-            Redis::unlink($processKey);
+            Redis::del($processKey);
 
             return;
         }
 
         if (now() > $status->started->endOfDay()) {
             Log::warning('Downloads are done for the day');
-            Redis::unlink($processKey);
+            Redis::del($processKey);
 
             return;
         }
 
         if ($status->count >= $limitRun) {
             Log::warning('Download limit reached');
-            Redis::unlink($processKey);
+            Redis::del($processKey);
 
             return;
         }
 
-        $videoId = (int) Redis::lpop($processKey);
-        if (blank($videoId)) {
+        $videoId = Redis::lpop($processKey);
+        if ($videoId === false) {
             Log::warning('No more Selected Videos to download');
             CheckSelectedVideosJob::dispatch();
 
             return;
         }
 
+        $videoId = (int) $videoId;
         $video = SelectedVideo::where('id', $videoId)->first();
         if ($video === null) {
             Log::warning("Video $videoId not found");

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Jobs\Boogie\CheckSelectedVideosJob;
 use App\Jobs\Tube\CheckEncodingErrorsJob;
 use App\Jobs\Tube\ClearTemporaryDisksJob;
 use App\Jobs\Tube\CreateFeedJob;
@@ -20,4 +21,4 @@ Schedule::job(app(ImportVideosJob::class))->cron('20 1,9,17 * * *');
 Schedule::job(app(CreateFeedJob::class))->dailyAt('03:25');
 Schedule::job(app(CheckEncodingErrorsJob::class))->dailyAt('23:45');
 Schedule::job(app(ClearTemporaryDisksJob::class))->dailyAt('23:55');
-//Schedule::job(app(CheckSelectedVideosJob::class))->dailyAt('04:05');
+Schedule::job(app(CheckSelectedVideosJob::class))->dailyAt('04:05');
