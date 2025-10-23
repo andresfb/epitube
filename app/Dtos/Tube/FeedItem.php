@@ -41,21 +41,7 @@ class FeedItem extends Data
                     $feedArray = $feed->toArray();
                     $thumb = collect($feed->thumbnails)->random();
 
-                    $video = [];
-                    $height = 0;
-
-                    foreach ($feed->videos as $item) {
-                        if ($item['height'] <= $height) {
-                            continue;
-                        }
-
-                        $video = $item;
-                    }
-
                     $feedArray['thumbnail'] = $thumb['srcset'];
-                    $feedArray['duration'] = self::readableDuration($video['duration']);
-                    $feedArray['resolution'] = "{$video['height']}p";
-                    $feedArray['is_hd'] = $video['height'] >= 720;
                     $feedArray['added_at'] = $feed->added_at->diffForHumans();
                     $feedArray['tags'] = $feed->tag_array;
                     sort($feedArray['tags']);
@@ -66,22 +52,5 @@ class FeedItem extends Data
                     return self::from($feedArray);
                 }
             );
-    }
-
-    private static function readableDuration(int $seconds): string
-    {
-        $hours = floor($seconds / 3600);
-        $minutes = floor(($seconds % 3600) / 60);
-
-        if ($hours > 0) {
-            // Example: "1 hour 20 minutes"
-            return trim(sprintf('%d h %d min',
-                $hours,
-                $minutes,
-            ));
-        }
-
-        // Example: "45 minutes"
-        return sprintf('%d min', $minutes);
     }
 }

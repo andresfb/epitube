@@ -26,6 +26,10 @@ final class ContentItem extends Data
         public int $category_id,
         public string $category,
         public string $title,
+        public string $duration,
+        public string $resolution,
+        public int $length,
+        public bool $is_hd,
         public bool $active,
         public bool $viewed,
         public bool $liked,
@@ -87,6 +91,7 @@ final class ContentItem extends Data
 
         if (! $content->hasMedia(MediaNamesLibrary::downscaled())) {
             $contentArray[MediaNamesLibrary::videos()] = $videos->toArray();
+            $contentArray = self::getVideoInfo($contentArray);
 
             return self::from($contentArray);
         }
@@ -100,7 +105,55 @@ final class ContentItem extends Data
             ));
 
         $contentArray[MediaNamesLibrary::videos()] = $videos->merge($downscales)->toArray();
+        $contentArray = self::getVideoInfo($contentArray);
 
         return self::from($contentArray);
+    }
+
+    private static function getVideoInfo(array $contentArray): array
+    {
+        $height = 0;
+        $video = [];
+
+        foreach ($contentArray[MediaNamesLibrary::videos()] as $item) {
+            if ($item['height'] <= $height) {
+                continue;
+            }
+
+            $video = $item;
+        }
+
+        if (blank($video)) {
+            $contentArray['length'] = 0;
+            $contentArray['duration'] = '';
+            $contentArray['resolution'] = '';
+            $contentArray['is_hd'] = false;
+
+            return $contentArray;
+        }
+
+        $contentArray['length'] = $video['duration'];
+        $contentArray['duration'] = self::readableDuration($video['duration']);
+        $contentArray['resolution'] = "{$video['height']}p";
+        $contentArray['is_hd'] = $video['height'] >= 720;
+
+        return $contentArray;
+    }
+
+    private static function readableDuration(int $seconds): string
+    {
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+
+        if ($hours > 0) {
+            // Example: "1 hour 20 minutes"
+            return trim(sprintf('%d h %d min',
+                $hours,
+                $minutes,
+            ));
+        }
+
+        // Example: "45 minutes"
+        return sprintf('%d min', $minutes);
     }
 }

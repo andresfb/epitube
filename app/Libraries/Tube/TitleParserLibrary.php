@@ -75,7 +75,7 @@ final class TitleParserLibrary
             [
                 'step',
                 'step-',
-                'xxx',
+                ' xxx ',
                 '240p',
                 '360p',
                 '480p',

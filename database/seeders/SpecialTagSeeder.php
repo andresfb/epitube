@@ -15,7 +15,8 @@ class SpecialTagSeeder extends Seeder
     public function run(): void
     {
         $this->importBanded();
-        $this->importTitleTags();
+        $this->importDeTitleTags();
+        $this->importReTitleTags();
 
         Cache::tags('special-tags')->flush();
     }
@@ -32,16 +33,16 @@ class SpecialTagSeeder extends Seeder
         $this->saveList($banded, SpecialTagType::BANDED);
     }
 
-    private function importTitleTags(): void
+    private function importDeTitleTags(): void
     {
         $titleTags = Config::array('content.de_title_words');
         if (blank($titleTags)) {
-            Log::error('No tags found for title tags.');
+            Log::error('No tags found for De Title tags.');
 
             return;
         }
 
-        $this->saveList($titleTags, SpecialTagType::TITLE_WORDS);
+        $this->saveList($titleTags, SpecialTagType::DE_TITLE_WORDS);
     }
 
     private function saveList(array $tags, SpecialTagType $type): void
@@ -52,6 +53,30 @@ class SpecialTagSeeder extends Seeder
                 'type' => $type,
             ], [
                 'tag' => $item,
+                'active' => true,
+            ]);
+        }
+    }
+
+    private function importReTitleTags(): void
+    {
+        $tags = Config::array('content.re_title_words');
+        if (blank($tags)) {
+            Log::error('No tags found for Re Title tags.');
+
+            return;
+        }
+
+        foreach ($tags as $item) {
+            $parts = explode('|', $item);
+
+            SpecialTag::updateOrCreate([
+                'slug' => md5($parts[0]),
+                'type' => SpecialTagType::RE_TITLE_WORDS,
+            ], [
+                'tag' => $parts[0],
+                'value' => $parts[1],
+                'active' => true,
             ]);
         }
     }

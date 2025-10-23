@@ -145,8 +145,25 @@ return [
         'rankingRules' => ['words', 'typo', 'proximity', 'attribute', 'sort', 'exactness'],
         'index-settings' => [
             \App\Models\Tube\Feed::class => [
-                'filterableAttributes' => ['id', 'title', 'active', 'viewed', 'category', 'tags', 'tag_slugs', '__soft_deleted'],
-                'sortableAttributes' => ['added_at', 'created_at', 'title', 'viewed', 'liked', 'view_count'],
+                'filterableAttributes' => [
+                    'id',
+                    'title',
+                    'active',
+                    'viewed',
+                    'category',
+                    'tags',
+                    'tag_slugs',
+                    'length',
+                ],
+                'sortableAttributes' => [
+                    'added_at',
+                    'created_at',
+                    'title',
+                    'viewed',
+                    'liked',
+                    'view_count',
+                    'length',
+                ],
                 'stopWords' => ['the', 'of', 'to'],
             ],
         ],

@@ -144,7 +144,7 @@ final class ImportVideoService
 
         $tags = collect();
         $sharedTags = SharedTag::getList();
-        $bandedTags = SpecialTag::getList(SpecialTagType::BANDED);
+        $bandedTags = SpecialTag::getBanded();
 
         str($directory)
             ->replace("'", '')

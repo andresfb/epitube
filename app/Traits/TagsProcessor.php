@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-use App\Enums\SpecialTagType;
 use App\Models\Tube\SpecialTag;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
@@ -31,49 +30,32 @@ trait TagsProcessor
     private function deTitle(Stringable $text): string
     {
         // These words will be changed back to lower case
-        $deTitleWords = SpecialTag::getList(SpecialTagType::TITLE_WORDS);
+        $deTitleWords = SpecialTag::getDeTitle();
         foreach ($deTitleWords as $word) {
             $text = $text->replace(
                 sprintf(" %s ", ucfirst($word)), " $word "
             );
         }
 
-        // These words will be capitalized
-        $value = $text->replace('Xx', 'XX')
-            ->replace('Xxx', 'XXX')
-            ->replace(' 70S ', " 70's ")
-            ->replace(' 1St ', ' 1st ')
-            ->replace(' 2Nd ', ' 2nd ')
-            ->replace(' Tv ', ' TV ')
-            ->replace(' Dp ', ' DP ')
-            ->replace(' Bf ', ' BF ')
-            ->replace(' Mvp ', ' MVP ')
-            ->replace(' Kpop ', ' KPop ')
-            ->replace(' Lut ', ' LUT ')
-            ->replace(' Bbc ', ' BBC ')
-            ->replace(' Hq ', ' HQ ')
-            ->replace('Hd ', 'HD ')
-            ->replace('- the ', '- The ')
-            ->replace('- a ', '- A ')
-            ->replace('- an ', '- An ')
-            ->replace('- in ', '- In ')
-            ->replace('- my ', '- My ')
-            ->replace(' S ', "'s ")
-            ->replace(' Hd', ' HD');
-
-        if ($value->is('Ai')) {
-            $value = $value->replace('Ai', 'AI');
+        // These words will be changed to Title or Upper case.
+        $reTitleWords = SpecialTag::getReTitle();
+        foreach ($reTitleWords as $word) {
+            $text = $text->replace($word->tag, $word->value);
         }
 
-        if ($value->startsWith('Ai ')) {
-            $value = $value->replace('Ai ', 'AI ');
+        if ($text->is('Ai')) {
+            $text = $text->replace('Ai', 'AI');
         }
 
-        return $this->normalizeAgeString($value->toString());
+        if ($text->startsWith('Ai ')) {
+            $text = $text->replace('Ai ', 'AI ');
+        }
+
+        return $this->normalizeAgeString($text->toString());
     }
 
     private function normalizeAgeString(string $s): string {
-        // 1‑3 digits at the start, followed by “yo” (any case) and nothing else
-        return preg_replace('/^(\d{1,3})Yo$/i', '$1yo', $s);
+        // 1-3 digits at the start, followed by “yo” or “yr” (any case), and nothing else
+        return preg_replace('/^(\d{1,3})(Yo|Yr)$/i', '$1\L$2', $s);
     }
 }

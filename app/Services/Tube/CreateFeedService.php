@@ -11,10 +11,14 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
-final class CreateFeedService
+final readonly class CreateFeedService
 {
+    public function __construct(private SyncFeedRecordsService $feedRecordsService) {}
+
     public function execute(): void
     {
+        $this->feedRecordsService->execute();
+
         Log::notice('Start to create feed');
 
         $main = $this->getBaseQuery();

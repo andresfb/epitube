@@ -38,7 +38,7 @@ final class CreateTagsFromPathCommand extends Command
             );
 
             $sharedTags = SharedTag::getList();
-            $bandedTags = SpecialTag::getList(SpecialTagType::BANDED);
+            $bandedTags = SpecialTag::getBanded();
 
             foreach ($directories as $directory) {
                 $tags = collect();

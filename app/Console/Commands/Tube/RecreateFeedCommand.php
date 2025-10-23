@@ -2,11 +2,9 @@
 
 namespace App\Console\Commands\Tube;
 
-use App\Models\Tube\Content;
-use App\Models\Tube\Feed;
+use App\Services\Tube\SyncFeedRecordsService;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
@@ -14,7 +12,6 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\info;
-use function Laravel\Prompts\warning;
 
 final class RecreateFeedCommand extends Command
 {
@@ -22,7 +19,7 @@ final class RecreateFeedCommand extends Command
 
     protected $description = 'Clear all records and recreate the Feed';
 
-    public function handle(): void
+    public function handle(SyncFeedRecordsService $service): void
     {
         try {
             clear();
@@ -34,55 +31,7 @@ final class RecreateFeedCommand extends Command
                 return;
             }
 
-            $this->line('Deleting records...');
-            Feed::all()->each(fn (Feed $feed) => $feed->forceDelete());
-
-            $this->newLine();
-            $this->call('scout:flush', [
-                'model' => Feed::class,
-            ]);
-
-            $this->newLine();
-            $this->line('Loading Contents');
-            $contents = Content::query()
-                ->hasVideos()
-                ->hasThumbnails()
-                ->get();
-
-            if ($contents->isEmpty()) {
-                warning('No Contents Found');
-
-                return;
-            }
-
-            $this->newLine();
-            $this->line("Processing {$contents->count()} contents");
-            $this->newLine();
-
-            $this->line('Creating feed');
-            $contents->each(function (Content $content) {
-                Feed::withoutEvents(static function () use ($content) {
-                    Feed::generate($content);
-                });
-
-                echo '.';
-            });
-
-            $this->newLine(2);
-            Feed::withoutEvents(static function () {
-                Feed::query()
-                    ->update([
-                        'order' => 0,
-                        'published' => false,
-                    ]);
-            });
-
-            $this->call('scout:import', [
-                'model' => Feed::class,
-            ]);
-
-            $this->newLine();
-            Cache::tags('feed')->flush();
+            $service->execute();
         } catch (Exception $e) {
             error($e->getMessage());
         } finally {

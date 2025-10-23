@@ -20,6 +20,10 @@ use MongoDB\Laravel\Eloquent\Model;
  * @property string $slug
  * @property string $title
  * @property bool $active
+ * @property string $duration,
+ * @property int $length,
+ * @property string $resolution,
+ * @property bool $is_hd,
  * @property bool $viewed
  * @property bool $liked
  * @property bool $published
@@ -143,6 +147,7 @@ final class Feed extends Model
             'viewed' => 'boolean',
             'liked' => 'boolean',
             'published' => 'boolean',
+            'is_hd' => 'boolean',
             'view_count' => 'integer',
             'order' => 'integer',
             'tags' => 'array',

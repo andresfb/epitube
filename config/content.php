@@ -52,6 +52,8 @@ return [
 
     'de_title_words' => explode(',', env('CONTENT_DE_TITLE_WORDS', '')),
 
+    're_title_words' => explode(',', env('CONTENT_RE_TITLE_WORDS', '')),
+
     'title_tags' => env('CONTENT_TITLE_TAGS', ''),
 
     'shared_tags' => $sharedTags,

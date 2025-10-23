@@ -56,7 +56,6 @@ final class DownloadVideoLibrary
         Log::channel(Config::string('laravel-ffmpeg.log_channel'))
             ->info("Downloading video with command: $cmd");
 
-        Log::notice('Downloading video...');
         try {
             $process = Process::fromShellCommandline($cmd)
                 ->enableOutput()
