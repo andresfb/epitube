@@ -67,6 +67,7 @@ class SpecialTagSeeder extends Seeder
             return;
         }
 
+        $order = 1;
         foreach ($tags as $item) {
             $parts = explode('|', $item);
 
@@ -77,7 +78,10 @@ class SpecialTagSeeder extends Seeder
                 'tag' => $parts[0],
                 'value' => $parts[1],
                 'active' => true,
+                'order' => $order,
             ]);
+
+            $order++;
         }
     }
 }

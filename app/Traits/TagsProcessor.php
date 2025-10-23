@@ -38,10 +38,10 @@ trait TagsProcessor
         }
 
         // These words will be changed to Title or Upper case.
-        $reTitleWords = SpecialTag::getReTitle();
-        foreach ($reTitleWords as $word) {
-            $text = $text->replace($word->tag, $word->value);
-        }
+        SpecialTag::getReTitle()
+            ->each(function (SpecialTag $word) use(&$text) {
+                $text = $text->replace($word->tag, $word->value);
+            });
 
         if ($text->is('Ai')) {
             $text = $text->replace('Ai', 'AI');
