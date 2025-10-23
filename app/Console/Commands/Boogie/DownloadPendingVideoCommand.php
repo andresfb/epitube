@@ -11,8 +11,8 @@ use App\Traits\LanguageChecker;
 use Illuminate\Console\Command;
 use LanguageDetector\LanguageDetector;
 use RuntimeException;
-
 use Throwable;
+
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;

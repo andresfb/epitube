@@ -22,6 +22,10 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
+// TODO: change the liked field to a int and rename it to like_status. Update any reference to it
+// TODO: the like_status will be to make like/dislikes of content.
+// TODO: update the feed creation to list Content by like_status >= 0
+
 /**
  * @property int $id
  * @property int $category_id

@@ -10,7 +10,6 @@ final class PreviewItem extends Data
 {
     public function __construct(
         public string $fulUrl,
-        public int $size,
-        public string $extension,
+        public string $mimeType,
     ) {}
 }

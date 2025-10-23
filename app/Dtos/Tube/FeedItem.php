@@ -29,6 +29,8 @@ class FeedItem extends Data
         public array $related = [],
     ) {}
 
+    // TODO: create a `forDetail()` method
+    // TODO: add fromContent{Listing,Detail}() method where the argument is the Content
     public static function forListing(Feed $feed): static
     {
         return Cache::tags('feed')

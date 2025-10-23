@@ -37,6 +37,12 @@ final class RecreateFeedCommand extends Command
             $this->line('Deleting records...');
             Feed::all()->each(fn (Feed $feed) => $feed->forceDelete());
 
+            $this->newLine();
+            $this->call('scout:flush', [
+                'model' => Feed::class,
+            ]);
+
+            $this->newLine();
             $this->line('Loading Contents');
             $contents = Content::query()
                 ->hasVideos()
@@ -53,11 +59,27 @@ final class RecreateFeedCommand extends Command
             $this->line("Processing {$contents->count()} contents");
             $this->newLine();
 
-            $this->line('Creating feed...');
+            $this->line('Creating feed');
             $contents->each(function (Content $content) {
-                Feed::generate($content);
+                Feed::withoutEvents(static function () use ($content) {
+                    Feed::generate($content);
+                });
+
                 echo '.';
             });
+
+            $this->newLine(2);
+            Feed::withoutEvents(static function () {
+                Feed::query()
+                    ->update([
+                        'order' => 0,
+                        'published' => false,
+                    ]);
+            });
+
+            $this->call('scout:import', [
+                'model' => Feed::class,
+            ]);
 
             $this->newLine();
             Cache::tags('feed')->flush();

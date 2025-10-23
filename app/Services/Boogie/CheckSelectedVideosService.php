@@ -33,7 +33,9 @@ readonly class CheckSelectedVideosService
             return;
         }
 
+        Log::notice('Starting checking selected videos');
         $processKey = md5(Config::string('selected-videos.process_key'));
+
         $selected->each(function (SelectedVideo $selectedVideo) use($processKey): void {
             if (! filter_var($selectedVideo->url, FILTER_VALIDATE_URL)) {
                 Log::error("Invalid URL: $selectedVideo->url on video $selectedVideo->id");

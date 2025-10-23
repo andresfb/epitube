@@ -6,6 +6,7 @@ namespace App\Services\Tube;
 
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
@@ -16,23 +17,15 @@ final class CreateFeedService
     {
         Log::notice('Start to create feed');
 
-        $query = Content::query()
-            ->hasVideos()
-            ->hasThumbnails()
-            ->where('active', true)
-            ->where('viewed', false)
-            ->where('created_at', '<=', now()->addHours(5))
-            ->inRandomOrder()
-            ->limit(
-                (int) floor(Config::integer('feed.max_feed_limit') * 1.5)
-            );
-
-        $contents = $query->inMainCategory()->get();
+        $main = $this->getBaseQuery();
+        $contents = $main->inMainCategory()->get();
         if ($contents->isEmpty()) {
             Log::error('No unplayed contents found in Main Category');
         }
 
-        $altContents = $query->inAltCategory()->get();
+
+        $alt = $this->getBaseQuery();
+        $altContents = $alt->inAltCategory()->get();
         if ($altContents->isEmpty()) {
             Log::error('No unplayed contents found in the Alt Category');
         }
@@ -59,5 +52,19 @@ final class CreateFeedService
 
         Cache::tags('feed')->flush();
         Log::notice('Finished creating feed');
+    }
+
+    private function getBaseQuery(): Builder|Content
+    {
+        return Content::query()
+            ->hasVideos()
+            ->hasThumbnails()
+            ->where('active', true)
+            ->where('viewed', false)
+            ->where('created_at', '<=', now()->addHours(5))
+            ->inRandomOrder()
+            ->limit(
+                (int)floor(Config::integer('feed.max_feed_limit') * 1.5)
+            );
     }
 }

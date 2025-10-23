@@ -65,8 +65,7 @@ final class ContentItem extends Data
         $contentArray[MediaNamesLibrary::previews()] = $content->getMedia(MediaNamesLibrary::previews())
             ->map(fn (Media $media): PreviewItem => new PreviewItem(
                 fulUrl: $media->getFullUrl(),
-                size: (int) $media->getCustomProperty('size'),
-                extension: $media->getCustomProperty('extension'),
+                mimeType: $media->mime_type,
             ))->toArray();
 
         $collection = MediaNamesLibrary::videos();
