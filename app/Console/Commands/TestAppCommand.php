@@ -30,12 +30,14 @@ final class TestAppCommand extends Command
             intro('Starting test');
 
             $content = Content::query()
+                ->with('related')
                 ->where('id', 4)
                 ->firstOrFail();
 
-//            $contentItem = ContentItem::withRelated($content)->toArray();
+//            dump($content->related->toArray());
 
-            dump($content);
+            $contentItem = ContentItem::withRelated($content)->toArray();
+            dump($contentItem);
 
         } catch (Throwable $e) {
             error($e->getMessage());

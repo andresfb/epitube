@@ -7,10 +7,10 @@ namespace App\Dtos\Tube;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Media;
-use App\Models\Tube\RelatedContent;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Spatie\LaravelData\Data;
+use stdClass;
 
 final class ContentItem extends Data
 {
@@ -19,7 +19,7 @@ final class ContentItem extends Data
      * @param  array<VideoItem>  $videos
      * @param  array<PreviewItem>  $previews
      * @param  array<ThumbnailItem>  $thumbnails
-     * @param  array<ContentItem>  $related
+     * @param  array<int>  $related
      */
     public function __construct(
         public int $id,
@@ -51,12 +51,7 @@ final class ContentItem extends Data
         Log::notice("Creating Content Item for $content->id");
 
         $contentArray = self::withContent($content)->toArray();
-
-        $contentArray['related'] = [];
-        // TODO: change the `->related` code to use the new getExtras() method
-//        $contentArray['related'] = $content->related->map(
-//            fn (RelatedContent $relatedContent): array => self::withContent($relatedContent->content)->toArray()
-//        );
+        $contentArray['related'] = $content->getRelatedIds();
 
         return self::from($contentArray);
     }

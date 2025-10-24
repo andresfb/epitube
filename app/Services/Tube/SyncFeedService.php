@@ -11,6 +11,7 @@ class SyncFeedService
     public function execute(int $contentId): void
     {
         $content = Content::query()
+            ->with('related')
             ->where('id', $contentId)
             ->first();
 

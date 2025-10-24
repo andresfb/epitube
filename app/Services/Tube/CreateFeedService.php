@@ -61,6 +61,7 @@ final readonly class CreateFeedService
     private function getBaseQuery(): Builder|Content
     {
         return Content::query()
+            ->with('related')
             ->hasVideos()
             ->hasThumbnails()
             ->where('active', true)

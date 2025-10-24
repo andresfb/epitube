@@ -6,7 +6,6 @@ namespace App\Services\Tube;
 
 use App\Libraries\Tube\JellyfinLibrary;
 use App\Models\Tube\Content;
-use App\Models\Tube\RelatedContent;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
@@ -27,7 +26,7 @@ final class ImportRelatedVideoService
             ->firstOrFail();
 
         Log::notice('Looking for related videos');
-        $items =JellyfinLibrary::getSimilarItems($content->item_id);
+        $items = JellyfinLibrary::getSimilarItems($content->item_id);
 
         if ($items === []) {
             Log::warning("No related videos found for Item: $content->id | Content: $content->title");
@@ -39,9 +38,8 @@ final class ImportRelatedVideoService
 
         $imported = 0;
         $maxCount = Config::integer('content.max_related_videos') * 3;
-        $list = collect($items)->random($maxCount)->toArray();
 
-        foreach ($list as $item) {
+        foreach (collect($items)->random($maxCount) as $item) {
             $relatedContent = Content::query()
                 ->without(['category', 'tags', 'media', 'related'])
                 ->where('item_id', $item['Id'])
@@ -49,23 +47,11 @@ final class ImportRelatedVideoService
                 ->first();
 
             if ($relatedContent === null) {
-                if ($this->toScreen) {
-                    echo 'x';
-                }
-
                 continue;
-            }
-
-            if ($this->toScreen) {
-                echo 'f';
             }
 
             if ($relatedContent->id === $contentId) {
                 $checkedList[] = $contentId;
-
-                if ($this->toScreen) {
-                    echo '=';
-                }
 
                 continue;
             }
@@ -73,40 +59,20 @@ final class ImportRelatedVideoService
             if ($relatedContent->category_id !== $content->category_id) {
                 $checkedList[] = $contentId;
 
-                if ($this->toScreen) {
-                    echo 'o';
-                }
-
                 continue;
             }
 
-            // Add the relationship
-            RelatedContent::updateOrCreate([
-                'content_id' => $contentId,
-                'related_content_id' => $relatedContent->id,
-            ]);
-
-            // Add the corresponding relationship
-            RelatedContent::updateOrCreate([
-                'content_id' => $relatedContent->id,
-                'related_content_id' => $contentId,
-            ]);
+            $content->related()->syncWithoutDetaching($relatedContent->id);
+            $relatedContent->related()->syncWithoutDetaching($content->id);
+            $relatedContent->touch();
 
             $imported++;
-            if ($this->toScreen) {
-                echo '.';
-            }
         }
 
-        if ($this->toScreen) {
-            echo PHP_EOL;
-        }
-
-        Log::notice("Imported $imported out of $maxCount related videos");
-
-        $content->touch();
         $this->saveChecked($checkedList);
-        Log::notice("Done Related Videos process for Content Id: $contentId");
+        $content->touch();
+
+        Log::notice("Imported $imported out of $maxCount related videos for Content Id: $contentId");
     }
 
     private function saveChecked(array $checkedList): void

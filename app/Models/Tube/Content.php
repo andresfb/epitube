@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Config;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
+use stdClass;
 
 // TODO: change the liked field to a int and rename it to like_status. Update any reference to it
 // TODO: the like_status will be to make like/dislikes of content.
@@ -56,7 +57,7 @@ final class Content extends Model implements HasMedia
 
     protected $guarded = [];
 
-    protected $with = ['category', 'tags', 'media', 'related'];
+    protected $with = ['category', 'tags', 'media'];
 
     public function getRouteKeyName(): string
     {
@@ -90,16 +91,23 @@ final class Content extends Model implements HasMedia
     // TODO: add method to load the related content. Fill the rest of the list with other Contents sharing the same tags
     public function related(): BelongsToMany
     {
-        return $this->belongsToMany(self::class)->using(RelatedContent::class)
-            ->limit(
-                Config::integer('content.max_related_videos')
-            );
+        return $this->belongsToMany(
+            self::class,
+            'content_related',
+            'content_id',
+            'related_content_id'
+        );
+    }
 
-//        return $this->hasMany(RelatedContent::class)
-//            ->inRandomOrder()
-//            ->limit(
-//                Config::integer('content.max_related_videos')
-//            );
+    // Contents that list this content as related
+    public function relatedToThis(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            self::class,
+            'content_related',
+            'related_content_id',
+            'content_id'
+        );
     }
 
     public function scopeHasVideos(Builder $query): Builder
@@ -193,6 +201,42 @@ final class Content extends Model implements HasMedia
         }
 
         return $content;
+    }
+
+    public function getRelatedIds(): array
+    {
+        $ids = [];
+        $maxCount = Config::integer('content.max_related_videos');
+
+        $idList = $this->related
+            ->map(function (Content $item) use (&$ids) {
+                $obj = new stdClass;
+                $obj->contentId = $item->id;
+                $ids[] = $item->id;
+
+                return $obj;
+            })->take($maxCount);
+
+        if ($idList->count() >= $maxCount) {
+            return $idList->toArray();
+        }
+
+        $limit = $maxCount - $idList->count();
+        $tags = $this->tags->pluck('name')->toArray();
+        $tagged = self::query()
+            ->withAnyTagsOfAnyType($tags)
+            ->whereNotIn('id', $ids)
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get()
+            ->map(function (Content $item): stdClass {
+                $obj = new stdClass;
+                $obj->contentId = $item->id;
+
+                return $obj;
+            });
+
+        return $idList->merge($tagged)->toArray();
     }
 
     protected static function boot(): void
