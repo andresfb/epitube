@@ -6,29 +6,101 @@ namespace App\Services\Tube;
 
 use App\Jobs\Tube\ImportRelatedVideoJob;
 use App\Models\Tube\Content;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
 final class ImportRelatedVideosService
 {
+    private array $checkedList = [];
+
+    public function __construct(private readonly ImportRelatedVideoService $relatedVideoService){}
+
+    /**
+     * This method used to dispatch a job foreach related video
+     * Used by the scheduler via ImportRelatedVideosJob
+     *
+     * @return void
+     */
     public function execute(): void
     {
-        $contents = Content::query()
-            ->whereDoesntHave('related')
-            ->where('active', true)
-            ->limit(
-                Config::integer('content.max_import_videos') * 2
-            )
-            ->get();
+        Log::notice('Start importing related videos');
 
-        if ($contents->isEmpty()) {
-            Log::info('No Content without related videos found');
-
+        $contents = $this->getContents();
+        if ($contents === false) {
             return;
         }
 
         $contents->each(function (Content $item): void {
+            if (in_array($item->id, $this->checkedList, true)) {
+                return;
+            }
+
             ImportRelatedVideoJob::dispatch($item->id);
         });
+
+        Log::notice('End importing related videos');
+    }
+
+    /**
+     * This method will run the Related Video import service directly.
+     * Mostly used in the Artisan command `php artisan import:related`
+     *
+     * @return void
+     */
+    public function handle(): void
+    {
+        Log::notice('Start importing related videos');
+
+        $contents = $this->getContents();
+        if ($contents === false) {
+            return;
+        }
+
+        $contents->each(function (Content $item): void {
+            if (in_array($item->id, $this->checkedList, true)) {
+                return;
+            }
+
+            $this->relatedVideoService->toScreen = true;
+            $this->relatedVideoService->execute($item->id);
+        });
+
+        Log::notice('End importing related videos');
+    }
+
+    private function getContents(): Collection|bool
+    {
+        $this->checkedList = $this->getCheckedList();
+
+        $contents = Content::query()
+            ->hasThumbnails()
+            ->hasVideos()
+            ->whereDoesntHave('related')
+            ->where('active', true)
+            ->whereNotIn('id', $this->checkedList)
+            // TODO: ->where('like_status', '>=' 0)
+            ->limit(
+//                Config::integer('content.max_import_videos') * 2
+                5
+            )
+            ->get();
+
+        if ($contents->isEmpty()) {
+            Log::warning('No Content without related videos found');
+
+            return false;
+        }
+
+        Log::notice("Found {$contents->count()} Content records missing related videos");
+
+        return $contents;
+    }
+
+    private function getCheckedList(): array
+    {
+        $key = md5(Config::string('content.related_checks_key'));
+        return array_map('intval', Cache::get($key, []));
     }
 }

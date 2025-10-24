@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Dtos\Tube\ContentItem;
+use App\Models\Tube\Content;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -26,6 +28,14 @@ final class TestAppCommand extends Command
         try {
             clear();
             intro('Starting test');
+
+            $content = Content::query()
+                ->where('id', 4)
+                ->firstOrFail();
+
+//            $contentItem = ContentItem::withRelated($content)->toArray();
+
+            dump($content);
 
         } catch (Throwable $e) {
             error($e->getMessage());

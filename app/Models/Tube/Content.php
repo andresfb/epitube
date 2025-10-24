@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -86,10 +87,19 @@ final class Content extends Model implements HasMedia
         return $this->hasMany(View::class);
     }
 
-    public function related(): HasMany
+    // TODO: add method to load the related content. Fill the rest of the list with other Contents sharing the same tags
+    public function related(): BelongsToMany
     {
-        return $this->hasMany(RelatedContent::class)
-            ->limit(16);
+        return $this->belongsToMany(self::class)->using(RelatedContent::class)
+            ->limit(
+                Config::integer('content.max_related_videos')
+            );
+
+//        return $this->hasMany(RelatedContent::class)
+//            ->inRandomOrder()
+//            ->limit(
+//                Config::integer('content.max_related_videos')
+//            );
     }
 
     public function scopeHasVideos(Builder $query): Builder

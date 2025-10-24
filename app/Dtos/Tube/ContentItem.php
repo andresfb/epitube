@@ -9,6 +9,7 @@ use App\Models\Tube\Content;
 use App\Models\Tube\Media;
 use App\Models\Tube\RelatedContent;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Spatie\LaravelData\Data;
 
 final class ContentItem extends Data
@@ -47,11 +48,15 @@ final class ContentItem extends Data
 
     public static function withRelated(Content $content): self
     {
+        Log::notice("Creating Content Item for $content->id");
+
         $contentArray = self::withContent($content)->toArray();
 
-        $contentArray['related'] = $content->related->map(
-            fn (RelatedContent $relatedContent): array => self::withContent($relatedContent->content)->toArray()
-        );
+        $contentArray['related'] = [];
+        // TODO: change the `->related` code to use the new getExtras() method
+//        $contentArray['related'] = $content->related->map(
+//            fn (RelatedContent $relatedContent): array => self::withContent($relatedContent->content)->toArray()
+//        );
 
         return self::from($contentArray);
     }

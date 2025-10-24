@@ -13,39 +13,31 @@ final readonly class JellyfinLibrary
     {
         Log::notice('Calling the Service API');
 
-        $result = Cache::remember(
-            'VIDEOS:FROM:API',
-            now()->addDay()->subSeconds(2),
-            static function (): array {
-                try {
-                    Jellyfin::setProvider();
-                    $provider = Jellyfin::getProvider();
-                    $result = $provider->getItems();
+        try {
+            Jellyfin::setProvider();
+            $provider = Jellyfin::getProvider();
+            $result = $provider->getItems();
 
-                    if (blank($result)) {
-                        Log::error('Api returned empty array');
+            if (blank($result)) {
+                Log::error('Api returned empty array');
 
-                        return [];
-                    }
-
-                    if (blank($result['Items'])) {
-                        Log::error('No items found');
-
-                        return [];
-                    }
-
-                    return $result;
-                } catch (Exception $e) {
-                    Log::error($e->getMessage());
-
-                    return [];
-                }
+                return [];
             }
-        );
 
-        Log::notice("Found {$result['TotalRecordCount']} items");
+            if (blank($result['Items'])) {
+                Log::error('No items found');
 
-        return $result['Items'];
+                return [];
+            }
+
+            Log::notice("Found {$result['TotalRecordCount']} items");
+
+            return $result['Items'];
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            return [];
+        }
     }
 
     public static function getSimilarItems(string $itemId): array
