@@ -6,6 +6,7 @@ use App\Dtos\Boogie\ImportSelectedVideoItem;
 use App\Dtos\Tube\ImportVideoItem;
 use App\Libraries\Tube\TitleParserLibrary;
 use App\Models\Boogie\SelectedVideo;
+use App\Models\Tube\Category;
 use App\Models\Tube\Content;
 use App\Models\Tube\MimeType;
 use App\Services\Tube\ImportVideoService;
@@ -106,7 +107,7 @@ final readonly class ImportSelectedVideoService
             ->where('id', $contentId)
             ->firstOrFail();
 
-        $content->attachTags($tags);
+        $content->attachTags($tags, Category::getMain()->slug);
         Log::notice('Add extra tags done');
     }
 }

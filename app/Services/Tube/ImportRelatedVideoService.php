@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\Log;
 
 final class ImportRelatedVideoService
 {
-    public bool $toScreen = false;
-
     public function execute(int $contentId): void
     {
         Log::notice("Starting Related Videos process for Content Id: $contentId");

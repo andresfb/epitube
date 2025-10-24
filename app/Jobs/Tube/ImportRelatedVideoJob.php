@@ -21,10 +21,14 @@ final class ImportRelatedVideoJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(private readonly int $contentId)
+    private int $delaySeconds = 60;
+
+    public function __construct(private readonly int $contentId, int $delay = 0)
     {
         $this->queue = 'ingestor';
-        $this->delay = now()->addMinute();
+        $this->delay = now()->addSeconds(
+            $this->delaySeconds + $delay
+        );
     }
 
     /**

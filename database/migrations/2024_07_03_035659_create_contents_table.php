@@ -31,7 +31,6 @@ return new class extends Migration
 
             $table->index(['item_id', 'file_hash'], 'hashes');
             $table->index(['active', 'viewed', 'liked'], 'flags');
-            // TODO: update the 'flags' index to use the new like_status
         });
     }
 

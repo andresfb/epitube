@@ -32,12 +32,14 @@ final class ImportRelatedVideosService
             return;
         }
 
-        $contents->each(function (Content $item): void {
+        $delay = 0;
+        $contents->each(function (Content $item) use (&$delay): void {
             if (in_array($item->id, $this->checkedList, true)) {
                 return;
             }
 
-            ImportRelatedVideoJob::dispatch($item->id);
+            $delay += 5;
+            ImportRelatedVideoJob::dispatch($item->id, $delay);
         });
 
         Log::notice('End importing related videos');
@@ -63,7 +65,6 @@ final class ImportRelatedVideosService
                 return;
             }
 
-            $this->relatedVideoService->toScreen = true;
             $this->relatedVideoService->execute($item->id);
         });
 
@@ -80,10 +81,9 @@ final class ImportRelatedVideosService
             ->whereDoesntHave('related')
             ->where('active', true)
             ->whereNotIn('id', $this->checkedList)
-            // TODO: ->where('like_status', '>=' 0)
+            ->where('like_status', '>=', 0)
             ->limit(
-//                Config::integer('content.max_import_videos') * 2
-                5
+                Config::integer('content.max_import_videos') * 2
             )
             ->get();
 

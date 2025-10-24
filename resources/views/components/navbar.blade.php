@@ -365,6 +365,9 @@
                                'dark:hover:text-white',
                             ])>📥 Downloads</a>
                         </li>
+
+                    {{-- TODO: add a "Likes" and "Diskiled" menus --}}
+
                     </ul>
                 </div>
             </ul>

@@ -52,7 +52,7 @@ final class AppServiceProvider extends ServiceProvider
                 'category' => Category::getName($slug),
                 'icon' => Category::getIcon($slug),
                 'categories' => Category::getRouterList(),
-                'tags' => Tag::getMainList(),
+                'tags' => Tag::getMenuList($slug),
             ]);
         });
     }

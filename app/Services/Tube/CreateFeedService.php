@@ -66,7 +66,7 @@ final readonly class CreateFeedService
             ->hasThumbnails()
             ->where('active', true)
             ->where('viewed', false)
-            // TODO: ->where('like_status', '>=' 0)
+            ->where('like_status', '>=', 0)
             ->where('created_at', '<=', now()->addHours(5))
             ->inRandomOrder()
             ->limit(

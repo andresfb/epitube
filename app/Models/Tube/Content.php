@@ -24,10 +24,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 use stdClass;
 
-// TODO: change the liked field to a int and rename it to like_status. Update any reference to it
-// TODO: the like_status will be to make like/dislikes of content.
-// TODO: update the feed creation to list Content by like_status >= 0
-
 /**
  * @property int $id
  * @property int $category_id
@@ -37,7 +33,7 @@ use stdClass;
  * @property string $title
  * @property bool $active
  * @property bool $viewed
- * @property bool $liked
+ * @property int $like_status
  * @property int $view_content
  * @property string $og_path
  * @property string $notes
@@ -88,7 +84,6 @@ final class Content extends Model implements HasMedia
         return $this->hasMany(View::class);
     }
 
-    // TODO: add method to load the related content. Fill the rest of the list with other Contents sharing the same tags
     public function related(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -177,7 +172,6 @@ final class Content extends Model implements HasMedia
         $content['id'] = $this->id;
         $content['category'] = $this->category->name;
         $content['viewed'] = $this->viewed ?? false;
-        $content['liked'] = $this->liked ?? false;
         $content['view_count'] = $this->view_count ?? 0;
 
         $content['tags'] = $this->tags->pluck('name')->toArray();
@@ -224,7 +218,7 @@ final class Content extends Model implements HasMedia
         $limit = $maxCount - $idList->count();
         $tags = $this->tags->pluck('name')->toArray();
         $tagged = self::query()
-            ->withAnyTagsOfAnyType($tags)
+            ->withAnyTags($tags, $this->category->slug)
             ->whereNotIn('id', $ids)
             ->inRandomOrder()
             ->limit($limit)
@@ -253,7 +247,7 @@ final class Content extends Model implements HasMedia
         return [
             'active' => 'bool',
             'viewed' => 'bool',
-            'liked' => 'bool',
+            'like_status' => 'int',
             'view_count' => 'int',
             'added_at' => 'datetime',
         ];

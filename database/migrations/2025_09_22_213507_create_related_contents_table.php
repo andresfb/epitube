@@ -14,7 +14,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('content_id');
             $table->unsignedBigInteger('related_content_id');
-            $table->timestamps();
 
             $table->unique(['content_id', 'related_content_id'], 'content_related_unique');
         });

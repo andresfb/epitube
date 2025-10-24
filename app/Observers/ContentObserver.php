@@ -14,13 +14,10 @@ class ContentObserver implements ShouldHandleEventsAfterCommit
     {
         $cacheKey = md5("CONTENT:SAVED:$content->id");
         if (Cache::has($cacheKey)) {
-            Log::notice("Content '$content->id' already queued for syncing");
-
             return;
         }
 
         Cache::put($cacheKey, true, now()->addSeconds(6));
-        Log::notice("Syncing content$content->id");
         SyncFeedJob::dispatch($content->id);
     }
 }

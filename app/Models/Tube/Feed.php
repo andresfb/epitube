@@ -25,7 +25,7 @@ use MongoDB\Laravel\Eloquent\Model;
  * @property string $resolution,
  * @property bool $is_hd,
  * @property bool $viewed
- * @property bool $liked
+ * @property int $like_status
  * @property bool $published
  * @property int $order
  * @property int $view_count
@@ -145,7 +145,7 @@ final class Feed extends Model
         return [
             'active' => 'boolean',
             'viewed' => 'boolean',
-            'liked' => 'boolean',
+            'like_status' => 'int',
             'published' => 'boolean',
             'is_hd' => 'boolean',
             'view_count' => 'integer',
