@@ -200,9 +200,10 @@ final class Content extends Model implements HasMedia
 
     public function getRelatedIds(): array
     {
-        $ids = [];
+        $ids[] = $this->id;
         $maxCount = Config::integer('content.max_related_videos');
 
+        // Load all related contents
         $idList = $this->related
             ->map(function (Content $item) use (&$ids): ContentRelatedItem {
                 $ids[] = $item->id;
@@ -218,11 +219,42 @@ final class Content extends Model implements HasMedia
             return $idList->toArray();
         }
 
+        // If there aren't enough related items load contents sharing the same tags
         $limit = $maxCount - $idList->count();
         $tags = $this->tags->pluck('name')->toArray();
         $tagged = self::query()
+            ->hasVideos()
+            ->hasThumbnails()
             ->withAnyTags($tags)
             ->whereNotIn('id', $ids)
+            ->where('active', true)
+            ->where('like_status', '>=', 0)
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get()
+            ->map(function (Content $item) use (&$ids): ContentRelatedItem {
+                $ids[] = $item->id;
+
+                return new ContentRelatedItem(
+                    id: $item->id
+                );
+            })
+            ->toBase();
+
+        $idList = $idList->merge($tagged);
+        if ($idList->count() >= $maxCount) {
+            return $idList->toArray();
+        }
+
+        // If there are still not enough items, fill the rest with a random set
+        $limit = $maxCount - $idList->count();
+        $contents = self::query()
+            ->hasVideos()
+            ->hasThumbnails()
+            ->whereNotIn('id', $ids)
+            ->where('category_id', $this->category_id)
+            ->where('active', true)
+            ->where('like_status', '>=', 0)
             ->inRandomOrder()
             ->limit($limit)
             ->get()
@@ -233,7 +265,7 @@ final class Content extends Model implements HasMedia
             })
             ->toBase();
 
-        return $idList->merge($tagged)->toArray();
+        return $idList->merge($contents)->toArray();
     }
 
     protected static function boot(): void

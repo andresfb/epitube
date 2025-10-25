@@ -6,7 +6,6 @@ use App\Jobs\Tube\SyncFeedJob;
 use App\Models\Tube\Content;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class ContentObserver implements ShouldHandleEventsAfterCommit
 {

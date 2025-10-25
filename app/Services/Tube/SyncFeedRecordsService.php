@@ -4,60 +4,77 @@ namespace App\Services\Tube;
 
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
+use App\Traits\Screenable;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class SyncFeedRecordsService
 {
+    use Screenable;
+
+    private const int CHUNK_SIZE = 200;
+
     public function execute(): void
     {
-        Log::info('Start to re-create the Feed data');
+        $this->warning("Start to re-create the Feed data\n");
 
-        Log::notice('Deleting records');
-        Feed::query()->chunk(200, function (Collection $feeds) {
+        $this->info('Deleting records');
+        Feed::query()->chunk(self::CHUNK_SIZE, function (Collection $feeds) {
+            $this->line(sprintf("Working on the next batch of %s Feed records", self::CHUNK_SIZE));
+
             $feeds->each(function (Feed $feed) {
-                Feed::withoutEvents(static function () use ($feed) {
+                Feed::withoutEvents(function () use ($feed) {
+                    $this->character('🚫 ');
                     $feed->forceDelete();
                 });
             });
-        });
 
-        Log::notice('Clearing the search index');
+            $this->line('');
+        });
+        $this->info("Done deleting records\n");
+
+        $this->info('Clearing the search index');
         Artisan::call('scout:flush', [
             'model' => Feed::class,
         ]);
+        $this->info("Done clearing the search index\n");
 
-        Log::notice('Processing Contents');
-
+        $this->info('Creating Feed records');
         $found = false;
         Content::query()
             ->with('related')
             ->hasVideos()
             ->hasThumbnails()
-            ->chunk(200, function (Collection $list) use (&$found): void {
+            ->chunk(self::CHUNK_SIZE, function (Collection $list) use (&$found): void {
+                $this->line(sprintf("Working on the next batch of %s Feed records", self::CHUNK_SIZE));
+
                 try {
                     $list->each(function (Content $content) use (&$found): void {
                         $found = true;
 
-                        Feed::withoutEvents(static function () use ($content) {
+                        Feed::withoutEvents(function () use ($content) {
+                            $this->character('✅ ');
                             Feed::generate($content);
                         });
                     });
                 } catch (Exception $e) {
-                    Log::error($e->getMessage());
+                    $this->error($e->getMessage());
+                    $this->line('');
                 }
+
+                $this->line('');
             });
+        $this->info('Done creating Feed records');
 
         if (! $found) {
-            Log::warning('No Content found');
+            $this->warning('No Content found. 👋');
 
             return;
         }
 
-        Log::notice('Updating Feed missing fields');
+        $this->info('Updating Feed missing fields');
         Feed::withoutEvents(static function () {
             Feed::query()
                 ->update([
@@ -65,15 +82,17 @@ class SyncFeedRecordsService
                     'published' => false,
                 ]);
         });
+        $this->info('Done updating Feed missing fields');
 
-        Log::notice('Recreating search index');
+        $this->info('Recreating search index');
         Artisan::call('scout:import', [
             'model' => Feed::class,
         ]);
+        $this->info('Done recreating search index');
 
-        Log::notice('Clearing feed cache');
+        $this->info('Clearing feed cache');
         Cache::tags('feed')->flush();
 
-        Log::info('Done recreating Feed data');
+        $this->warning("\nDone recreating Feed data\n");
     }
 }

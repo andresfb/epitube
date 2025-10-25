@@ -13,21 +13,26 @@ use Illuminate\Support\Facades\Log;
 
 final readonly class CreateFeedService
 {
-    public function __construct(private SyncFeedRecordsService $feedRecordsService) {}
-
     public function execute(): void
     {
-        $this->feedRecordsService->execute();
-
         Log::notice('Start to create feed');
 
+        Log::notice('Unpublishing current Feed');
+        Feed::query()
+            ->where('published', true)
+            ->update([
+                'order' => 0,
+                'published' => false,
+            ]);
+
+        Log::notice('Loading Main Category Contents');
         $main = $this->getBaseQuery();
         $contents = $main->inMainCategory()->get();
         if ($contents->isEmpty()) {
             Log::error('No unplayed contents found in Main Category');
         }
 
-
+        Log::notice('Loading Alt Category Contents');
         $alt = $this->getBaseQuery();
         $altContents = $alt->inAltCategory()->get();
         if ($altContents->isEmpty()) {
@@ -41,14 +46,8 @@ final readonly class CreateFeedService
             return;
         }
 
-        Feed::query()
-            ->where('published', true)
-            ->update([
-                'order' => 0,
-                'published' => false,
-            ]);
-
         $index = 1;
+        Log::notice('Activating Feed records');
         foreach ($contents as $content) {
             Feed::activateFeed($content, $index);
             $index++;
@@ -70,7 +69,7 @@ final readonly class CreateFeedService
             ->where('created_at', '<=', now()->addHours(5))
             ->inRandomOrder()
             ->limit(
-                (int) floor(Config::integer('feed.max_feed_limit') * 1.5)
+                (int) ceil(Config::integer('feed.max_feed_limit') * 1.5)
             );
     }
 }

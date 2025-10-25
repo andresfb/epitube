@@ -31,7 +31,7 @@ final class RecreateFeedCommand extends Command
                 return;
             }
 
-            $service->execute();
+            $service->setToScreen(true)->execute();
         } catch (Exception $e) {
             error($e->getMessage());
         } finally {
