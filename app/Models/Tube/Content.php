@@ -221,7 +221,7 @@ final class Content extends Model implements HasMedia
         $limit = $maxCount - $idList->count();
         $tags = $this->tags->pluck('name')->toArray();
         $tagged = self::query()
-            ->withAnyTags($tags, $this->category->slug)
+            ->withAnyTags($tags)
             ->whereNotIn('id', $ids)
             ->inRandomOrder()
             ->limit($limit)

@@ -68,7 +68,6 @@ final class CreateTagsFromPathCommand extends Command
 
                     Tag::create([
                         'name' => $tag,
-                        'type' => 'main',
                     ]);
 
                     echo '.';

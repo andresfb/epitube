@@ -107,7 +107,7 @@ final readonly class ImportSelectedVideoService
             ->where('id', $contentId)
             ->firstOrFail();
 
-        $content->attachTags($tags, Category::getMain()->slug);
+        $content->attachTags($tags);
         Log::notice('Add extra tags done');
     }
 }
