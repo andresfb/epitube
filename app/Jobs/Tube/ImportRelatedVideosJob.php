@@ -23,6 +23,7 @@ final class ImportRelatedVideosJob implements ShouldQueue
 
     public function __construct()
     {
+        $this->queue = 'default';
         $this->delay = now()->addSeconds(10);
     }
 

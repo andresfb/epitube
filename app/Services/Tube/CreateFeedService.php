@@ -61,14 +61,16 @@ final readonly class CreateFeedService
     private function getBaseQuery(): Builder|Content
     {
         return Content::query()
+            ->with('related')
             ->hasVideos()
             ->hasThumbnails()
             ->where('active', true)
             ->where('viewed', false)
+            ->where('like_status', '>=', 0)
             ->where('created_at', '<=', now()->addHours(5))
             ->inRandomOrder()
             ->limit(
-                (int)floor(Config::integer('feed.max_feed_limit') * 1.5)
+                (int) floor(Config::integer('feed.max_feed_limit') * 1.5)
             );
     }
 }

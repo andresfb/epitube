@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Tube;
 
+use App\Dtos\Tube\ContentRelatedItem;
 use App\Libraries\Tube\DiskNamesLibrary;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Observers\ContentObserver;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -21,10 +23,7 @@ use Illuminate\Support\Facades\Config;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
-
-// TODO: change the liked field to a int and rename it to like_status. Update any reference to it
-// TODO: the like_status will be to make like/dislikes of content.
-// TODO: update the feed creation to list Content by like_status >= 0
+use stdClass;
 
 /**
  * @property int $id
@@ -35,7 +34,7 @@ use Spatie\Tags\HasTags;
  * @property string $title
  * @property bool $active
  * @property bool $viewed
- * @property bool $liked
+ * @property int $like_status
  * @property int $view_content
  * @property string $og_path
  * @property string $notes
@@ -55,7 +54,7 @@ final class Content extends Model implements HasMedia
 
     protected $guarded = [];
 
-    protected $with = ['category', 'tags', 'media', 'related'];
+    protected $with = ['category', 'tags', 'media'];
 
     public function getRouteKeyName(): string
     {
@@ -86,10 +85,25 @@ final class Content extends Model implements HasMedia
         return $this->hasMany(View::class);
     }
 
-    public function related(): HasMany
+    public function related(): BelongsToMany
     {
-        return $this->hasMany(RelatedContent::class)
-            ->limit(16);
+        return $this->belongsToMany(
+            self::class,
+            'content_related',
+            'content_id',
+            'related_content_id'
+        );
+    }
+
+    // Contents that list this content as related
+    public function relatedToThis(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            self::class,
+            'content_related',
+            'related_content_id',
+            'content_id'
+        );
     }
 
     public function scopeHasVideos(Builder $query): Builder
@@ -159,7 +173,6 @@ final class Content extends Model implements HasMedia
         $content['id'] = $this->id;
         $content['category'] = $this->category->name;
         $content['viewed'] = $this->viewed ?? false;
-        $content['liked'] = $this->liked ?? false;
         $content['view_count'] = $this->view_count ?? 0;
 
         $content['tags'] = $this->tags->pluck('name')->toArray();
@@ -185,6 +198,44 @@ final class Content extends Model implements HasMedia
         return $content;
     }
 
+    public function getRelatedIds(): array
+    {
+        $ids = [];
+        $maxCount = Config::integer('content.max_related_videos');
+
+        $idList = $this->related
+            ->map(function (Content $item) use (&$ids): ContentRelatedItem {
+                $ids[] = $item->id;
+
+                return new ContentRelatedItem(
+                    id: $item->id
+                );
+            })
+            ->take($maxCount)
+            ->toBase();
+
+        if ($idList->count() >= $maxCount) {
+            return $idList->toArray();
+        }
+
+        $limit = $maxCount - $idList->count();
+        $tags = $this->tags->pluck('name')->toArray();
+        $tagged = self::query()
+            ->withAnyTags($tags, $this->category->slug)
+            ->whereNotIn('id', $ids)
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get()
+            ->map(function (Content $item): ContentRelatedItem {
+                return new ContentRelatedItem(
+                    id: $item->id
+                );
+            })
+            ->toBase();
+
+        return $idList->merge($tagged)->toArray();
+    }
+
     protected static function boot(): void
     {
         parent::boot();
@@ -199,7 +250,7 @@ final class Content extends Model implements HasMedia
         return [
             'active' => 'bool',
             'viewed' => 'bool',
-            'liked' => 'bool',
+            'like_status' => 'int',
             'view_count' => 'int',
             'added_at' => 'datetime',
         ];

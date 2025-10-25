@@ -9,24 +9,24 @@ use Spatie\LaravelData\Data;
 class FeedItem extends Data
 {
     public function __construct(
-        public int $id,
+        public int    $id,
         public string $slug,
-        public int $category_id,
+        public int    $category_id,
         public string $category,
         public string $title,
-        public bool $active,
-        public bool $viewed,
-        public bool $liked,
-        public int $view_count,
+        public bool   $active,
+        public bool   $viewed,
+        public int   $like_status,
+        public int    $view_count,
         public string $thumbnail,
         public string $duration,
         public string $resolution,
-        public bool $is_hd,
+        public bool   $is_hd,
         public string $added_at,
-        public array $tags = [],
-        public array $videos = [],
-        public array $previews = [],
-        public array $related = [],
+        public array  $tags = [],
+        public array  $videos = [],
+        public array  $previews = [],
+        public array  $related = [],
     ) {}
 
     // TODO: create a `forDetail()` method

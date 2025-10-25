@@ -11,18 +11,18 @@ use Spatie\Tags\Tag as SpatieTag;
 
 class Tag extends SpatieTag
 {
-    public static function getList(): Collection
+    public static function getList(string $categorySlug): Collection
     {
         return Cache::tags('tags')
             ->remember(
                 md5('TAG:LIST'),
                 now()->addHours(5),
-                static function (): Collection {
+                static function () use ($categorySlug): Collection {
                     return self::query()
                         ->select('tags.name', 'tags.slug', DB::raw('COUNT(taggables.tag_id) as count'))
                         ->join('taggables', 'tags.id', '=', 'taggables.tag_id')
                         ->where('taggables.taggable_type', Content::class)
-                        ->where('tags.type', 'main')
+                        ->where('tags.type', $categorySlug)
                         ->groupBy('tags.id')
                         ->orderByDesc('count')
                         ->get()
@@ -33,9 +33,9 @@ class Tag extends SpatieTag
             );
     }
 
-    public static function getMainList(): Collection
+    public static function getMenuList(string $categorySlug): Collection
     {
-        return self::getList()
+        return self::getList($categorySlug)
             ->sortBy('name')
             ->take(Config::integer('constants.main_tags_limit') - 1);
     }

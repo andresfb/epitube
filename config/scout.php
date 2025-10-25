@@ -160,7 +160,7 @@ return [
                     'created_at',
                     'title',
                     'viewed',
-                    'liked',
+                    'like_status',
                     'view_count',
                     'length',
                 ],

@@ -34,6 +34,7 @@ class SyncFeedRecordsService
 
         $found = false;
         Content::query()
+            ->with('related')
             ->hasVideos()
             ->hasThumbnails()
             ->chunk(200, function (Collection $list) use (&$found): void {

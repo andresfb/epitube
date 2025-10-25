@@ -20,6 +20,8 @@ return [
 
     'max_import_videos' => (int) env('MAX_RAW_IMPORT', 2),
 
+    'max_related_videos' => (int) env('MAX_RELATED_VIDEOS', 20),
+
     'minimum_duration' => (int) env('MINIMUM_VIDEO_DURATION', 300), // 5 minutes
 
     'min_down_res' => (int) env('MINIMUM_DOWNSCALE_ROUND', 1080),
@@ -57,4 +59,7 @@ return [
     'title_tags' => env('CONTENT_TITLE_TAGS', ''),
 
     'shared_tags' => $sharedTags,
+
+    'related_checks_key' => env('RELATED_CHECKS_KEY', 'RELATED:VIDEOS:CHECKED'),
+
 ];

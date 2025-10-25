@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Models\Tube\Content;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,22 +10,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('related_contents', static function (Blueprint $table): void {
+        Schema::create('content_related', static function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(Content::class)
-                ->constrained('contents')
-                ->cascadeOnDelete();
-            $table->foreignId('related_content_id')
-                ->references('id')
-                ->on('contents')
-                ->cascadeOnDelete();
+            $table->unsignedBigInteger('content_id');
+            $table->unsignedBigInteger('related_content_id');
 
-            $table->timestamps();
+            $table->unique(['content_id', 'related_content_id'], 'content_related_unique');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('related_contents');
+        Schema::dropIfExists('content_related');
     }
 };

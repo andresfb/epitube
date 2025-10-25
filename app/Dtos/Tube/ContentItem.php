@@ -7,7 +7,6 @@ namespace App\Dtos\Tube;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Media;
-use App\Models\Tube\RelatedContent;
 use Illuminate\Support\Carbon;
 use Spatie\LaravelData\Data;
 
@@ -18,40 +17,37 @@ final class ContentItem extends Data
      * @param  array<VideoItem>  $videos
      * @param  array<PreviewItem>  $previews
      * @param  array<ThumbnailItem>  $thumbnails
-     * @param  array<ContentItem>  $related
+     * @param  array<int>  $related
      */
     public function __construct(
         public int $id,
         public string $slug,
-        public int $category_id,
+        public int    $category_id,
         public string $category,
         public string $title,
         public string $duration,
         public string $resolution,
-        public int $length,
-        public bool $is_hd,
-        public bool $active,
-        public bool $viewed,
-        public bool $liked,
-        public int $view_count,
+        public int    $length,
+        public bool   $is_hd,
+        public bool   $active,
+        public bool   $viewed,
+        public int    $like_status,
+        public int    $view_count,
         public string $service_url,
         public Carbon $added_at,
-        public array $tags = [],
-        public array $tag_slugs = [],
-        public array $tag_array = [],
-        public array $videos = [],
-        public array $previews = [],
-        public array $thumbnails = [],
-        public array $related = [],
+        public array  $tags = [],
+        public array  $tag_slugs = [],
+        public array  $tag_array = [],
+        public array  $videos = [],
+        public array  $previews = [],
+        public array  $thumbnails = [],
+        public array  $related = [],
     ) {}
 
     public static function withRelated(Content $content): self
     {
         $contentArray = self::withContent($content)->toArray();
-
-        $contentArray['related'] = $content->related->map(
-            fn (RelatedContent $relatedContent): array => self::withContent($relatedContent->content)->toArray()
-        );
+        $contentArray['related'] = $content->getRelatedIds();
 
         return self::from($contentArray);
     }

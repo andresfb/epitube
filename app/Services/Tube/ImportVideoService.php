@@ -35,11 +35,15 @@ final class ImportVideoService
     use TagsProcessor;
     use VideoValidator;
 
+    private string $mainCategory;
+
     public function __construct(
         private readonly TitleParserLibrary   $parserLibrary,
         private readonly TranscodeMediaAction $transcodeAction,
         private readonly CreateSymLinksAction $symLinksAction,
-    ) {}
+    ) {
+        $this->mainCategory = Category::getMain()->slug;
+    }
 
     /**
      * @throws Throwable
@@ -132,7 +136,7 @@ final class ImportVideoService
             return;
         }
 
-        $content->attachTags($tags, 'main');
+        $content->attachTags($tags, $this->mainCategory);
     }
 
     public function extractTags(array $fileInfo): array
