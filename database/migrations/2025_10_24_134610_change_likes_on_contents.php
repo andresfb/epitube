@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('contents', static function (Blueprint $table) {
             $table->dropIndex('flags');
             $table->dropColumn('liked');
-            $table->unsignedSmallInteger('like_status')
+            $table->smallInteger('like_status')
                 ->after('viewed')
                 ->default(0);
 
@@ -24,7 +24,9 @@ return new class extends Migration
         Schema::table('contents', static function (Blueprint $table) {
             $table->dropIndex('flags');
             $table->dropColumn('like_status');
-            $table->boolean('liked')->default(false);
+            $table->boolean('liked')
+                ->after('viewed')
+                ->default(false);
 
             $table->index(['active', 'viewed', 'liked'], 'flags');
         });

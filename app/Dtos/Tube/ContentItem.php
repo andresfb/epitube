@@ -8,7 +8,6 @@ use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Media;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 use Spatie\LaravelData\Data;
 
 final class ContentItem extends Data
@@ -32,7 +31,7 @@ final class ContentItem extends Data
         public bool   $is_hd,
         public bool   $active,
         public bool   $viewed,
-        public int   $like_status,
+        public int    $like_status,
         public int    $view_count,
         public string $service_url,
         public Carbon $added_at,

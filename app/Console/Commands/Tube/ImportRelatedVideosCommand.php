@@ -25,7 +25,7 @@ class ImportRelatedVideosCommand extends Command
         intro('Starting Import');
 
         try {
-            if (confirm('Dispatch Job')) {
+            if (confirm('Dispatch Job', false)) {
                 ImportRelatedVideosJob::dispatch();
                 $this->line('Job dispatched');
 

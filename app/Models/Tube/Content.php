@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Tube;
 
+use App\Dtos\Tube\ContentRelatedItem;
 use App\Libraries\Tube\DiskNamesLibrary;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Observers\ContentObserver;
@@ -203,13 +204,15 @@ final class Content extends Model implements HasMedia
         $maxCount = Config::integer('content.max_related_videos');
 
         $idList = $this->related
-            ->map(function (Content $item) use (&$ids) {
-                $obj = new stdClass;
-                $obj->contentId = $item->id;
+            ->map(function (Content $item) use (&$ids): ContentRelatedItem {
                 $ids[] = $item->id;
 
-                return $obj;
-            })->take($maxCount);
+                return new ContentRelatedItem(
+                    id: $item->id
+                );
+            })
+            ->take($maxCount)
+            ->toBase();
 
         if ($idList->count() >= $maxCount) {
             return $idList->toArray();
@@ -223,12 +226,12 @@ final class Content extends Model implements HasMedia
             ->inRandomOrder()
             ->limit($limit)
             ->get()
-            ->map(function (Content $item): stdClass {
-                $obj = new stdClass;
-                $obj->contentId = $item->id;
-
-                return $obj;
-            });
+            ->map(function (Content $item): ContentRelatedItem {
+                return new ContentRelatedItem(
+                    id: $item->id
+                );
+            })
+            ->toBase();
 
         return $idList->merge($tagged)->toArray();
     }
