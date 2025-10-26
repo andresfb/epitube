@@ -50,7 +50,6 @@ class Tag extends SpatieTag
     public static function getMenuList(string $categorySlug): Collection
     {
         return self::getList($categorySlug)
-            ->sortBy('name')
             ->take(Config::integer('constants.main_tags_limit') - 1);
     }
 }

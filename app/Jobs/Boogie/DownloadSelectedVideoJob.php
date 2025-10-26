@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Random\RandomException;
 
 class DownloadSelectedVideoJob implements ShouldQueue
 {
@@ -19,10 +20,15 @@ class DownloadSelectedVideoJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
         $this->queue = 'downloader';
-        $this->delay = now()->addMinutes(5);
+        $this->delay = now()->addMinutes(
+            random_int(4, 8)
+        );
     }
 
     /**

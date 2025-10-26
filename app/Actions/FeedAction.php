@@ -36,6 +36,7 @@ final readonly class FeedAction
                         ->where('active', true)
                         ->where('viewed', false)
                         ->where('published', true)
+                        ->where('like_status', '>=', 0)
                         ->orderBy('order')
                         ->limit(Config::integer('feed.max_feed_limit'))
                         ->paginate($perPage);

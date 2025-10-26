@@ -9,7 +9,7 @@ use Spatie\LaravelData\Data;
 final class PreviewItem extends Data
 {
     public function __construct(
-        public string $fulUrl,
+        public string $url,
         public string $mimeType,
     ) {}
 }

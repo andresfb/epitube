@@ -17,7 +17,7 @@
     <x-navbar />
 
     <main class="flex-1 bg-white rounded-md shadow-sm m-2 dark:bg-gray-800">
-        <div class="w-full max-w-[90%] mx-auto sm:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl 2xl:max-w-[90%] py-2 md:p-4 flex flex-wrap items-center justify-between">
+        <div class="w-full max-w-[90%] mx-auto sm:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl 2xl:max-w-[90%] py-2 md:p-4 flex flex-wrap items-center justify-center">
             {{ $slot }}
         </div>
     </main>

@@ -42,6 +42,7 @@ class FeedItem extends Data
                     $thumb = collect($feed->thumbnails)->random();
 
                     $feedArray['thumbnail'] = $thumb['srcset'];
+                    $feedArray['previews'] = $feed->previews;
                     $feedArray['added_at'] = $feed->added_at->diffForHumans();
                     $feedArray['tags'] = $feed->tag_array;
                     sort($feedArray['tags']);
