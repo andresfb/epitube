@@ -61,11 +61,8 @@ final readonly class CreateFeedService
     {
         return Content::query()
             ->with('related')
-            ->hasVideos()
-            ->hasThumbnails()
-            ->where('active', true)
+            ->usable()
             ->where('viewed', false)
-            ->where('like_status', '>=', 0)
             ->where('created_at', '<=', now()->addHours(5))
             ->inRandomOrder()
             ->limit(

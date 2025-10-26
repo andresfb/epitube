@@ -45,8 +45,7 @@ class SyncFeedRecordsService
         $found = false;
         Content::query()
             ->with('related')
-            ->hasVideos()
-            ->hasThumbnails()
+            ->hasAllMedia()
             ->chunk(self::CHUNK_SIZE, function (Collection $list) use (&$found): void {
                 $this->line(sprintf("Working on the next batch of %s Feed records", self::CHUNK_SIZE));
 

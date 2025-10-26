@@ -1,3 +1,9 @@
 <x-layouts.app>
-    <x-content-list :items="$feed" :links="$links" :timeout="$timeout" :maxRefresh="$maxRefresh" />
+    <x-content-list
+        :items="$feed"
+        :links="$links"
+        :timeout="$timeout"
+        :maxRefresh="$maxRefresh"
+        :show-tags="$showTags"
+    />
 </x-layouts.app>

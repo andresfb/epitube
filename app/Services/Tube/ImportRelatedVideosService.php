@@ -76,12 +76,9 @@ final class ImportRelatedVideosService
         $this->checkedList = $this->getCheckedList();
 
         $contents = Content::query()
-            ->hasThumbnails()
-            ->hasVideos()
+            ->usable()
             ->whereDoesntHave('related')
-            ->where('active', true)
             ->whereNotIn('id', $this->checkedList)
-            ->where('like_status', '>=', 0)
             ->limit(
                 Config::integer('content.max_import_videos') * 2
             )

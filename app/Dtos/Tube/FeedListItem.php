@@ -5,7 +5,7 @@ namespace App\Dtos\Tube;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 
-class FeedActionItem
+class FeedListItem
 {
     public function __construct(
         public ?Collection $feed = null,
