@@ -99,8 +99,14 @@ final readonly class ImportSelectedVideoService
                 ->trim()
                 ->toString()
             )
-            ->reject(fn(string $tag): bool => blank($tag) || is_numeric($tag))
-            ->random(5)
+            ->reject(fn(string $tag): bool => blank($tag) || is_numeric($tag));
+
+        $selects = 5;
+        if ($tags->count() < $selects) {
+            $selects = $tags->count();
+        }
+
+        $tags = $tags->random($selects)
             ->toArray();
 
         $content = Content::query()

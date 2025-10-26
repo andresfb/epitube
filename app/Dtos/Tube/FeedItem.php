@@ -29,8 +29,6 @@ class FeedItem extends Data
         public array  $related = [],
     ) {}
 
-    // TODO: create a `forDetail()` method
-    // TODO: add fromContent{Listing,Detail}() method where the argument is the Content
     public static function forListing(Feed $feed): static
     {
         return Cache::tags('feed')
@@ -38,20 +36,65 @@ class FeedItem extends Data
                 md5("FEED:LISTING:ITEM:$feed->slug"),
                 now()->addMinutes(5),
                 static function () use ($feed): static {
-                    $feedArray = $feed->toArray();
-                    $thumb = collect($feed->thumbnails)->random();
+                    $feedArray = self::getBaseArray($feed);
 
-                    $feedArray['thumbnail'] = $thumb['srcset'];
                     $feedArray['previews'] = $feed->previews;
-                    $feedArray['added_at'] = $feed->added_at->diffForHumans();
-                    $feedArray['tags'] = $feed->tag_array;
-                    sort($feedArray['tags']);
+                    $feedArray['service_url'] = '';
                     $feedArray['videos'] = [];
                     $feedArray['related'] = [];
-                    $feedArray['service_url'] = '';
 
                     return self::from($feedArray);
                 }
             );
+    }
+
+    public static function forDetail(Feed $feed): static
+    {
+        return Cache::tags('feed')
+            ->remember(
+                md5("FEED:DETAIL:ITEM:$feed->slug"),
+                now()->addHour(),
+                static function () use ($feed): static {
+                    $feedArray = self::getBaseArray($feed);
+
+                    $feedArray['previews'] = [];
+                    $feedArray['service_url'] = $feed->service_url;
+                    $feedArray['videos'] = $feed->videos;
+                    $feedArray['related'] = self::loadRelated($feed);
+
+                    return self::from($feedArray);
+                }
+            );
+    }
+
+    public static function getBaseArray(Feed $feed): array
+    {
+        $feedArray = $feed->toArray();
+
+        $feedArray['tags'] = $feed->tag_array;
+        asort($feedArray['tags']);
+
+        $thumb = collect($feed->thumbnails)->random();
+        $feedArray['thumbnail'] = $thumb['srcset'];
+        $feedArray['added_at'] = $feed->added_at->diffForHumans();
+
+        return $feedArray;
+    }
+
+    private static function loadRelated(Feed $feed): array
+    {
+        if (blank($feed->related)) {
+            return [];
+        }
+
+        return Feed::query()
+            ->whereIn('id', collect($feed->related)->pluck('id')->toArray())
+            ->where('id', '!=', $feed->id)
+            ->get()
+            ->map(function (Feed $related): FeedItem {
+                return FeedItem::forListing($related);
+            })
+            ->toArray();
+
     }
 }

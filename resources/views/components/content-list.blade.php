@@ -3,12 +3,13 @@
     'links',
     'timeout' => 5000,
     'maxRefresh' => 3,
-    'reloadTimer' => true
+    'reloadTimer' => true,
+    'showTags' => false,
 ])
 
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
 @forelse($items as $item)
-    <x-content-item :item="$item" />
+    <x-content-item :item="$item" :show-tags="$showTags" />
     @once
     <script>
         // Clear refresh counter when content loads successfully

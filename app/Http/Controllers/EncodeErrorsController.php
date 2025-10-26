@@ -8,7 +8,7 @@ use App\Actions\MarkNotificationReadAction;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class EncodeErrorsController extends Controller
+final class EncodeErrorsController extends Controller
 {
     public function __construct(
         private readonly EncodeErrorsAction $errorsAction,

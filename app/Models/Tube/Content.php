@@ -11,6 +11,7 @@ use App\Observers\ContentObserver;
 use App\Traits\ContentIdGenerator;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +24,6 @@ use Illuminate\Support\Facades\Config;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
-use stdClass;
 
 /**
  * @property int $id
@@ -106,7 +106,8 @@ final class Content extends Model implements HasMedia
         );
     }
 
-    public function scopeHasVideos(Builder $query): Builder
+    #[Scope]
+    protected function hasVideos(Builder $query): Builder
     {
         return $query->whereHas('media', function (Builder $query): void {
             $query->where('collection_name', MediaNamesLibrary::transcoded())
@@ -114,21 +115,39 @@ final class Content extends Model implements HasMedia
         });
     }
 
-    public function scopeHasThumbnails(Builder $query): Builder
+    #[Scope]
+    protected function hasThumbnails(Builder $query): Builder
     {
         return $query->whereHas('media', function (Builder $query): void {
             $query->where('collection_name', MediaNamesLibrary::thumbnails());
         });
     }
 
-    public function scopeInMainCategory(Builder $query): Builder
+    #[Scope]
+    protected function inMainCategory(Builder $query): Builder
     {
         return $query->where('category_id', Category::getMain()->id);
     }
 
-    public function scopeInAltCategory(Builder $query): Builder
+    #[Scope]
+    protected function inAltCategory(Builder $query): Builder
     {
         return $query->where('category_id', Category::getAlt()->id);
+    }
+
+    #[Scope]
+    protected function hasAllMedia(Builder $query): Builder
+    {
+        return $query->hasVideos()
+            ->hasThumbnails();
+    }
+
+    #[Scope]
+    protected function usable(Builder $query): Builder
+    {
+        return $query->hasAllMedia()
+            ->where('active', true)
+            ->where('like_status', '>=', 0);
     }
 
     public function registerMediaCollections(): void
@@ -219,16 +238,13 @@ final class Content extends Model implements HasMedia
             return $idList->toArray();
         }
 
-        // If there aren't enough related items load contents sharing the same tags
+        // If there aren't enough related items, load contents sharing the same tags
         $limit = $maxCount - $idList->count();
         $tags = $this->tags->pluck('name')->toArray();
         $tagged = self::query()
-            ->hasVideos()
-            ->hasThumbnails()
             ->withAnyTags($tags)
             ->whereNotIn('id', $ids)
-            ->where('active', true)
-            ->where('like_status', '>=', 0)
+            ->usable()
             ->inRandomOrder()
             ->limit($limit)
             ->get()
@@ -249,12 +265,9 @@ final class Content extends Model implements HasMedia
         // If there are still not enough items, fill the rest with a random set
         $limit = $maxCount - $idList->count();
         $contents = self::query()
-            ->hasVideos()
-            ->hasThumbnails()
+            ->usable()
             ->whereNotIn('id', $ids)
             ->where('category_id', $this->category_id)
-            ->where('active', true)
-            ->where('like_status', '>=', 0)
             ->inRandomOrder()
             ->limit($limit)
             ->get()

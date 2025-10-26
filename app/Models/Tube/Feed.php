@@ -65,7 +65,7 @@ final class Feed extends Model
         );
     }
 
-    public static function activateFeed(Content $content, int $index): void
+    public static function activateFeed(Content $content, int $index = 1): void
     {
         if (self::query()->where('id', $content->id)->doesntExist()) {
             self::generate($content);

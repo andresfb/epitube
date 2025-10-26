@@ -4,53 +4,45 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Dtos\Tube\FeedActionItem;
 use App\Dtos\Tube\FeedItem;
-use App\Jobs\Tube\CreateFeedJob;
-use App\Models\Tube\Category;
+use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 final readonly class FeedAction
 {
-    public function handle(int $page, bool $fromRequest = true): FeedActionItem
+    public function handle(string $slug): FeedItem
     {
-        $cateSlug = Session::get(
-            'category',
-            Config::string('constants.main_category')
-        );
-
-        $perPage = Config::integer('feed.per_page');
-        $cacheKey = "FEED:PAGE:$page:$perPage";
-
-        $feed = Cache::tags('feed')
-            ->remember(
-                md5($cacheKey),
-                now()->addHour(),
-                function () use ($perPage, $cateSlug): LengthAwarePaginator {
-                    return Feed::query()
-                        ->where('category_id', Category::getId($cateSlug))
-                        ->where('active', true)
-                        ->where('viewed', false)
-                        ->where('published', true)
-                        ->where('like_status', '>=', 0)
-                        ->orderBy('order')
-                        ->limit(Config::integer('feed.max_feed_limit'))
-                        ->paginate($perPage);
-                });
-
-        if ($feed->isEmpty()) {
-            CreateFeedJob::dispatch(
-                fromRequest: $fromRequest
-            );
+        $feed = $this->getFeed($slug);
+        if ($feed === null) {
+            return $this->generateFeed($slug);
         }
 
-        return new FeedActionItem(
-            $feed->map(fn(Feed $feed) => FeedItem::forListing($feed)),
-            $feed->links(),
-        );
+        return FeedItem::forDetail($feed);
+    }
+
+    private function generateFeed(string $slug): FeedItem
+    {
+        $content = Content::query()
+            ->usable()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        Feed::activateFeed($content);
+
+        $feed = $this->getFeed($slug);
+        if ($feed === null) {
+            throw (new ModelNotFoundException)->setModel(Feed::class);
+        }
+
+        return FeedItem::forDetail($feed);
+    }
+
+    private function getFeed(string $slug): ?Feed
+    {
+        return Feed::query()
+            ->where('active', true)
+            ->where('slug', $slug)
+            ->first();
     }
 }

@@ -15,7 +15,7 @@ final class ContentItem extends Data
     /**
      * @param  array<string>  $tags
      * @param  array<VideoItem>  $videos
-     * @param  array<PreviewItem>  $previews
+     * @param  array<VideoItem>  $previews
      * @param  array<ThumbnailItem>  $thumbnails
      * @param  array<int>  $related
      */
@@ -63,7 +63,7 @@ final class ContentItem extends Data
             ))->toArray();
 
         $contentArray[MediaNamesLibrary::previews()] = $content->getMedia(MediaNamesLibrary::previews())
-            ->map(fn (Media $media): PreviewItem => new PreviewItem(
+            ->map(fn (Media $media): VideoItem => new VideoItem(
                 url: $media->getFullUrl(),
                 mimeType: $media->mime_type,
             ))->toArray();
@@ -75,9 +75,9 @@ final class ContentItem extends Data
 
         $videos = $content->getMedia($collection)
             ->map(fn (Media $media): VideoItem => new VideoItem(
-                fulUrl: $media->getFullUrl(),
+                url: $media->getFullUrl(),
+                mimeType: $media->mime_type,
                 duration: (int) $media->getCustomProperty('duration'),
-                width: (int) $media->getCustomProperty('width'),
                 height: (int) $media->getCustomProperty('height'),
             ));
 
@@ -94,9 +94,9 @@ final class ContentItem extends Data
 
         $downscales = $content->getMedia(MediaNamesLibrary::downscaled())
             ->map(fn (Media $media): VideoItem => new VideoItem(
-                fulUrl: $media->getFullUrl(),
+                url: $media->getFullUrl(),
+                mimeType: $media->mime_type,
                 duration: (int) $media->getCustomProperty('duration'),
-                width: (int) $media->getCustomProperty('width'),
                 height: (int) $media->getCustomProperty('height'),
             ));
 
@@ -112,7 +112,7 @@ final class ContentItem extends Data
         $video = [];
 
         foreach ($contentArray[MediaNamesLibrary::videos()] as $item) {
-            if ($item['height'] <= $height) {
+            if ($height > $item['height']) {
                 continue;
             }
 
