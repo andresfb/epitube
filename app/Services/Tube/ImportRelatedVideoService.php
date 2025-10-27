@@ -36,6 +36,9 @@ final class ImportRelatedVideoService
 
         $imported = 0;
         $maxCount = Config::integer('content.max_related_videos') * 3;
+        if (count($items) < $maxCount) {
+            $maxCount = count($items);
+        }
 
         foreach (collect($items)->random($maxCount) as $item) {
             $relatedContent = Content::query()
