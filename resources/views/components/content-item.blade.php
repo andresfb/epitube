@@ -22,7 +22,7 @@
             class="group relative overflow-hidden bg-gray-800">
 
             <img class="inset-0 h-full w-full object-contain transition-opacity duration-200 group-hover:opacity-0"
-                 srcset="{{ $item->thumbnail }}" alt="thumbnail" />
+                 srcset="{{ $item->thumbnail }}" alt="thumbnail" src=""/>
 
             <!-- Preview video -->
             <video
