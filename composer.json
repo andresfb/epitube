@@ -28,6 +28,7 @@
         "pbmedia/laravel-ffmpeg": "^8.7",
         "spatie/laravel-data": "^4.17",
         "spatie/laravel-medialibrary": "^11.14",
+        "spatie/laravel-query-builder": "^6.3",
         "spatie/laravel-tags": "^4.10"
     },
     "require-dev": {

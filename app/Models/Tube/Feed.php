@@ -38,6 +38,8 @@ use MongoDB\Laravel\Eloquent\Model;
  * @property array $thumbnails
  * @property array $related
  * @property CarbonInterface $added_at
+ * @property CarbonInterface $created_at
+ * @property CarbonInterface $updated_at
  */
 final class Feed extends Model
 {

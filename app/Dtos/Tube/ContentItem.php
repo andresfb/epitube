@@ -8,6 +8,7 @@ use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Media;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Spatie\LaravelData\Data;
 
 final class ContentItem extends Data
@@ -35,6 +36,7 @@ final class ContentItem extends Data
         public int    $view_count,
         public string $service_url,
         public Carbon $added_at,
+        public Carbon $created_at,
         public array  $tags = [],
         public array  $tag_slugs = [],
         public array  $tag_array = [],
@@ -43,6 +45,27 @@ final class ContentItem extends Data
         public array  $thumbnails = [],
         public array  $related = [],
     ) {}
+
+    public static  function forListing(Content $content): self
+    {
+        return Cache::tags('content')
+            ->remember(
+                md5("CONTENT:LISTING:ITEM:$content->slug"),
+                now()->addHours(8),
+                static function () use ($content): ContentItem {
+                    $contentArray = $content->toFeedArray();
+
+                    $contentArray[MediaNamesLibrary::thumbnails()] = self::loadThumbnails($content);
+                    $contentArray[MediaNamesLibrary::videos()] = self::loadVideos($content);
+                    $contentArray = self::getVideoInfo($contentArray);
+
+                    $contentArray[MediaNamesLibrary::thumbnails()] = [];
+                    $contentArray['tag_slugs'] = [];
+                    $contentArray['tags'] = [];
+
+                    return self::from($contentArray);
+                });
+    }
 
     public static function withRelated(Content $content): self
     {
@@ -56,11 +79,7 @@ final class ContentItem extends Data
     {
         $contentArray = $content->toFeedArray();
 
-        $contentArray[MediaNamesLibrary::thumbnails()] = $content->getMedia(MediaNamesLibrary::thumbnails())
-            ->map(fn (Media $media): ThumbnailItem => new ThumbnailItem(
-                urls: $media->getResponsiveImageUrls(),
-                srcset: $media->getSrcset(),
-            ))->toArray();
+        $contentArray[MediaNamesLibrary::thumbnails()] = self::loadThumbnails($content);
 
         $contentArray[MediaNamesLibrary::previews()] = $content->getMedia(MediaNamesLibrary::previews())
             ->map(fn (Media $media): VideoItem => new VideoItem(
@@ -68,39 +87,7 @@ final class ContentItem extends Data
                 mimeType: $media->mime_type,
             ))->toArray();
 
-        $collection = MediaNamesLibrary::videos();
-        if ($content->hasMedia(MediaNamesLibrary::transcoded())) {
-            $collection = MediaNamesLibrary::transcoded();
-        }
-
-        $videos = $content->getMedia($collection)
-            ->map(fn (Media $media): VideoItem => new VideoItem(
-                url: $media->getFullUrl(),
-                mimeType: $media->mime_type,
-                duration: (int) $media->getCustomProperty('duration'),
-                height: (int) $media->getCustomProperty('height'),
-            ));
-
-        if ($videos->isEmpty()) {
-            $videos = collect();
-        }
-
-        if (! $content->hasMedia(MediaNamesLibrary::downscaled())) {
-            $contentArray[MediaNamesLibrary::videos()] = $videos->toArray();
-            $contentArray = self::getVideoInfo($contentArray);
-
-            return self::from($contentArray);
-        }
-
-        $downscales = $content->getMedia(MediaNamesLibrary::downscaled())
-            ->map(fn (Media $media): VideoItem => new VideoItem(
-                url: $media->getFullUrl(),
-                mimeType: $media->mime_type,
-                duration: (int) $media->getCustomProperty('duration'),
-                height: (int) $media->getCustomProperty('height'),
-            ));
-
-        $contentArray[MediaNamesLibrary::videos()] = $videos->merge($downscales)->toArray();
+        $contentArray[MediaNamesLibrary::videos()] = self::loadVideos($content);
         $contentArray = self::getVideoInfo($contentArray);
 
         return self::from($contentArray);
@@ -151,5 +138,48 @@ final class ContentItem extends Data
 
         // Example: "45 minutes"
         return sprintf('%d min', $minutes);
+    }
+
+    private static function loadVideos(Content $content): array
+    {
+        $collection = MediaNamesLibrary::videos();
+        if ($content->hasMedia(MediaNamesLibrary::transcoded())) {
+            $collection = MediaNamesLibrary::transcoded();
+        }
+
+        $videos = $content->getMedia($collection)
+            ->map(fn (Media $media): VideoItem => new VideoItem(
+                url: $media->getFullUrl(),
+                mimeType: $media->mime_type,
+                duration: (int) $media->getCustomProperty('duration'),
+                height: (int) $media->getCustomProperty('height'),
+            ));
+
+        if ($videos->isEmpty()) {
+            $videos = collect();
+        }
+
+        if (! $content->hasMedia(MediaNamesLibrary::downscaled())) {
+            return $videos->toArray();
+        }
+
+        $downscales = $content->getMedia(MediaNamesLibrary::downscaled())
+            ->map(fn (Media $media): VideoItem => new VideoItem(
+                url: $media->getFullUrl(),
+                mimeType: $media->mime_type,
+                duration: (int) $media->getCustomProperty('duration'),
+                height: (int) $media->getCustomProperty('height'),
+            ));
+
+        return $videos->merge($downscales)->toArray();
+    }
+
+    private static function loadThumbnails(Content $content): array
+    {
+        return $content->getMedia(MediaNamesLibrary::thumbnails())
+            ->map(fn (Media $media): ThumbnailItem => new ThumbnailItem(
+                urls: $media->getResponsiveImageUrls(),
+                srcset: $media->getSrcset(),
+            ))->toArray();
     }
 }

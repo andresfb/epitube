@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Actions\ContentListAction;
+use App\Dtos\Tube\ContentListItem;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -27,6 +29,10 @@ final class TestAppCommand extends Command
             clear();
             intro('Starting test');
 
+            $request = new ContentListItem();
+            $list = (new ContentListAction())->handle($request);
+
+            dump($list->toArray());
         } catch (Throwable $e) {
             error($e->getMessage());
         } finally {

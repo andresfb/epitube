@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\ContentController;
 use App\Http\Controllers\EncodeErrorsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SwitchCategoryController;
@@ -16,6 +17,9 @@ Route::get('/switch/{category}', SwitchCategoryController::class)
     ->whereIn('category', Category::getSlugs());
 
 Route::get('/videos/{slug}', VideosController::class)->name('video');
+
+Route::get('/contents', [ContentController::class, 'index'])
+    ->name('content.list');
 
 // TODO: add the controller to load the Contents from a giving tag
 Route::get('/tags/{slug}', static function (string $slug) {
