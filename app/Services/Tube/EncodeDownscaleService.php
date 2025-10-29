@@ -24,7 +24,7 @@ final class EncodeDownscaleService extends BaseEncodeService
         Log::notice("Starting downscaling video for media: $mediaId to resolution: $resolution");
 
         try {
-            $this->prepare($mediaId);
+            $this->prepare($mediaId, (string) $resolution);
         } catch (ProcessRunningException $exception) {
             Log::error($exception->getMessage());
 
