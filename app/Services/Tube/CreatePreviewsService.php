@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services\Tube;
 
 use App\Dtos\Tube\PreviewItem;
-use App\Exceptions\ProcessRunningException;
 use App\Jobs\EncodePreviewJob;
 use App\Libraries\Tube\MasterVideoLibrary;
 use App\Libraries\Tube\MediaNamesLibrary;
@@ -13,20 +12,15 @@ use App\Models\Tube\Content;
 use App\Traits\Screenable;
 use Exception;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\File;
 
-final class CreatePreviewsService extends BaseEncodeService
+final class CreatePreviewsService
 {
     use Screenable;
 
-    private int $mediaId = 0;
-
     public function __construct(
-        MasterVideoLibrary $videoLibrary,
+        private readonly MasterVideoLibrary $videoLibrary,
         private readonly EncodePreviewService $encodeService,
-    ) {
-        parent::__construct($videoLibrary);
-    }
+    ) {}
 
     public function setToScreen(bool $toScreen): self
     {
@@ -42,19 +36,34 @@ final class CreatePreviewsService extends BaseEncodeService
      */
     public function execute(int $mediaId): void
     {
-        $this->mediaId = $mediaId;
+        $this->videoLibrary->setMediaId($mediaId)
+            ->loadVideoInfo();
 
-        $this->notice("Starting creating Preview videos for: $this->mediaId");
+        $sections = $this->calculateSections($this->videoLibrary->getDuration());
+        $this->notice("Starting queuing Preview videos for: $mediaId");
 
-        try {
-            $this->generate($this->videoLibrary->getContent());
+        foreach (Config::array('content.preview_options.sizes') as $size => $bitRate) {
+            $size = (int) $size;
+            $bitRate = (int) $bitRate;
 
-            $this->notice('Done queuing Preview videos');
-        } finally {
-            $this->videoLibrary->deleteTempFiles();
+            if ($this->videoLibrary->getHeight() < $size) {
+                continue;
+            }
 
-            $this->deleteFlag($this->videoLibrary->getProcessingDisk());
+            foreach (Config::array('content.preview_options.extensions') as $extension) {
+                EncodePreviewJob::dispatch(
+                    $this->loadPreviewItem(
+                        $this->videoLibrary->getContent()->id,
+                        $size,
+                        $bitRate,
+                        $extension,
+                        $sections
+                    )
+                );
+            }
         }
+
+        $this->notice('Done queuing Preview videos');
     }
 
     public function generateMissing(int $contentId): void
@@ -70,9 +79,10 @@ final class CreatePreviewsService extends BaseEncodeService
         }
 
         $media = $content->getMedia($collection)->firstOrFail();
-        $this->mediaId = $media->id;
         $previews = $content->getMedia(MediaNamesLibrary::previews());
-        $this->videoLibrary->loadVideoInfo($media->id);
+        $this->videoLibrary->setMediaId($media->id)
+            ->loadVideoInfo();
+
         $sections = $this->calculateSections($this->videoLibrary->getDuration());
 
         foreach (Config::array('content.preview_options.sizes') as $size => $bitRate) {
@@ -121,47 +131,6 @@ final class CreatePreviewsService extends BaseEncodeService
                     continue;
                 }
             }
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function generate(Content $content): void
-    {
-        try {
-            $this->notice('Generating Preview videos');
-            $this->videoLibrary->loadVideoInfo($this->mediaId);
-            $sections = $this->calculateSections($this->videoLibrary->getDuration());
-
-            foreach (Config::array('content.preview_options.sizes') as $size => $bitRate) {
-                $size = (int) $size;
-                $bitRate = (int) $bitRate;
-
-                if ($this->videoLibrary->getHeight() < $size) {
-                    continue;
-                }
-
-                foreach (Config::array('content.preview_options.extensions') as $extension) {
-                    EncodePreviewJob::dispatch(
-                        $this->loadPreviewItem(
-                            $content->id,
-                            $size,
-                            $bitRate,
-                            $extension,
-                            $sections
-                        )
-                    );
-                }
-            }
-        } catch (Exception $e) {
-            File::deleteDirectory($this->videoLibrary->getProcessingPath());
-            $content->getMedia(MediaNamesLibrary::previews())
-                ->each(function ($media): void {
-                    $media->forceDelete();
-                });
-
-            throw $e;
         }
     }
 
@@ -217,15 +186,11 @@ final class CreatePreviewsService extends BaseEncodeService
     {
         return new PreviewItem(
             contentId: $contentId,
-            mediaId: $this->mediaId,
+            mediaId: $this->videoLibrary->getMedia()->id,
             size: $size,
             bitRate: $bitRate,
             extension: $extension,
             sections: $sections,
-            tempPath: $this->videoLibrary->getTempPath(),
-            downloadDisk: $this->videoLibrary->getDownloadDisk(),
-            processingDisk: $this->videoLibrary->getProcessingDisk(),
-            relativeVideoPath: $this->videoLibrary->getRelativeVideoPath(),
         );
     }
 }

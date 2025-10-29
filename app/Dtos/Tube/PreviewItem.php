@@ -11,9 +11,5 @@ class PreviewItem
         public int $bitRate,
         public string $extension,
         public array $sections,
-        public string $tempPath,
-        public string $downloadDisk,
-        public string $processingDisk,
-        public string $relativeVideoPath,
     ) {}
 }

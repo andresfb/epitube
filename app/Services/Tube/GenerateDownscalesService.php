@@ -52,7 +52,7 @@ final class GenerateDownscalesService
             return;
         }
 
-        $this->videoLibrary->downloadMaster($media);
+        $this->videoLibrary->setMediaId($mediaId)->downloadMaster();
         $resolutions = collect(self::RESOLUTIONS)
             ->filter(fn (int $resolution): bool => $resolution < $mediaHeight);
 

@@ -23,6 +23,8 @@ final class MasterVideoLibrary
 
     private int $mediaId = 0;
 
+    private int $contentId = 0;
+
     private string $processingDisk;
 
     private string $downloadDisk;
@@ -37,7 +39,7 @@ final class MasterVideoLibrary
 
     private ?Media $media = null;
 
-    private Content $content;
+    private ?Content $content = null;
 
     public function __construct(private readonly Filesystem $filesystem)
     {
@@ -85,74 +87,98 @@ final class MasterVideoLibrary
         return $this->relativeVideoPath;
     }
 
+    public function setMediaId(int $mediaId): MasterVideoLibrary
+    {
+        $this->mediaId = $mediaId;
+        $this->getMedia();
+
+        return $this;
+    }
+
     public function getMedia(): Media
     {
+        if ($this->media !== null && $this->media->id === $this->mediaId) {
+            $this->contentId = $this->media->model_id;
+
+            return $this->media;
+        }
+
         if (blank($this->mediaId)) {
             throw new RuntimeException('Missing media id');
         }
 
-        if ($this->media !== null) {
-            return $this->media;
-        }
-
-        $this->media = Media::where('id', $this->mediaId)
+        $this->media = Media::query()
+            ->whereId($this->mediaId)
             ->firstOrFail();
+
+        $this->contentId = $this->media->model_id;
 
         return $this->media;
     }
 
     public function getContent(): Content
     {
+        if ($this->content !== null && $this->content->id === $this->contentId) {
+            return $this->content;
+        }
+
+        if (blank($this->contentId)) {
+            throw new RuntimeException('Missing media id');
+        }
+
+        $this->content = Content::query()
+            ->whereId($this->contentId)
+            ->firstOrFail();
+
         return $this->content;
     }
 
-    public function prepare(int $mediaId, string $caller): void
+    public function prepare(string $caller): void
     {
-        $this->notice("Preparing Master Video for: $mediaId from caller $caller");
-
-        $this->mediaId = $mediaId;
-        $this->content = Content::where('id', $this->getMedia()->model_id)
-            ->firstOrFail();
+        $this->notice("Preparing Master Video for: $this->mediaId from caller $caller");
 
         if (! $this->getMedia()->getCustomProperty('is_video', false)) {
             throw new RuntimeException('The media provided is not a video');
         }
 
-        $this->downloadMaster($this->getMedia());
-        $this->loadVideoInfo($this->getMedia()->id);
+        $this->downloadMaster();
+        $this->loadVideoInfo();
 
         $this->notice('Creating temp path for processing');
         $this->tempPath = md5("$caller:{$this->getMedia()->file_name}");
         $this->processingPath = Storage::disk($this->processingDisk)->path($this->tempPath);
-        if (! is_dir($this->processingPath) && ! mkdir($this->processingPath, 0777, true) && ! is_dir($this->processingPath)) {
+        if (! is_dir($this->processingPath)
+            && ! mkdir($this->processingPath, 0777, true)
+            && ! is_dir($this->processingPath))
+        {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $this->processingPath));
         }
     }
 
-    public function downloadMaster(Media $media): void
+    public function downloadMaster(): void
     {
-        if (! $media->getCustomProperty('transcoded', false)) {
+        if (! $this->getMedia()->getCustomProperty('transcoded', false)) {
             $this->notice('The video is not transcoded, using the original file');
             $this->downloadDisk = DiskNamesLibrary::content();
-            $this->masterFile = $media->getPath();
-            $this->relativeVideoPath = $media->getPathRelativeToRoot();
+            $this->masterFile = $this->getMedia()->getPath();
+            $this->relativeVideoPath = $this->getMedia()->getPathRelativeToRoot();
 
             return;
         }
 
-        $this->prepareDownloadPath($media);
+        $this->prepareDownloadPath();
 
         if (! File::exists($this->masterFile)) {
             // download the video from S3
             $this->notice("Downloading video file: $this->masterFile");
-            $this->filesystem->copyFromMediaLibrary($media, $this->masterFile);
+            $this->filesystem->copyFromMediaLibrary($this->getMedia(), $this->masterFile);
         }
     }
 
-    public function loadVideoInfo(int $mediaId): void
+    public function loadVideoInfo(): void
     {
         $this->notice('Loading video info');
-        $this->mediaId = $mediaId;
+
         $this->height = (int) $this->getMedia()->getCustomProperty('height', 0);
         $this->duration = (int) $this->getMedia()->getCustomProperty('duration', 0);
         if ($this->duration < Config::integer('content.minimum_duration')) {
@@ -160,19 +186,19 @@ final class MasterVideoLibrary
         }
     }
 
-    public function prepareDownloadPath(Media $media): void
+    public function prepareDownloadPath(): void
     {
         $this->notice('Preparing download path for video');
         $this->downloadDisk = DiskNamesLibrary::download();
 
         // prepare a local file
-        $tempMasterPath = md5($media->file_name);
+        $tempMasterPath = md5($this->getMedia()->file_name);
         $masterDownloadPath = Storage::disk($this->downloadDisk)->path($tempMasterPath);
         if (! is_dir($masterDownloadPath) && ! mkdir($masterDownloadPath, 0777, true) && ! is_dir($masterDownloadPath)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $masterDownloadPath));
         }
 
-        $videoFileName = pathinfo($media->file_name, PATHINFO_BASENAME);
+        $videoFileName = pathinfo($this->getMedia()->file_name, PATHINFO_BASENAME);
         $this->masterFile = sprintf('%s%s%s', $masterDownloadPath, DIRECTORY_SEPARATOR, $videoFileName);
         $this->relativeVideoPath = sprintf('%s%s%s', $tempMasterPath, DIRECTORY_SEPARATOR, $videoFileName);
     }

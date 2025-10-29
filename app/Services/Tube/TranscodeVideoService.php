@@ -80,7 +80,9 @@ final class TranscodeVideoService
             Log::info('Adding transcoded video to Media');
             $newMedia = $this->addNewMedia($info);
 
-            $this->videoLibrary->prepareDownloadPath($newMedia);
+            $this->videoLibrary->setMediaId($newMedia->id)
+                ->prepareDownloadPath();
+
             $masterPath = $this->videoLibrary->getMasterFile();
 
             Log::info("Moving the video to download folder: $masterPath");

@@ -77,7 +77,8 @@ final readonly class HlsConverterService
             throw new RuntimeException("Media not supported: {$media->id}");
         }
 
-        $this->videoLibrary->prepare($mediaId, self::class);
+        $this->videoLibrary->setMediaId($media->id)
+            ->prepare(self::class);
 
         $filepath = $this->convert($this->videoLibrary->getMasterFile());
         $directory = dirname($filepath);
@@ -96,9 +97,6 @@ final readonly class HlsConverterService
         $diskRelativePath = "/{$this->filesystem->getConversionDirectory($media)}.'$this->hls/playlist.m3u8'";
         $media->setCustomProperty($this->hls, $diskRelativePath);
         $media->save();
-
-        $content = Content::where('id', $media->model_id)->first();
-        $content?->searchable();
 
         $this->videoLibrary->deleteTempFiles();
         Log::notice('Done creating HLS playlist');

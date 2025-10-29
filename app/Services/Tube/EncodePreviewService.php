@@ -49,14 +49,12 @@ class EncodePreviewService extends BaseEncodeService
                 $item->extension
             ));
 
-            $content = Content::where('id', $item->contentId)
-                ->firstOrFail();
+            $fullPath = Storage::disk($this->videoLibrary->getProcessingDisk())
+                ->path(
+                    $this->createClipFile($item)
+                );
 
-            $file = $this->createClipFile($item);
-            $fullPath = Storage::disk($item->processingDisk)
-                ->path($file);
-
-            $content->addMedia($fullPath)
+            $this->videoLibrary->getContent()->addMedia($fullPath)
                 ->withCustomProperties([
                     'size' => $item->size,
                     'extension' => $item->extension,
@@ -76,7 +74,8 @@ class EncodePreviewService extends BaseEncodeService
 
             throw $e;
         } finally {
-            $this->deleteFlag($item->processingDisk);
+            $this->deleteFlag($this->videoLibrary->getProcessingDisk());
+            $this->videoLibrary->deleteTempFiles();
         }
     }
 
@@ -84,7 +83,7 @@ class EncodePreviewService extends BaseEncodeService
     {
         $fileTemplate = sprintf(
             '%s/preview_%s_%s%s.%s',
-            $item->tempPath,
+            $this->videoLibrary->getTempPath(),
             $item->size,
             $item->extension,
             '%s',
@@ -98,8 +97,8 @@ class EncodePreviewService extends BaseEncodeService
 
         $tmpFiles = [];
         foreach ($item->sections as $section) {
-            $video = FFMpeg::fromDisk($item->downloadDisk)
-                ->open($item->relativeVideoPath);
+            $video = FFMpeg::fromDisk($this->videoLibrary->getDownloadDisk())
+                ->open($this->videoLibrary->getRelativeVideoPath());
 
             $tmpFile = sprintf(
                 $tmpFileTemplate,
@@ -118,7 +117,7 @@ class EncodePreviewService extends BaseEncodeService
                 ->addFilter(function (VideoFilters $filters) use ($item): void {
                     $filters->custom("fps=10,scale=-2:$item->size:flags=lanczos");
                 })
-                ->toDisk($item->processingDisk)
+                ->toDisk($this->videoLibrary->getProcessingDisk())
                 ->inFormat($this->getEncodeFormat($item->extension, $item->bitRate))
                 ->save($tmpFile);
 
@@ -127,13 +126,13 @@ class EncodePreviewService extends BaseEncodeService
             unset($video);
         }
 
-        FFMpeg::fromDisk($item->processingDisk)
+        FFMpeg::fromDisk($this->videoLibrary->getProcessingDisk())
             ->open($tmpFiles)
             ->export()
             ->concatWithoutTranscoding()
             ->save($outputFile);
 
-        Storage::disk($item->processingDisk)
+        Storage::disk($this->videoLibrary->getProcessingDisk())
             ->delete($tmpFiles);
 
         return $outputFile;
