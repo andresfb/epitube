@@ -3,6 +3,7 @@
 namespace App\Services\Tube;
 
 use App\Dtos\Tube\PreviewItem;
+use App\Exceptions\ProcessRunningException;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
 use App\Traits\Screenable;
@@ -14,45 +15,69 @@ use FFMpeg\Format\Video\X264;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
-class EncodePreviewService
+class EncodePreviewService extends BaseEncodeService
 {
     use Screenable;
+
+    public function setToScreen(bool $toScreen): self
+    {
+        $this->toScreen = $toScreen;
+        $this->videoLibrary->setToScreen($toScreen);
+
+        return $this;
+    }
 
     /**
      * @throws Exception
      */
     public function execute(PreviewItem $item): void
     {
-        $this->notice(sprintf(
-            "Start creating Preview for Content %s, Media: %s, Size: %s, Extension: %s",
-            $item->contentId,
-            $item->mediaId,
-            $item->size,
-            $item->extension
-        ));
+        try {
+            $this->prepare($item->mediaId, "$item->size:$item->extension");
+        } catch (ProcessRunningException $ex) {
+            $this->error($ex->getMessage());
 
-        $content = Content::where('id', $item->contentId)
-            ->firstOrFail();
+            return;
+        }
 
-        $file = $this->createClipFile($item);
-        $fullPath = Storage::disk($item->processingDisk)
-            ->path($file);
+        try {
+            $this->notice(sprintf(
+                "Start creating Preview for Content %s, Media: %s, Size: %s, Extension: %s",
+                $item->contentId,
+                $item->mediaId,
+                $item->size,
+                $item->extension
+            ));
 
-        $content->addMedia($fullPath)
-            ->withCustomProperties([
-                'size' => $item->size,
-                'extension' => $item->extension,
-                'is_video' => true,
-            ])
-            ->toMediaCollection(MediaNamesLibrary::previews());
+            $content = Content::where('id', $item->contentId)
+                ->firstOrFail();
 
-        $this->notice(sprintf(
-            "Done creating Preview for Content %s, Media: %s, Size: %s, Extension: %s",
-            $item->contentId,
-            $item->mediaId,
-            $item->size,
-            $item->extension
-        ));
+            $file = $this->createClipFile($item);
+            $fullPath = Storage::disk($item->processingDisk)
+                ->path($file);
+
+            $content->addMedia($fullPath)
+                ->withCustomProperties([
+                    'size' => $item->size,
+                    'extension' => $item->extension,
+                    'is_video' => true,
+                ])
+                ->toMediaCollection(MediaNamesLibrary::previews());
+
+            $this->notice(sprintf(
+                "Done creating Preview for Content %s, Media: %s, Size: %s, Extension: %s",
+                $item->contentId,
+                $item->mediaId,
+                $item->size,
+                $item->extension
+            ));
+        } catch (Exception $e) {
+            $this->error($e->getMessage());
+
+            throw $e;
+        } finally {
+            $this->deleteFlag($item->processingDisk);
+        }
     }
 
     private function createClipFile(PreviewItem $item): string

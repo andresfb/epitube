@@ -6,15 +6,17 @@ namespace App\Libraries\Tube;
 
 use App\Models\Tube\Content;
 use App\Models\Tube\Media;
+use App\Traits\Screenable;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Filesystem;
 
 final class MasterVideoLibrary
 {
+    use Screenable;
+
     private int $duration = 0;
 
     private int $height = 0;
@@ -106,6 +108,8 @@ final class MasterVideoLibrary
 
     public function prepare(int $mediaId, string $caller): void
     {
+        $this->notice("Preparing Master Video for: $mediaId from caller $caller");
+
         $this->mediaId = $mediaId;
         $this->content = Content::where('id', $this->getMedia()->model_id)
             ->firstOrFail();
@@ -117,7 +121,7 @@ final class MasterVideoLibrary
         $this->downloadMaster($this->getMedia());
         $this->loadVideoInfo($this->getMedia()->id);
 
-        // create temp folder
+        $this->notice('Creating temp path for processing');
         $this->tempPath = md5("$caller:{$this->getMedia()->file_name}");
         $this->processingPath = Storage::disk($this->processingDisk)->path($this->tempPath);
         if (! is_dir($this->processingPath) && ! mkdir($this->processingPath, 0777, true) && ! is_dir($this->processingPath)) {
@@ -128,6 +132,7 @@ final class MasterVideoLibrary
     public function downloadMaster(Media $media): void
     {
         if (! $media->getCustomProperty('transcoded', false)) {
+            $this->notice('The video is not transcoded, using the original file');
             $this->downloadDisk = DiskNamesLibrary::content();
             $this->masterFile = $media->getPath();
             $this->relativeVideoPath = $media->getPathRelativeToRoot();
@@ -139,13 +144,14 @@ final class MasterVideoLibrary
 
         if (! File::exists($this->masterFile)) {
             // download the video from S3
-            Log::notice("Downloading video file: $this->masterFile");
+            $this->notice("Downloading video file: $this->masterFile");
             $this->filesystem->copyFromMediaLibrary($media, $this->masterFile);
         }
     }
 
     public function loadVideoInfo(int $mediaId): void
     {
+        $this->notice('Loading video info');
         $this->mediaId = $mediaId;
         $this->height = (int) $this->getMedia()->getCustomProperty('height', 0);
         $this->duration = (int) $this->getMedia()->getCustomProperty('duration', 0);
@@ -156,6 +162,7 @@ final class MasterVideoLibrary
 
     public function prepareDownloadPath(Media $media): void
     {
+        $this->notice('Preparing download path for video');
         $this->downloadDisk = DiskNamesLibrary::download();
 
         // prepare a local file
@@ -172,6 +179,7 @@ final class MasterVideoLibrary
 
     public function deleteTempFiles(): void
     {
+        $this->notice("Deleting temp files on $this->processingPath");
         File::deleteDirectory($this->processingPath);
     }
 }

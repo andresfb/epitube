@@ -28,6 +28,15 @@ final class CreatePreviewsService extends BaseEncodeService
         parent::__construct($videoLibrary);
     }
 
+    public function setToScreen(bool $toScreen): self
+    {
+        $this->toScreen = $toScreen;
+        $this->encodeService->setToScreen($toScreen);
+        $this->videoLibrary->setToScreen($toScreen);
+
+        return $this;
+    }
+
     /**
      * @throws Exception
      */
@@ -50,7 +59,7 @@ final class CreatePreviewsService extends BaseEncodeService
 
     public function generateMissing(int $contentId): void
     {
-        $this->notice('Looking for missing Preview videos');
+        $this->notice("Looking for missing Preview videos\n");
 
         $content = Content::where('id', $contentId)
             ->firstOrFail();
@@ -61,8 +70,8 @@ final class CreatePreviewsService extends BaseEncodeService
         }
 
         $media = $content->getMedia($collection)->firstOrFail();
+        $this->mediaId = $media->id;
         $previews = $content->getMedia(MediaNamesLibrary::previews());
-
         $this->videoLibrary->loadVideoInfo($media->id);
         $sections = $this->calculateSections($this->videoLibrary->getDuration());
 
@@ -91,20 +100,12 @@ final class CreatePreviewsService extends BaseEncodeService
                 }
 
                 if ($found) {
-                    $this->notice("Content already has a $size, $extension Preview");
+                    $this->notice("Content already has a $size, $extension");
 
                     continue;
                 }
 
-                 $this->notice("Preview not found. Creating $size, $extension");
-
-                try {
-                    $this->prepare($this->mediaId, "$size:$extension");
-                } catch (ProcessRunningException $exception) {
-                    $this->error($exception->getMessage());
-
-                    continue;
-                }
+                $this->warning("\nPreview not found. Creating $size, $extension");
 
                 try {
                     $this->encodeService->execute(
@@ -116,9 +117,7 @@ final class CreatePreviewsService extends BaseEncodeService
                             $sections
                         )
                     );
-                } catch (Exception $e) {
-                    $this->error($e->getMessage());
-
+                } catch (Exception) {
                     continue;
                 }
             }
@@ -144,14 +143,6 @@ final class CreatePreviewsService extends BaseEncodeService
                 }
 
                 foreach (Config::array('content.preview_options.extensions') as $extension) {
-                    try {
-                        $this->prepare($this->mediaId, "$size:$extension");
-                    } catch (ProcessRunningException $exception) {
-                        $this->error($exception->getMessage());
-
-                        continue;
-                    }
-
                     EncodePreviewJob::dispatch(
                         $this->loadPreviewItem(
                             $content->id,
