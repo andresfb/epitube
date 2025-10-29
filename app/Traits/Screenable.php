@@ -26,7 +26,7 @@ trait Screenable
         echo $character;
     }
 
-    public function line(string $message): void
+    public function notice(string $message): void
     {
         if ($message !== '') {
             Log::notice($message);

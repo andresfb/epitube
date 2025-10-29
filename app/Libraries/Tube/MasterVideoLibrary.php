@@ -19,6 +19,8 @@ final class MasterVideoLibrary
 
     private int $height = 0;
 
+    private int $mediaId = 0;
+
     private string $processingDisk;
 
     private string $downloadDisk;
@@ -31,7 +33,7 @@ final class MasterVideoLibrary
 
     private string $masterFile = '';
 
-    private Media $media;
+    private ?Media $media = null;
 
     private Content $content;
 
@@ -83,6 +85,17 @@ final class MasterVideoLibrary
 
     public function getMedia(): Media
     {
+        if (blank($this->mediaId)) {
+            throw new RuntimeException('Missing media id');
+        }
+
+        if ($this->media !== null) {
+            return $this->media;
+        }
+
+        $this->media = Media::where('id', $this->mediaId)
+            ->firstOrFail();
+
         return $this->media;
     }
 
@@ -93,29 +106,22 @@ final class MasterVideoLibrary
 
     public function prepare(int $mediaId, string $caller): void
     {
-        $this->media = Media::where('id', $mediaId)
+        $this->mediaId = $mediaId;
+        $this->content = Content::where('id', $this->getMedia()->model_id)
             ->firstOrFail();
 
-        $this->content = Content::where('id', $this->media->model_id)
-            ->firstOrFail();
-
-        if (! $this->media->getCustomProperty('is_video', false)) {
+        if (! $this->getMedia()->getCustomProperty('is_video', false)) {
             throw new RuntimeException('The media provided is not a video');
         }
 
-        $this->downloadMaster($this->media);
+        $this->downloadMaster($this->getMedia());
+        $this->loadVideoInfo($this->getMedia()->id);
 
         // create temp folder
-        $this->tempPath = md5("$caller:{$this->media->file_name}");
+        $this->tempPath = md5("$caller:{$this->getMedia()->file_name}");
         $this->processingPath = Storage::disk($this->processingDisk)->path($this->tempPath);
         if (! is_dir($this->processingPath) && ! mkdir($this->processingPath, 0777, true) && ! is_dir($this->processingPath)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $this->processingPath));
-        }
-
-        $this->height = (int) $this->media->getCustomProperty('height', 0);
-        $this->duration = (int) $this->media->getCustomProperty('duration', 0);
-        if ($this->duration < Config::integer('content.minimum_duration')) {
-            throw new RuntimeException("The video duration is too short: $this->duration");
         }
     }
 
@@ -135,6 +141,16 @@ final class MasterVideoLibrary
             // download the video from S3
             Log::notice("Downloading video file: $this->masterFile");
             $this->filesystem->copyFromMediaLibrary($media, $this->masterFile);
+        }
+    }
+
+    public function loadVideoInfo(int $mediaId): void
+    {
+        $this->mediaId = $mediaId;
+        $this->height = (int) $this->getMedia()->getCustomProperty('height', 0);
+        $this->duration = (int) $this->getMedia()->getCustomProperty('duration', 0);
+        if ($this->duration < Config::integer('content.minimum_duration')) {
+            throw new RuntimeException("The video duration is too short: $this->duration");
         }
     }
 

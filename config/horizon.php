@@ -209,7 +209,7 @@ return [
                 'queue' => ['media'],
                 'balance' => 'auto',
                 'minProcesses' => 1,
-                'maxProcesses' => 4,
+                'maxProcesses' => 6,
                 'timeout' => 1800,
                 'tries' => 1,
             ],

@@ -22,7 +22,7 @@ class SyncFeedRecordsService
 
         $this->info('Deleting records');
         Feed::query()->chunk(self::CHUNK_SIZE, function (Collection $feeds) {
-            $this->line(sprintf("Working on the next batch of %s Feed records", self::CHUNK_SIZE));
+            $this->notice(sprintf("Working on the next batch of %s Feed records", self::CHUNK_SIZE));
 
             $feeds->each(function (Feed $feed) {
                 Feed::withoutEvents(function () use ($feed) {
@@ -31,7 +31,7 @@ class SyncFeedRecordsService
                 });
             });
 
-            $this->line('');
+            $this->notice('');
         });
         $this->info("Done deleting records\n");
 
@@ -47,7 +47,7 @@ class SyncFeedRecordsService
             ->with('related')
             ->hasAllMedia()
             ->chunk(self::CHUNK_SIZE, function (Collection $list) use (&$found): void {
-                $this->line(sprintf("Working on the next batch of %s Feed records", self::CHUNK_SIZE));
+                $this->notice(sprintf("Working on the next batch of %s Feed records", self::CHUNK_SIZE));
 
                 try {
                     $list->each(function (Content $content) use (&$found): void {
@@ -60,10 +60,10 @@ class SyncFeedRecordsService
                     });
                 } catch (Exception $e) {
                     $this->error($e->getMessage());
-                    $this->line('');
+                    $this->notice('');
                 }
 
-                $this->line('');
+                $this->notice('');
             });
         $this->info('Done creating Feed records');
 
