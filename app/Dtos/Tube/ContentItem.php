@@ -103,6 +103,7 @@ final class ContentItem extends Data
                 continue;
             }
 
+            $height = $item['height'];
             $video = $item;
         }
 

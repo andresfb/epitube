@@ -11,6 +11,7 @@ use App\Models\Tube\MimeType;
 use App\Traits\Encodable;
 use Exception;
 use FFMpeg\FFProbe;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -53,8 +54,7 @@ final class GenerateDownscalesService
         }
 
         $this->videoLibrary->setMediaId($mediaId)->downloadMaster();
-        $resolutions = collect(self::RESOLUTIONS)
-            ->filter(fn (int $resolution): bool => $resolution < $mediaHeight);
+        $resolutions = $this->getResolutions($mediaHeight);
 
         foreach ($resolutions as $resolution) {
             Log::notice("Queueing downscaling for resolution: $resolution");
@@ -62,6 +62,12 @@ final class GenerateDownscalesService
         }
 
         Log::notice('Done scheduling Downscales');
+    }
+
+    public function getResolutions(int $mediaHeight): Collection
+    {
+        return collect(self::RESOLUTIONS)
+            ->filter(fn(int $resolution): bool => $resolution < $mediaHeight);
     }
 
     private function canConvert(Media $media): bool
