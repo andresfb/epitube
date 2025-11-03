@@ -53,7 +53,7 @@ final readonly class JellyfinLibrary
                 return [];
             }
 
-            if (blank($result['Items'])) {
+            if (! is_array($result) || blank($result['Items'])) {
                 Log::error('No items found');
 
                 return [];
