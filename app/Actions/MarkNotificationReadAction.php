@@ -18,7 +18,7 @@ final readonly class MarkNotificationReadAction
         DB::transaction(static function (): void {
             DB::table('notifications')
                 ->where('notifiable_type', Content::class)
-                ->where('read_at', null)
+                ->whereNull('read_at')
                 ->update(['read_at' => now()]);
         });
     }

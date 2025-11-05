@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use App\Actions\EncodeErrorsAction;
 use App\Actions\HasRejectedAction;
 use App\Actions\MarkNotificationReadAction;
@@ -16,7 +18,7 @@ final class EncodeErrorsController extends Controller
         private readonly MarkNotificationReadAction $notificationAction,
     ) {}
 
-    public function __invoke()
+    public function __invoke(): Factory|View
     {
         // TODO: add a route/controller to list the rejected items
 

@@ -163,7 +163,7 @@ final class TitleParserLibrary
         /** @var Collection<Stringable> $dirList */
         $dirList = Str::of($directory)
             ->explode('/')
-            ->map(fn ($item): Stringable => $this->cleanString($item, '')->removeSpaces())
+            ->map(fn (string $item): Stringable => $this->cleanString($item, '')->removeSpaces())
             ->reject(function (Stringable $item): bool {
                 $value = $item->toString();
 

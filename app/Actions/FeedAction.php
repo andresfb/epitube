@@ -14,7 +14,7 @@ final readonly class FeedAction
     public function handle(string $slug): FeedItem
     {
         $feed = $this->getFeed($slug);
-        if ($feed === null) {
+        if (!$feed instanceof Feed) {
             return $this->generateFeed($slug);
         }
 
@@ -31,7 +31,7 @@ final readonly class FeedAction
         Feed::activateFeed($content);
 
         $feed = $this->getFeed($slug);
-        if ($feed === null) {
+        if (!$feed instanceof Feed) {
             throw (new ModelNotFoundException)->setModel(Feed::class);
         }
 

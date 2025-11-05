@@ -3,7 +3,6 @@
 namespace App\Libraries\Tube;
 
 use Exception;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Modules\JellyfinApi\Facades\Jellyfin;
 

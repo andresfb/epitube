@@ -17,6 +17,6 @@ class ContentController extends Controller
     {
         $contents = $action->handle(ContentListItem::from($request));
 
-        return view('content.list', compact('contents'));
+        return view('content.list', ['contents' => $contents]);
     }
 }

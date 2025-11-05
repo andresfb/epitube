@@ -15,9 +15,9 @@ final readonly class EncodeErrorsAction
     {
         return DB::table('notifications')
             ->where('notifiable_type', Content::class)
-            ->where('read_at', null)
+            ->whereNull('read_at')
             ->get()
-            ->map(function ($notification) {
+            ->map(function ($notification): EncodeErrorItem {
                 $data = $notification->data;
                 $data['content_id'] = $notification->notification_id;
 

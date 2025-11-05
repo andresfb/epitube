@@ -6,6 +6,11 @@ use Rector\Config\RectorConfig;
 use Rector\Exception\Configuration\InvalidConfigurationException;
 use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
 use Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector;
+use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
+use Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector;
+use Rector\TypeDeclaration\Rector\Closure\AddClosureVoidReturnTypeWhereNoReturnRector;
+use Rector\TypeDeclaration\Rector\Function_\AddFunctionVoidReturnTypeWhereNoReturnRector;
+use RectorLaravel\Set\LaravelSetProvider;
 
 try {
     return RectorConfig::configure()
@@ -16,19 +21,25 @@ try {
             __DIR__.'/database',
             __DIR__.'/public',
         ])
-        ->withSkip([
-            AddOverrideAttributeToOverriddenMethodsRector::class,
-            DisallowedEmptyRuleFixerRector::class,
-        ])
         ->withPreparedSets(
             deadCode: true,
             codeQuality: true,
             typeDeclarations: true,
             privatization: true,
             earlyReturn: true,
-            strictBooleans: true,
         )
-        ->withPhpSets();
+        ->withPhpSets()
+        ->withSetProviders(LaravelSetProvider::class)
+        ->withComposerBased(laravel: true, /** other options */)
+        ->withSkip([
+            AddOverrideAttributeToOverriddenMethodsRector::class,
+            DisallowedEmptyRuleFixerRector::class,
+            ClosureToArrowFunctionRector::class,
+            AddClosureVoidReturnTypeWhereNoReturnRector::class,
+            AddFunctionVoidReturnTypeWhereNoReturnRector::class,
+            NullToStrictStringFuncCallArgRector::class,
+        ])
+        ->withImportNames(removeUnusedImports: true);
 } catch (InvalidConfigurationException $e) {
     echo 'Invalid configuration: '.$e->getMessage();
 }

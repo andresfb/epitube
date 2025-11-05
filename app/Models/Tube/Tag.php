@@ -40,7 +40,7 @@ class Tag extends SpatieTag
                         ->groupBy('tags.id')
                         ->orderByDesc('count')
                         ->get()
-                        ->map(function (Tag $tag) {
+                        ->map(function (Tag $tag): TagMenuItem {
                             return TagMenuItem::from($tag);
                         });
                 }

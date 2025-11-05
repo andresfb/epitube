@@ -21,7 +21,7 @@ final class JellyfinService
         $this->setRequestHeader('Content-Type', 'application/json');
     }
 
-    protected function setOptions(array $credentials): void
+    private function setOptions(array $credentials): void
     {
         // Setting API Endpoint
         $this->config['server_api_url'] = $credentials['server_url'];

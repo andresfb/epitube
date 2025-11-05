@@ -5,7 +5,6 @@ namespace App\Console\Commands\Tube;
 use App\Models\Tube\SharedTag;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Config;
 
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
@@ -46,7 +45,7 @@ final class PrepareSharedTagsCommand extends Command
 
                 $tagList[$tag] = str($childTags)
                     ->explode(',')
-                    ->map(fn(string $tag) => ucwords(mb_trim($tag)))
+                    ->map(fn(string $tag): string => ucwords(mb_trim($tag)))
                     ->toArray();
 
                 if (! confirm('Add more Tags?')) {

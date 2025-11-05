@@ -65,7 +65,7 @@ final class CreateFeedJob implements ShouldQueue
             return false;
         }
 
-        $key = md5(__CLASS__);
+        $key = md5(self::class);
         if (! Cache::has($key)) {
             Cache::put($key, 1, now()->endOfDay());
 

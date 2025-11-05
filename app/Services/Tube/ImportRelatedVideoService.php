@@ -17,7 +17,7 @@ final class ImportRelatedVideoService
         Log::notice("Starting Related Videos process for Content Id: $contentId");
 
         $key = md5(Config::string('content.related_checks_key'));
-        $checkedList = array_map('intval', Cache::get($key, []));
+        $checkedList = array_map(intval(...), Cache::get($key, []));
 
         $content = Content::query()
             ->where('id', $contentId)
@@ -79,7 +79,7 @@ final class ImportRelatedVideoService
     private function saveChecked(array $checkedList): void
     {
         $key = md5(Config::string('content.related_checks_key'));
-        $extras = array_map('intval', Cache::get($key, []));
+        $extras = array_map(intval(...), Cache::get($key, []));
         $final = array_unique(array_merge($checkedList, $extras));
 
         Cache::put($key, $final, now()->addWeek());

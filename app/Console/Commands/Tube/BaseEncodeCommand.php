@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\Tube;
 
-use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
-use App\Models\Tube\Media;
 use App\Traits\MediaGetter;
 use Illuminate\Console\Command;
 use RuntimeException;

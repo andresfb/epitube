@@ -14,7 +14,7 @@ class CheckEncodingErrorsService
     {
         $pendingNotifications = DB::table('notifications')
             ->where('notifiable_type', Content::class)
-            ->where('read_at', null)
+            ->whereNull('read_at')
             ->count();
 
         if ($pendingNotifications <= 0) {

@@ -18,10 +18,8 @@ final class ImportRelatedVideosService
     public function __construct(private readonly ImportRelatedVideoService $relatedVideoService){}
 
     /**
-     * This method used to dispatch a job foreach related video
+     * This method used to dispatch a job for each related video
      * Used by the scheduler via ImportRelatedVideosJob
-     *
-     * @return void
      */
     public function execute(): void
     {
@@ -48,8 +46,6 @@ final class ImportRelatedVideosService
     /**
      * This method will run the Related Video import service directly.
      * Mostly used in the Artisan command `php artisan import:related`
-     *
-     * @return void
      */
     public function handle(): void
     {
@@ -98,6 +94,6 @@ final class ImportRelatedVideosService
     private function getCheckedList(): array
     {
         $key = md5(Config::string('content.related_checks_key'));
-        return array_map('intval', Cache::get($key, []));
+        return array_map(intval(...), Cache::get($key, []));
     }
 }

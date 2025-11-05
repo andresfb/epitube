@@ -46,9 +46,9 @@ class ContentListItem extends Data
             && $this->tag === null
             && $this->search === null
             && $this->sort === null
-            && $this->added_after === null
-            && $this->added_before === null
-            && $this->created_after === null
-            && $this->created_before === null;
+            && !$this->added_after instanceof CarbonInterface
+            && !$this->added_before instanceof CarbonInterface
+            && !$this->created_after instanceof CarbonInterface
+            && !$this->created_before instanceof CarbonInterface;
     }
 }

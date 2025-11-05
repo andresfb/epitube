@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use Illuminate\Support\Collection;
 use App\Models\Tube\Category;
 use App\Models\Tube\Tag;
 use Illuminate\Support\Facades\Config;
@@ -23,7 +24,7 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind('category', fn ($app) => collect());
+        $this->app->bind('category', fn ($app): Collection => collect());
     }
 
     /**

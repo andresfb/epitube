@@ -46,12 +46,7 @@ trait DirectoryChecker
         if (preg_match('/^\$2[aby]\$\d{2}\$[.\/A-Za-z0-9]{53}$/', $value)) {
             return true;
         }
-
         // Argon2i / Argon2id
-        if (preg_match('/^\$(argon2i|argon2id)\$[^$]+\$[^$]+\$[A-Za-z0-9\/+.=]+$/', $value)) {
-            return true;
-        }
-
-        return false;
+        return (bool) preg_match('/^\$(argon2i|argon2id)\$[^$]+\$[^$]+\$[A-Za-z0-9\/+.=]+$/', $value);
     }
 }

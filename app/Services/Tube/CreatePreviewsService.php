@@ -99,9 +99,11 @@ final class CreatePreviewsService
                 $this->notice("Looking for $size, $extension Preview");
 
                 foreach ($previews as $preview) {
-                    if ($preview->getCustomProperty('extension') !== $extension
-                        || $preview->getCustomProperty('size') !== $size
-                    ) {
+                    if ($preview->getCustomProperty('extension') !== $extension) {
+                        continue;
+                    }
+
+                    if ($preview->getCustomProperty('size') !== $size) {
                         continue;
                     }
 

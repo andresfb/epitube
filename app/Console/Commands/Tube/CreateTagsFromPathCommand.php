@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\Tube;
 
-use App\Enums\SpecialTagType;
 use App\Models\Tube\SharedTag;
 use App\Models\Tube\SpecialTag;
 use App\Models\Tube\Tag;

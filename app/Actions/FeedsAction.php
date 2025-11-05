@@ -49,7 +49,7 @@ final readonly class FeedsAction
         }
 
         return new FeedListItem(
-            $feed->map(fn(Feed $feed) => FeedItem::forListing($feed)),
+            $feed->map(fn(Feed $feed): FeedItem => FeedItem::forListing($feed)),
             $feed->links(),
         );
     }

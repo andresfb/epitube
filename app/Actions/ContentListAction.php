@@ -93,7 +93,7 @@ final readonly class ContentListAction
                         ->defaultSort('-created_at')
                         ->paginate(100)
                         ->appends($item->toArray())
-                        ->map(function (Content $content) {
+                        ->map(function (Content $content): ContentItem {
                             return ContentItem::forListing($content);
                         });
                 });

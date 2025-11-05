@@ -97,7 +97,7 @@ final class MasterVideoLibrary
 
     public function getMedia(): Media
     {
-        if ($this->media !== null && $this->media->id === $this->mediaId) {
+        if ($this->media instanceof Media && $this->media->id === $this->mediaId) {
             $this->contentId = $this->media->model_id;
 
             return $this->media;
@@ -118,7 +118,7 @@ final class MasterVideoLibrary
 
     public function getContent(): Content
     {
-        if ($this->content !== null && $this->content->id === $this->contentId) {
+        if ($this->content instanceof Content && $this->content->id === $this->contentId) {
             return $this->content;
         }
 

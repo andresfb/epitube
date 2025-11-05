@@ -6,7 +6,6 @@ use App\Dtos\Boogie\ImportSelectedVideoItem;
 use App\Dtos\Tube\ImportVideoItem;
 use App\Libraries\Tube\TitleParserLibrary;
 use App\Models\Boogie\SelectedVideo;
-use App\Models\Tube\Category;
 use App\Models\Tube\Content;
 use App\Models\Tube\MimeType;
 use App\Services\Tube\ImportVideoService;
