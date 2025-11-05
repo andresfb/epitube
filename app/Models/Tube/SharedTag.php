@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Tube;
 
 use Carbon\CarbonInterface;
@@ -12,24 +14,18 @@ use Illuminate\Support\Facades\Cache;
  * @property int $id
  * @property string $hash
  * @property string $name
- * @property boolean $active
+ * @property bool $active
  * @property CarbonInterface|null $deleted_at
  * @property CarbonInterface|null $created_at
  * @property CarbonInterface|null $updated_at
  */
-class SharedTag extends Model
+final class SharedTag extends Model
 {
     use SoftDeletes;
 
     protected $guarded = [];
 
     protected $with = ['items'];
-
-    public function items(): HasMany
-    {
-        return $this->hasMany(SharedTagItem::class)
-            ->where('active', true);
-    }
 
     public static function getList(): array
     {
@@ -50,6 +46,12 @@ class SharedTag extends Model
                     return $tags;
                 }
             );
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(SharedTagItem::class)
+            ->where('active', true);
     }
 
     protected function casts(): array

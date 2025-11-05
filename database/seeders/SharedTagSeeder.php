@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Tube\SharedTag;
@@ -8,7 +10,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
-class SharedTagSeeder extends Seeder
+final class SharedTagSeeder extends Seeder
 {
     public function run(): void
     {

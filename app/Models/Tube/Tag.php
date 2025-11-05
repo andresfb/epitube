@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Tube;
 
 use App\Dtos\Tube\TagMenuItem;
@@ -12,20 +14,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Spatie\Tags\Tag as SpatieTag;
 
-class Tag extends SpatieTag
+final class Tag extends SpatieTag
 {
-    #[Scope]
-    protected function contentFromCategory(Builder $query, string $categorySlug): Builder
-    {
-        return $query->join('taggables', function (JoinClause $join) {
-                return $join->on('tags.id', '=', 'taggables.tag_id')
-                    ->where('taggables.taggable_type', Content::class);
-            })
-            ->join('contents', 'taggables.taggable_id', '=', 'contents.id')
-            ->join('categories', 'contents.category_id', '=', 'categories.id')
-            ->where('categories.slug', $categorySlug);
-    }
-
     public static function getList(string $categorySlug): Collection
     {
         return Cache::tags('tags')
@@ -51,5 +41,17 @@ class Tag extends SpatieTag
     {
         return self::getList($categorySlug)
             ->take(Config::integer('constants.main_tags_limit') - 1);
+    }
+
+    #[Scope]
+    protected function contentFromCategory(Builder $query, string $categorySlug): Builder
+    {
+        return $query->join('taggables', function (JoinClause $join) {
+            return $join->on('tags.id', '=', 'taggables.tag_id')
+                ->where('taggables.taggable_type', Content::class);
+        })
+            ->join('contents', 'taggables.taggable_id', '=', 'contents.id')
+            ->join('categories', 'contents.category_id', '=', 'categories.id')
+            ->where('categories.slug', $categorySlug);
     }
 }

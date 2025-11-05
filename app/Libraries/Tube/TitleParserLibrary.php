@@ -495,7 +495,7 @@ final class TitleParserLibrary
         $escaped = preg_quote($word, '/');
 
         // Pattern: optional whitespace, the word, then end‑of‑string
-        $pattern = '/\s*' . $escaped . '$/i';
+        $pattern = '/\s*'.$escaped.'$/i';
 
         // Remove it (replace with empty string) and trim any leftover space
         return trim(preg_replace($pattern, '', $text));

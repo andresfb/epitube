@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use Exception;
@@ -11,7 +13,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class ResetCacheCommand extends Command
+final class ResetCacheCommand extends Command
 {
     protected $signature = 'reset:cache';
 

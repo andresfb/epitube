@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 use App\Models\Tube\Content;
@@ -34,7 +36,7 @@ trait ContentIdGenerator
 
         $id = '';
         for ($j = 0; $j < $length; $j++) {
-            $id .= $characters[random_int(0, strlen($characters) - 1)];
+            $id .= $characters[random_int(0, mb_strlen($characters) - 1)];
         }
 
         return $id;

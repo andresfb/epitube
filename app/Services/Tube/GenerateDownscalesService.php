@@ -67,7 +67,7 @@ final class GenerateDownscalesService
     public function getResolutions(int $mediaHeight): Collection
     {
         return collect(self::RESOLUTIONS)
-            ->filter(fn(int $resolution): bool => $resolution < $mediaHeight);
+            ->filter(fn (int $resolution): bool => $resolution < $mediaHeight);
     }
 
     private function canConvert(Media $media): bool

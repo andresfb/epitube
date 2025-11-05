@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Boogie;
 
 use App\Dtos\Boogie\ImportSelectedVideoItem;
@@ -87,18 +89,18 @@ final readonly class ImportSelectedVideoService
             ->replace('    ', ' ')
             ->replace('   ', ' ')
             ->replace('  ', ' ')
-            ->replace(',,',',')
+            ->replace(',,', ',')
             ->rtrim(',')
             ->ltrim(',')
             ->explode(',')
-            ->map(fn($tag): string => str($tag)
+            ->map(fn ($tag): string => str($tag)
                 ->trim()
                 ->replace('-', ' ')
                 ->title()
                 ->trim()
                 ->toString()
             )
-            ->reject(fn(string $tag): bool => blank($tag) || is_numeric($tag));
+            ->reject(fn (string $tag): bool => blank($tag) || is_numeric($tag));
 
         $selects = 5;
         if ($tags->count() < $selects) {

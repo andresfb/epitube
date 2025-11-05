@@ -147,7 +147,7 @@ final readonly class HlsConverterService
             "\"{$output}/%v/playlist.m3u8\"",
         ]);
 
-        Log::info("Running HLS conversions");
+        Log::info('Running HLS conversions');
         Log::channel(Config::string('laravel-ffmpeg.log_channel'))
             ->info("HLS conversion command: $cmd");
 

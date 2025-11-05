@@ -12,7 +12,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
  */
 final class Media extends BaseMedia
 {
-    protected $touches = ['model'];
-
     use SoftDeletes;
+
+    protected $touches = ['model'];
 }

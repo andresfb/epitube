@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 use App\Models\Tube\SpecialTag;
@@ -10,7 +12,7 @@ trait TagsProcessor
 {
     private function collectTags(string $text, Collection $tags, array $sharedTags): void
     {
-        $tag =  str($text)->title();
+        $tag = str($text)->title();
         $tags->push($this->deTitle($tag));
 
         $key = $tag->lower()->hash('md5')->toString();
@@ -33,13 +35,13 @@ trait TagsProcessor
         $deTitleWords = SpecialTag::getDeTitle();
         foreach ($deTitleWords as $word) {
             $text = $text->replace(
-                sprintf(" %s ", ucfirst($word)), " $word "
+                sprintf(' %s ', ucfirst($word)), " $word "
             );
         }
 
         // These words will be changed to Title or Upper case.
         SpecialTag::getReTitle()
-            ->each(function (SpecialTag $word) use(&$text) {
+            ->each(function (SpecialTag $word) use (&$text) {
                 $text = $text->replace($word->tag, $word->value);
             });
 
@@ -54,7 +56,8 @@ trait TagsProcessor
         return $this->normalizeAgeString($text->toString());
     }
 
-    private function normalizeAgeString(string $s): string {
+    private function normalizeAgeString(string $s): string
+    {
         // 1-3 digits at the start, followed by “yo” or “yr” (any case), and nothing else
         return preg_replace('/^(\d{1,3})(Yo|Yr)$/i', '$1\L$2', $s);
     }

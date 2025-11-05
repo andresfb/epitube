@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Boogie;
 
 use App\Dtos\Boogie\DownloadStatusItem;

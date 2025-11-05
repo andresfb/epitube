@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
 use Illuminate\Support\Facades\Log;
 
-class SyncFeedService
+final class SyncFeedService
 {
     public function execute(int $contentId): void
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Libraries\Boogie;
 
 use App\Dtos\Boogie\DownloadStatusItem;
@@ -38,7 +40,7 @@ final class DownloadVideoLibrary
 
         $this->downloaded = false;
         $this->downloadPath = sprintf(
-            "%s/%s/%s",
+            '%s/%s/%s',
             Config::string('selected-videos.download_path'),
             $this->getDomainRoot($video->getUrl()),
             $video->getHash(),
@@ -62,7 +64,7 @@ final class DownloadVideoLibrary
                 ->setTimeout(0)
                 ->mustRun();
 
-            if (!$process->isSuccessful()) {
+            if (! $process->isSuccessful()) {
                 throw new RuntimeException($process->getErrorOutput());
             }
         } catch (Exception $e) {

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Jobs\Boogie\CheckSelectedVideosJob;
 use App\Jobs\Tube\CheckEncodingErrorsJob;
 use App\Jobs\Tube\ClearTemporaryDisksJob;
 use App\Jobs\Tube\CreateFeedJob;

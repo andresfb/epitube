@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
 use App\Models\Tube\Content;
@@ -10,7 +12,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 
-class SyncFeedRecordsService
+final class SyncFeedRecordsService
 {
     use Screenable;
 
@@ -22,7 +24,7 @@ class SyncFeedRecordsService
 
         $this->info('Deleting records');
         Feed::query()->chunk(self::CHUNK_SIZE, function (Collection $feeds) {
-            $this->notice(sprintf("Working on the next batch of %s Feed records", self::CHUNK_SIZE));
+            $this->notice(sprintf('Working on the next batch of %s Feed records', self::CHUNK_SIZE));
 
             $feeds->each(function (Feed $feed) {
                 Feed::withoutEvents(function () use ($feed) {
@@ -47,7 +49,7 @@ class SyncFeedRecordsService
             ->with('related')
             ->hasAllMedia()
             ->chunk(self::CHUNK_SIZE, function (Collection $list) use (&$found): void {
-                $this->notice(sprintf("Working on the next batch of %s Feed records", self::CHUNK_SIZE));
+                $this->notice(sprintf('Working on the next batch of %s Feed records', self::CHUNK_SIZE));
 
                 try {
                     $list->each(function (Content $content) use (&$found): void {

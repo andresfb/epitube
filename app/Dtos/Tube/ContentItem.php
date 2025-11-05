@@ -23,30 +23,30 @@ final class ContentItem extends Data
     public function __construct(
         public int $id,
         public string $slug,
-        public int    $category_id,
+        public int $category_id,
         public string $category,
         public string $title,
         public string $duration,
         public string $resolution,
-        public int    $length,
-        public bool   $is_hd,
-        public bool   $active,
-        public bool   $viewed,
-        public int    $like_status,
-        public int    $view_count,
+        public int $length,
+        public bool $is_hd,
+        public bool $active,
+        public bool $viewed,
+        public int $like_status,
+        public int $view_count,
         public string $service_url,
         public Carbon $added_at,
         public Carbon $created_at,
-        public array  $tags = [],
-        public array  $tag_slugs = [],
-        public array  $tag_array = [],
-        public array  $videos = [],
-        public array  $previews = [],
-        public array  $thumbnails = [],
-        public array  $related = [],
+        public array $tags = [],
+        public array $tag_slugs = [],
+        public array $tag_array = [],
+        public array $videos = [],
+        public array $previews = [],
+        public array $thumbnails = [],
+        public array $related = [],
     ) {}
 
-    public static  function forListing(Content $content): self
+    public static function forListing(Content $content): self
     {
         return Cache::tags('content')
             ->remember(

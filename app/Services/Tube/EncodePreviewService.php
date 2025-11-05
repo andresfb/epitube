@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
 use App\Dtos\Tube\PreviewItem;
@@ -14,7 +16,7 @@ use FFMpeg\Format\Video\X264;
 use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
-class EncodePreviewService extends BaseEncodeService
+final class EncodePreviewService extends BaseEncodeService
 {
     use Screenable;
 
@@ -41,7 +43,7 @@ class EncodePreviewService extends BaseEncodeService
 
         try {
             $this->notice(sprintf(
-                "Start creating Preview for Content %s, Media: %s, Size: %s, Extension: %s",
+                'Start creating Preview for Content %s, Media: %s, Size: %s, Extension: %s',
                 $item->contentId,
                 $item->mediaId,
                 $item->size,
@@ -62,7 +64,7 @@ class EncodePreviewService extends BaseEncodeService
                 ->toMediaCollection(MediaNamesLibrary::previews());
 
             $this->notice(sprintf(
-                "Done creating Preview for Content %s, Media: %s, Size: %s, Extension: %s",
+                'Done creating Preview for Content %s, Media: %s, Size: %s, Extension: %s',
                 $item->contentId,
                 $item->mediaId,
                 $item->size,

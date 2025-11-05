@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Services\Tube\SyncFeedRecordsService;
@@ -9,9 +11,9 @@ use Illuminate\Console\Command;
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
-use function Laravel\Prompts\info;
 
 final class RecreateFeedCommand extends Command
 {

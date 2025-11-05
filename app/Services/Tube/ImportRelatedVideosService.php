@@ -15,7 +15,7 @@ final class ImportRelatedVideosService
 {
     private array $checkedList = [];
 
-    public function __construct(private readonly ImportRelatedVideoService $relatedVideoService){}
+    public function __construct(private readonly ImportRelatedVideoService $relatedVideoService) {}
 
     /**
      * This method used to dispatch a job for each related video
@@ -94,6 +94,7 @@ final class ImportRelatedVideosService
     private function getCheckedList(): array
     {
         $key = md5(Config::string('content.related_checks_key'));
+
         return array_map(intval(...), Cache::get($key, []));
     }
 }

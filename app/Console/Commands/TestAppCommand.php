@@ -21,7 +21,7 @@ final class TestAppCommand extends Command
 
     public function handle(): void
     {
-        Log::notice('Test started at: '. now()->format('Y-m-d H:i:s'));
+        Log::notice('Test started at: '.now()->format('Y-m-d H:i:s'));
 
         try {
             clear();
@@ -30,7 +30,7 @@ final class TestAppCommand extends Command
         } catch (Throwable $e) {
             error($e->getMessage());
         } finally {
-            Log::notice('Test finished at: '. now()->format('Y-m-d H:i:s'));
+            Log::notice('Test finished at: '.now()->format('Y-m-d H:i:s'));
             $this->newLine();
             outro('Done');
         }

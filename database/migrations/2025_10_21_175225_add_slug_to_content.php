@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Tube\Content;
 use App\Traits\ContentIdGenerator;
 use Illuminate\Database\Migrations\Migration;

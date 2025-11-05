@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
 use App\Traits\DirectoryChecker;
@@ -8,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
-class ClearDirectoryDiskService
+final class ClearDirectoryDiskService
 {
     use DirectoryChecker;
 
@@ -30,7 +32,7 @@ class ClearDirectoryDiskService
             Log::notice("Preparing to delete $dir");
 
             if (! $this->isDirectoryEmpty($dir)) {
-                Log::warning("Directory is not empty");
+                Log::warning('Directory is not empty');
 
                 return;
             }

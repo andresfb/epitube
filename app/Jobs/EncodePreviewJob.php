@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Dtos\Tube\PreviewItem;
@@ -14,7 +16,7 @@ use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class EncodePreviewJob implements ShouldQueue
+final class EncodePreviewJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -38,7 +40,7 @@ class EncodePreviewJob implements ShouldQueue
             Log::error($e->getMessage());
         } catch (Exception $e) {
             $error = sprintf(
-                "Previews generation error for Content Id: %s Media Id: %s: %s",
+                'Previews generation error for Content Id: %s Media Id: %s: %s',
                 $this->item->contentId,
                 $this->item->mediaId,
                 $e->getMessage());

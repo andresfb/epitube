@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Boogie;
 
 use App\Dtos\Boogie\ImportSelectedVideoItem;
@@ -13,7 +15,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class ImportSelectedVideoJob implements ShouldQueue
+final class ImportSelectedVideoJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

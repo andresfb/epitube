@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dtos\Tube;
 
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 
-class FeedListItem
+final class FeedListItem
 {
     public function __construct(
         public ?Collection $feed = null,

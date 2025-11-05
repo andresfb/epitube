@@ -34,7 +34,7 @@ final class ExtractThumbnailsCommand extends BaseEncodeCommand
             clear();
             intro('Extract Thumbnails');
 
-            $contentId = (int)$this->argument('contentId');
+            $contentId = (int) $this->argument('contentId');
             $content = $this->getContent($contentId);
 
             if ($content->hasMedia(MediaNamesLibrary::thumbnails())) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Log;
@@ -38,7 +40,7 @@ trait DirectoryChecker
 
         // Hex‑only hashes (MD5, SHA‑1, SHA‑256, SHA‑512)
         $hexLengths = [32, 40, 64, 128];
-        if (ctype_xdigit($value) && in_array(strlen($value), $hexLengths, true)) {
+        if (ctype_xdigit($value) && in_array(mb_strlen($value), $hexLengths, true)) {
             return true;
         }
 
@@ -46,6 +48,7 @@ trait DirectoryChecker
         if (preg_match('/^\$2[aby]\$\d{2}\$[.\/A-Za-z0-9]{53}$/', $value)) {
             return true;
         }
+
         // Argon2i / Argon2id
         return (bool) preg_match('/^\$(argon2i|argon2id)\$[^$]+\$[^$]+\$[A-Za-z0-9\/+.=]+$/', $value);
     }

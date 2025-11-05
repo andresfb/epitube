@@ -49,16 +49,6 @@ final class Feed extends Model
 
     protected $guarded = [];
 
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        self::creating(static function (Feed $model) {
-            $model->order = 0;
-            $model->published = false;
-        });
-    }
-
     public static function generate(Content $content): void
     {
         self::query()->updateOrCreate(
@@ -106,7 +96,7 @@ final class Feed extends Model
     }
 
     /**
-     * @param Collection $models
+     * @param  Collection  $models
      */
     public function queueMakeSearchable($models): void
     {
@@ -115,7 +105,7 @@ final class Feed extends Model
         }
 
         $cacheKey = md5(sprintf(
-            "FEED:MAKE:SEARCHABLE:%s",
+            'FEED:MAKE:SEARCHABLE:%s',
             $models->pluck('id')->implode(',')
         ));
 
@@ -140,6 +130,16 @@ final class Feed extends Model
         $item['added_at'] = CarbonImmutable::parse($this->added_at->toDateTimeString());
 
         return $item;
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        self::creating(static function (Feed $model) {
+            $model->order = 0;
+            $model->published = false;
+        });
     }
 
     protected function casts(): array

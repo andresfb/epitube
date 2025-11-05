@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dtos\Tube;
 
 use Spatie\LaravelData\Data;
 
-class TagMenuItem extends Data
+final class TagMenuItem extends Data
 {
     public function __construct(
         public string $slug,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Tube;
 
 use Carbon\CarbonInterface;
@@ -12,12 +14,12 @@ use Illuminate\Support\Facades\Cache;
  * @property string $hash
  * @property string $word
  * @property string $tag
- * @property boolean $active
+ * @property bool $active
  * @property CarbonInterface|null $deleted_at
  * @property CarbonInterface|null $created_at
  * @property CarbonInterface|null $updated_at
  */
-class TitleTag extends Model
+final class TitleTag extends Model
 {
     use SoftDeletes;
 

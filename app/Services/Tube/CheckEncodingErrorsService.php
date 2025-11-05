@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
 use App\Mail\EncodeErrorsMail;
@@ -8,7 +10,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
-class CheckEncodingErrorsService
+final class CheckEncodingErrorsService
 {
     public function execute(): void
     {

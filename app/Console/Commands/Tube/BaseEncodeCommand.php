@@ -8,6 +8,7 @@ use App\Models\Tube\Content;
 use App\Traits\MediaGetter;
 use Illuminate\Console\Command;
 use RuntimeException;
+
 use function Laravel\Prompts\text;
 
 abstract class BaseEncodeCommand extends Command

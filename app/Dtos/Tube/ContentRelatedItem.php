@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dtos\Tube;
 
-class ContentRelatedItem
+final class ContentRelatedItem
 {
     public function __construct(
         public int $id,

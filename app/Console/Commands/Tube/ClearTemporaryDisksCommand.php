@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Jobs\Tube\ClearTemporaryDisksJob;
@@ -8,6 +10,7 @@ use App\Services\Tube\ClearDirectoryDiskService;
 use App\Services\Tube\ClearDownloadDiskService;
 use Exception;
 use Illuminate\Console\Command;
+
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
@@ -22,7 +25,7 @@ final class ClearTemporaryDisksCommand extends Command
     protected $description = 'Delete pending temp files or directories in the temp paths';
 
     public function __construct(
-        private readonly ClearDownloadDiskService  $downloadDiskService,
+        private readonly ClearDownloadDiskService $downloadDiskService,
         private readonly ClearDirectoryDiskService $directoryDiskService,
     ) {
         parent::__construct();

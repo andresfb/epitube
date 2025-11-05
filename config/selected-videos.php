@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
     'limit_run' => env('SELECTED_VIDEOS_LIMIT_RUN', 50),

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -9,7 +11,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EncodeErrorsMail extends Mailable implements ShouldQueue
+final class EncodeErrorsMail extends Mailable implements ShouldQueue
 {
     use Queueable;
     use SerializesModels;

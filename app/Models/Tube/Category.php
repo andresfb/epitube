@@ -86,7 +86,7 @@ final class Category extends Model
                     ], [
                         'name' => $alt->name,
                         'slug' => $alt->slug,
-                        'icon' => $alt->icon
+                        'icon' => $alt->icon,
                     ]];
                 });
     }

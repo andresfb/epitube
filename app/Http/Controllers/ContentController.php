@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\ContentListAction;
@@ -8,7 +10,7 @@ use App\Http\Requests\ContentListRequest;
 use Exception;
 use Illuminate\View\View;
 
-class ContentController extends Controller
+final class ContentController extends Controller
 {
     /**
      * @throws Exception

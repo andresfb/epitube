@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Tube;
 
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
-class TagMorphPivot extends MorphPivot
+final class TagMorphPivot extends MorphPivot
 {
     public $timestamps = false;
 
@@ -12,7 +14,7 @@ class TagMorphPivot extends MorphPivot
     {
         parent::boot();
 
-        static::created(static function (TagMorphPivot $pivot) {
+        self::created(static function (TagMorphPivot $pivot) {
             $pivot->pivotParent->touch();
         });
     }

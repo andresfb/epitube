@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Models\Tube\SharedTag;
@@ -9,10 +11,10 @@ use Illuminate\Console\Command;
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\text;
-use function Laravel\Prompts\info;
 
 final class PrepareSharedTagsCommand extends Command
 {
@@ -32,7 +34,7 @@ final class PrepareSharedTagsCommand extends Command
                 $tag = text(
                     label: 'Enter Tag name',
                     required: true,
-                    transform: fn($tag): string => ucwords($tag)
+                    transform: fn ($tag): string => ucwords($tag)
                 );
 
                 info("Processing $tag");
@@ -45,7 +47,7 @@ final class PrepareSharedTagsCommand extends Command
 
                 $tagList[$tag] = str($childTags)
                     ->explode(',')
-                    ->map(fn(string $tag): string => ucwords(mb_trim($tag)))
+                    ->map(fn (string $tag): string => ucwords(mb_trim($tag)))
                     ->toArray();
 
                 if (! confirm('Add more Tags?')) {

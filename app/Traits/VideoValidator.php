@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Traits;
 
 use App\Dtos\Tube\ImportVideoItem;
@@ -29,7 +31,7 @@ trait VideoValidator
         $extension = mb_strtolower(mb_trim($fileInfo['extension']));
         if (! in_array($extension, $this->getExtensions(), true)) {
             $message = sprintf(
-                "File extension: %s is not supported",
+                'File extension: %s is not supported',
                 $extension
             );
 

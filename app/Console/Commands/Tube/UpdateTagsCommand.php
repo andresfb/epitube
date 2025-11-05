@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Models\Tube\Content;
 use App\Services\Tube\ImportVideoService;
 use Illuminate\Console\Command;
 use Throwable;
+
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;

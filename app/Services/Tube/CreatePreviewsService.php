@@ -181,10 +181,10 @@ final class CreatePreviewsService
 
     private function loadPreviewItem(
         int $contentId,
-        int     $size,
-        int     $bitRate,
-        mixed   $extension,
-        array   $sections): PreviewItem
+        int $size,
+        int $bitRate,
+        mixed $extension,
+        array $sections): PreviewItem
     {
         return new PreviewItem(
             contentId: $contentId,

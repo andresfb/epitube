@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Dtos\Tube\FeedListItem;
 use App\Dtos\Tube\FeedItem;
+use App\Dtos\Tube\FeedListItem;
 use App\Jobs\Tube\CreateFeedJob;
 use App\Models\Tube\Category;
 use App\Models\Tube\Feed;
@@ -49,7 +49,7 @@ final readonly class FeedsAction
         }
 
         return new FeedListItem(
-            $feed->map(fn(Feed $feed): FeedItem => FeedItem::forListing($feed)),
+            $feed->map(fn (Feed $feed): FeedItem => FeedItem::forListing($feed)),
             $feed->links(),
         );
     }

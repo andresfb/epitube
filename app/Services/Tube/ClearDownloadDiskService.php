@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
 use App\Libraries\Tube\DiskNamesLibrary;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Finder\SplFileInfo;
 
-class ClearDownloadDiskService
+final class ClearDownloadDiskService
 {
     use DirectoryChecker;
 
@@ -31,9 +33,9 @@ class ClearDownloadDiskService
             collect($files)->each(function (SplFileInfo $file) {
                 Log::notice("Preparing to delete {$file->getPathname()}");
 
-                $mTime = (int)$file->getMTime();
+                $mTime = (int) $file->getMTime();
                 if ($mTime >= now()->subDay()->timestamp) {
-                    Log::warning("Not yet: " . date('Y-m-d H:i:s', $mTime));
+                    Log::warning('Not yet: '.date('Y-m-d H:i:s', $mTime));
 
                     return;
                 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Enums\SpecialTagType;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class SpecialTagSeeder extends Seeder
+final class SpecialTagSeeder extends Seeder
 {
     public function run(): void
     {

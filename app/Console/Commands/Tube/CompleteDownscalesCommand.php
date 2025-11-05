@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Jobs\Tube\EncodeDownscaleJob;
@@ -16,7 +18,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class CompleteDownscalesCommand extends Command
+final class CompleteDownscalesCommand extends Command
 {
     protected $signature = 'complete:downscales';
 

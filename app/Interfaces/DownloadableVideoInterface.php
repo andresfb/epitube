@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Interfaces;
 
 interface DownloadableVideoInterface
@@ -13,5 +15,4 @@ interface DownloadableVideoInterface
     public function disable(): void;
 
     public function markUsed(): void;
-
 }

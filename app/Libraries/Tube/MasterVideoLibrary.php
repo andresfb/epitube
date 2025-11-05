@@ -87,7 +87,7 @@ final class MasterVideoLibrary
         return $this->relativeVideoPath;
     }
 
-    public function setMediaId(int $mediaId): MasterVideoLibrary
+    public function setMediaId(int $mediaId): self
     {
         $this->mediaId = $mediaId;
         $this->getMedia();
@@ -149,8 +149,7 @@ final class MasterVideoLibrary
         $this->processingPath = Storage::disk($this->processingDisk)->path($this->tempPath);
         if (! is_dir($this->processingPath)
             && ! mkdir($this->processingPath, 0777, true)
-            && ! is_dir($this->processingPath))
-        {
+            && ! is_dir($this->processingPath)) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $this->processingPath));
         }
     }

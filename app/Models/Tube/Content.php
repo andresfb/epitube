@@ -46,20 +46,15 @@ use Spatie\Tags\HasTags;
 #[ObservedBy([ContentObserver::class])]
 final class Content extends Model implements HasMedia
 {
+    use ContentIdGenerator;
     use HasTags;
     use InteractsWithMedia;
-    use SoftDeletes;
     use Notifiable;
-    use ContentIdGenerator;
+    use SoftDeletes;
 
     protected $guarded = [];
 
     protected $with = ['category', 'tags', 'media'];
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
 
     public static function isDifferentFileVersion(string $hash, string $ogPath): bool
     {
@@ -73,6 +68,11 @@ final class Content extends Model implements HasMedia
         return self::select('item_id')
             ->pluck('item_id')
             ->toArray();
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
     }
 
     public function category(): BelongsTo
@@ -104,50 +104,6 @@ final class Content extends Model implements HasMedia
             'related_content_id',
             'content_id'
         );
-    }
-
-    #[Scope]
-    protected function hasVideos(Builder $query): Builder
-    {
-        return $query->whereHas('media', function (Builder $query): void {
-            $query->where('collection_name', MediaNamesLibrary::transcoded())
-                ->orWhere('collection_name', MediaNamesLibrary::videos());
-        });
-    }
-
-    #[Scope]
-    protected function hasThumbnails(Builder $query): Builder
-    {
-        return $query->whereHas('media', function (Builder $query): void {
-            $query->where('collection_name', MediaNamesLibrary::thumbnails());
-        });
-    }
-
-    #[Scope]
-    protected function inMainCategory(Builder $query): Builder
-    {
-        return $query->where('category_id', Category::getMain()->id);
-    }
-
-    #[Scope]
-    protected function inAltCategory(Builder $query): Builder
-    {
-        return $query->where('category_id', Category::getAlt()->id);
-    }
-
-    #[Scope]
-    protected function hasAllMedia(Builder $query): Builder
-    {
-        return $query->hasVideos()
-            ->hasThumbnails();
-    }
-
-    #[Scope]
-    protected function usable(Builder $query): Builder
-    {
-        return $query->hasAllMedia()
-            ->where('active', true)
-            ->where('like_status', '>=', 0);
     }
 
     public function registerMediaCollections(): void
@@ -210,7 +166,7 @@ final class Content extends Model implements HasMedia
 
         $media = $this->getMedia($collection)->first();
         if ($media !== null) {
-            $content['duration'] = (int)$media->getCustomProperty('duration', 0);
+            $content['duration'] = (int) $media->getCustomProperty('duration', 0);
             $content['height'] = sprintf('%sp', $media->getCustomProperty('height', 0));
         }
 
@@ -290,6 +246,50 @@ final class Content extends Model implements HasMedia
         });
     }
 
+    #[Scope]
+    protected function hasVideos(Builder $query): Builder
+    {
+        return $query->whereHas('media', function (Builder $query): void {
+            $query->where('collection_name', MediaNamesLibrary::transcoded())
+                ->orWhere('collection_name', MediaNamesLibrary::videos());
+        });
+    }
+
+    #[Scope]
+    protected function hasThumbnails(Builder $query): Builder
+    {
+        return $query->whereHas('media', function (Builder $query): void {
+            $query->where('collection_name', MediaNamesLibrary::thumbnails());
+        });
+    }
+
+    #[Scope]
+    protected function inMainCategory(Builder $query): Builder
+    {
+        return $query->where('category_id', Category::getMain()->id);
+    }
+
+    #[Scope]
+    protected function inAltCategory(Builder $query): Builder
+    {
+        return $query->where('category_id', Category::getAlt()->id);
+    }
+
+    #[Scope]
+    protected function hasAllMedia(Builder $query): Builder
+    {
+        return $query->hasVideos()
+            ->hasThumbnails();
+    }
+
+    #[Scope]
+    protected function usable(Builder $query): Builder
+    {
+        return $query->hasAllMedia()
+            ->where('active', true)
+            ->where('like_status', '>=', 0);
+    }
+
     protected function casts(): array
     {
         return [
@@ -304,8 +304,8 @@ final class Content extends Model implements HasMedia
     protected function viewCount(): Attribute
     {
         return Attribute::make(
-            get: static fn($value): int|float => $value / 1000,
-            set: static fn($value): int|float => $value * 1000,
+            get: static fn ($value): int|float => $value / 1000,
+            set: static fn ($value): int|float => $value * 1000,
         );
     }
 }

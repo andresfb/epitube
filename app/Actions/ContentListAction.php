@@ -18,6 +18,7 @@ final readonly class ContentListAction
 {
     /**
      * @return Collection<ContentItem>
+     *
      * @throws Exception
      */
     public function handle(ContentListItem $item): Collection
@@ -86,7 +87,7 @@ final readonly class ContentListAction
                             'added_after',
                             'viewed',
                             'category_id',
-                            'like_status'
+                            'like_status',
                         ])
                         ->allowedIncludes(['tags'])
                         ->allowedIncludes(['category', 'tags', 'media'])

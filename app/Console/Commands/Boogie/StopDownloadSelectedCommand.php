@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Boogie;
 
 use Illuminate\Console\Command;
@@ -13,7 +15,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class StopDownloadSelectedCommand extends Command
+final class StopDownloadSelectedCommand extends Command
 {
     protected $signature = 'stop:downloads';
 

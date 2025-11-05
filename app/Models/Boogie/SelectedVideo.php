@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Boogie;
 
 use App\Interfaces\DownloadableVideoInterface;
@@ -28,7 +30,7 @@ use Illuminate\Support\Facades\Config;
  * @property CarbonInterface|null $created_at
  * @property CarbonInterface|null $updated_at
  */
-class SelectedVideo extends Model implements DownloadableVideoInterface
+final class SelectedVideo extends Model implements DownloadableVideoInterface
 {
     use SoftDeletes;
 

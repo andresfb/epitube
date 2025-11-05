@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Libraries\Tube\MediaNamesLibrary;
@@ -10,12 +12,12 @@ use Illuminate\Support\Facades\Config;
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
-use function Laravel\Prompts\intro;
 use function Laravel\Prompts\info;
+use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\warning;
 
-class CreateMissingPreviewsCommand extends BaseEncodeCommand
+final class CreateMissingPreviewsCommand extends BaseEncodeCommand
 {
     protected $signature = 'missing:previews {contentId?}';
 

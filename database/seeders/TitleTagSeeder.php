@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Tube\TitleTag;
@@ -8,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
-class TitleTagSeeder extends Seeder
+final class TitleTagSeeder extends Seeder
 {
     public function run(): void
     {

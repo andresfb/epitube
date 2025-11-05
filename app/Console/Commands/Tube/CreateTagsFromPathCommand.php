@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Models\Tube\SharedTag;
@@ -52,7 +54,7 @@ final class CreateTagsFromPathCommand extends Command
                     ->replace('  ', ' ')
                     ->explode(' - ')
                     ->map(fn (string $text): string => mb_trim($text))
-                    ->reject(function (string $text) use($bandedTags): bool {
+                    ->reject(function (string $text) use ($bandedTags): bool {
                         return blank($text) || in_array($text, $bandedTags, true);
                     })
                     ->unique()

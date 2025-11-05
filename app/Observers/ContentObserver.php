@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Observers;
 
 use App\Jobs\Tube\SyncFeedJob;
@@ -7,7 +9,7 @@ use App\Models\Tube\Content;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Support\Facades\Cache;
 
-class ContentObserver implements ShouldHandleEventsAfterCommit
+final class ContentObserver implements ShouldHandleEventsAfterCommit
 {
     public function saved(Content $content): void
     {

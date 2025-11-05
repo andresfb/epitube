@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Tube;
 
 use App\Enums\SpecialTagType;
@@ -21,7 +23,7 @@ use Illuminate\Support\Facades\Cache;
  * @property CarbonInterface|null $created_at
  * @property CarbonInterface|null $updated_at
  */
-class SpecialTag extends Model
+final class SpecialTag extends Model
 {
     use SoftDeletes;
 

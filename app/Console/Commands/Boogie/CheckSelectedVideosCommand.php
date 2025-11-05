@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Boogie;
 
 use App\Jobs\Boogie\CheckSelectedVideosJob;
@@ -8,11 +10,11 @@ use Throwable;
 
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
-use function Laravel\Prompts\info;
 
-class CheckSelectedVideosCommand extends Command
+final class CheckSelectedVideosCommand extends Command
 {
     protected $signature = 'selected:videos';
 

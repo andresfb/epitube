@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Jobs\Tube\ImportRelatedVideosJob;
@@ -13,7 +15,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class ImportRelatedVideosCommand extends Command
+final class ImportRelatedVideosCommand extends Command
 {
     protected $signature = 'import:related';
 

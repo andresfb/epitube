@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dtos\Tube;
 
 use Carbon\CarbonInterface;
 use Spatie\LaravelData\Data;
 
-class ContentListItem extends Data
+final class ContentListItem extends Data
 {
     public function __construct(
         public ?bool $active = null,
@@ -46,9 +48,9 @@ class ContentListItem extends Data
             && $this->tag === null
             && $this->search === null
             && $this->sort === null
-            && !$this->added_after instanceof CarbonInterface
-            && !$this->added_before instanceof CarbonInterface
-            && !$this->created_after instanceof CarbonInterface
-            && !$this->created_before instanceof CarbonInterface;
+            && ! $this->added_after instanceof CarbonInterface
+            && ! $this->added_before instanceof CarbonInterface
+            && ! $this->created_after instanceof CarbonInterface
+            && ! $this->created_before instanceof CarbonInterface;
     }
 }

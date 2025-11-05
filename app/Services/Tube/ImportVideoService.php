@@ -35,7 +35,7 @@ final class ImportVideoService
     use VideoValidator;
 
     public function __construct(
-        private readonly TitleParserLibrary   $parserLibrary,
+        private readonly TitleParserLibrary $parserLibrary,
         private readonly TranscodeMediaAction $transcodeAction,
         private readonly CreateSymLinksAction $symLinksAction,
     ) {}
@@ -87,7 +87,7 @@ final class ImportVideoService
 
             $content = Content::updateOrCreate([
                 'item_id' => $videoItem->Id,
-            ],[
+            ], [
                 'category_id' => Category::getId($category),
                 'file_hash' => $fileHash,
                 'title' => $tile,
@@ -153,7 +153,7 @@ final class ImportVideoService
             ->replace('  ', ' ')
             ->explode('/')
             ->map(fn (string $text): string => mb_trim($text))
-            ->reject(function (string $text) use($bandedTags): bool {
+            ->reject(function (string $text) use ($bandedTags): bool {
                 return blank($text) || in_array($text, $bandedTags, true);
             })
             ->each(function (string $text) use (&$tags, $sharedTags) {

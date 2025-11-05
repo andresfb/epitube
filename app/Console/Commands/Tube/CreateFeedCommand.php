@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Services\Tube\CreateFeedService;
@@ -11,7 +13,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class CreateFeedCommand extends Command
+final class CreateFeedCommand extends Command
 {
     protected $signature = 'create:feed';
 

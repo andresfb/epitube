@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Boogie;
 
 use Carbon\CarbonInterface;
@@ -24,7 +26,7 @@ use Illuminate\Support\Facades\Config;
  * @property CarbonInterface|null $created_at
  * @property CarbonInterface|null $updated_at
  */
-class Video extends Model
+final class Video extends Model
 {
     use SoftDeletes;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Tube;
 
 use App\Libraries\Tube\DiskNamesLibrary;
@@ -33,8 +35,7 @@ final class ClearTemporaryDisksJob implements ShouldQueue
     public function handle(
         ClearDownloadDiskService $downloadDiskService,
         ClearDirectoryDiskService $directoryDiskService
-    ): void
-    {
+    ): void {
         try {
             $downloadDiskService->execute();
 

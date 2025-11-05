@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Boogie;
 
 use App\Services\Boogie\DownloadSelectedVideoService;
@@ -12,7 +14,7 @@ use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class DownloadSelectedVideoJob implements ShouldQueue
+final class DownloadSelectedVideoJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

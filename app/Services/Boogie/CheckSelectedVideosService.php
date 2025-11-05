@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Boogie;
 
 use App\Dtos\Boogie\DownloadStatusItem;
@@ -12,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use LanguageDetector\LanguageDetector;
 
-readonly class CheckSelectedVideosService
+final readonly class CheckSelectedVideosService
 {
     use LanguageChecker;
 
@@ -38,7 +40,7 @@ readonly class CheckSelectedVideosService
         $processKey = md5(Config::string('selected-videos.process_key'));
         Redis::del($processKey);
 
-        $selected->each(function (SelectedVideo $selectedVideo) use($processKey, &$processedCount): void {
+        $selected->each(function (SelectedVideo $selectedVideo) use ($processKey, &$processedCount): void {
             if (! filter_var($selectedVideo->url, FILTER_VALIDATE_URL)) {
                 Log::error("Invalid URL: $selectedVideo->url on video $selectedVideo->id");
                 $selectedVideo->disable();
@@ -54,7 +56,7 @@ readonly class CheckSelectedVideosService
             }
 
             Redis::rpush($processKey, $selectedVideo->id);
-            ++$processedCount;
+            $processedCount++;
         });
 
         Log::notice("Queued $processedCount Videos for download");

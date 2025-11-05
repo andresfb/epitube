@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
 use App\Actions\EncodeErrorsAction;
 use App\Actions\HasRejectedAction;
 use App\Actions\MarkNotificationReadAction;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 

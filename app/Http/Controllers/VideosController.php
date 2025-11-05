@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Actions\FeedAction;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use App\Actions\FeedAction;
 
-class VideosController extends Controller
+final class VideosController extends Controller
 {
     public function __invoke(string $slug, FeedAction $feedAction): Factory|View
     {
