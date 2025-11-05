@@ -59,8 +59,10 @@ class FeedItem extends Data
 
                     $feedArray['previews'] = [];
                     $feedArray['service_url'] = $feed->service_url;
-                    $feedArray['videos'] = $feed->videos;
                     $feedArray['related'] = self::loadRelated($feed);
+                    $feedArray['videos'] = collect($feed->videos)
+                        ->each(fn (array $video) => VideoItem::from($video))
+                        ->toArray();
 
                     return self::from($feedArray);
                 }

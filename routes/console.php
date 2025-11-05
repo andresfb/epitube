@@ -22,4 +22,3 @@ Schedule::job(app(CheckEncodingErrorsJob::class))->dailyAt('23:45');
 Schedule::job(app(ClearTemporaryDisksJob::class))->dailyAt('23:55');
 Schedule::job(app(ImportRelatedVideosJob::class))->dailyAt('01:45');
 Schedule::job(app(CreateFeedJob::class))->dailyAt('03:25');
-Schedule::job(app(CheckSelectedVideosJob::class))->dailyAt('04:05');
