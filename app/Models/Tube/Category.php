@@ -4,11 +4,22 @@ declare(strict_types=1);
 
 namespace App\Models\Tube;
 
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * @property int $id
+ * @property string $slug
+ * @property string $name
+ * @property string $icon
+ * @property bool $main
+ * @property CarbonInterface|null $deleted_at
+ * @property CarbonInterface|null $created_at
+ * @property CarbonInterface|null $updated_at
+ */
 final class Category extends Model
 {
     use SoftDeletes;
@@ -91,8 +102,15 @@ final class Category extends Model
                 });
     }
 
-    public function contents(): HasMany|self
+    public function contents(): HasMany
     {
         return $this->hasMany(Content::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'main' => 'boolean',
+        ];
     }
 }

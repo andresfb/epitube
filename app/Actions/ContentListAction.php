@@ -46,7 +46,7 @@ final readonly class ContentListAction
                                             $query->where('name', 'like', "%{$value}%");
                                         });
 
-                                    $tags = Content::convertToTags($value);
+                                    $tags = Content::makeTags($value);
                                     if ($tags->isNotEmpty()) {
                                         $query->orWhereHas('tags', function ($query) use ($tags) {
                                             $tagIds = collect($tags)->pluck('id');

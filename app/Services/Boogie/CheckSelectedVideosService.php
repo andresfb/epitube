@@ -12,13 +12,10 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
-use LanguageDetector\LanguageDetector;
 
 final readonly class CheckSelectedVideosService
 {
     use LanguageChecker;
-
-    public function __construct(private LanguageDetector $detector) {}
 
     public function execute(): void
     {

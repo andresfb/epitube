@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -61,6 +62,11 @@ final class Content extends Model implements HasMedia
         return self::where('file_hash', $hash)
             ->where('og_path', '!=', $ogPath)
             ->exists();
+    }
+
+    public static function makeTags($values, $type = null, $locale = null): Collection
+    {
+        return self::convertToTags($values, $type, $locale);
     }
 
     public static function getImported(): array
@@ -138,7 +144,7 @@ final class Content extends Model implements HasMedia
             ->useDisk(DiskNamesLibrary::media());
     }
 
-    public function toFeedArray(): ?array
+    public function toFeedArray(): array
     {
         $content = $this->except([
             'item_id',

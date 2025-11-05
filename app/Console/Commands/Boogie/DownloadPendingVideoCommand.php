@@ -11,7 +11,6 @@ use App\Models\Boogie\SelectedVideo;
 use App\Services\Boogie\ImportSelectedVideoService;
 use App\Traits\LanguageChecker;
 use Illuminate\Console\Command;
-use LanguageDetector\LanguageDetector;
 use RuntimeException;
 use Throwable;
 
@@ -30,7 +29,6 @@ final class DownloadPendingVideoCommand extends Command
 
     public function __construct(
         private readonly DownloadVideoLibrary $downloadLibrary,
-        private readonly LanguageDetector $detector,
         private readonly ImportSelectedVideoService $importService
     ) {
         parent::__construct();

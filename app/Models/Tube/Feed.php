@@ -81,7 +81,7 @@ final class Feed extends Model
         return 'epitube_feed_index';
     }
 
-    public function toSearchableArray(): ?array
+    public function toSearchableArray(): array
     {
         return $this->except([
             'order',

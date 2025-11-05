@@ -31,13 +31,13 @@ final class FeedItem extends Data
         public array $related = [],
     ) {}
 
-    public static function forListing(Feed $feed): static
+    public static function forListing(Feed $feed): self
     {
         return Cache::tags('feed')
             ->remember(
                 md5("FEED:LISTING:ITEM:$feed->slug"),
                 now()->addMinutes(5),
-                static function () use ($feed): static {
+                static function () use ($feed): FeedItem {
                     $feedArray = self::getBaseArray($feed);
 
                     $feedArray['previews'] = $feed->previews;
@@ -50,13 +50,13 @@ final class FeedItem extends Data
             );
     }
 
-    public static function forDetail(Feed $feed): static
+    public static function forDetail(Feed $feed): self
     {
         return Cache::tags('feed')
             ->remember(
                 md5("FEED:DETAIL:ITEM:$feed->slug"),
                 now()->addHour(),
-                static function () use ($feed): static {
+                static function () use ($feed): FeedItem {
                     $feedArray = self::getBaseArray($feed);
 
                     $feedArray['previews'] = [];
@@ -99,6 +99,5 @@ final class FeedItem extends Data
                 return FeedItem::forListing($related);
             })
             ->toArray();
-
     }
 }

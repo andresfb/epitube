@@ -1,0 +1,55 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Tube/Content.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:hasAllMedia\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Tube/Content.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:hasVideos\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Tube/Content.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:syncWithSearchUsing\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Tube/Feed.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:syncWithSearchUsingQueue\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Models/Tube/Feed.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$raw_tags\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/Boogie/ImportSelectedVideoService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:inAltCategory\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Tube/CreateFeedService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Builder\:\:inMainCategory\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Tube/CreateFeedService.php
+
+		-
+			message: '#^Call to an undefined method ProtoneMedia\\LaravelFFMpeg\\Drivers\\PHPFFMpeg\:\:toDisk\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/Tube/EncodePreviewService.php

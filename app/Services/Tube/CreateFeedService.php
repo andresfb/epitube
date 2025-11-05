@@ -57,7 +57,7 @@ final readonly class CreateFeedService
         Log::notice('Finished creating feed');
     }
 
-    private function getBaseQuery(): Builder|Content
+    private function getBaseQuery(): Builder
     {
         return Content::query()
             ->with('related')
