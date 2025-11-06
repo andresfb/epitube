@@ -6,40 +6,12 @@
 <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
     <a href="{{ route('video', ['slug' => $item->slug]) }}" @class([
         'block',
-//        'aspect-video',
         'overflow-hidden',
         'rounded-t-lg',
         'bg-gray-100',
         'dark:bg-gray-900',
     ])>
-        <div
-            x-data="preview()"
-            @mouseenter="play()"
-            @mouseleave="reset()"
-            @touchstart.prevent="toggle()"
-            @touchend="reset()"
-            @touchcancel="reset()"
-            class="group relative overflow-hidden bg-gray-800">
-
-            <img class="inset-0 h-full w-full object-contain transition-opacity duration-200 group-hover:opacity-0"
-                 srcset="{{ $item->thumbnail }}" alt="thumbnail" src=""/>
-
-            <!-- Preview video -->
-            <video
-                x-ref="vid"
-                muted
-                playsinline
-                preload="metadata"
-                loop
-                class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-200">
-
-            @foreach($item->previews as $preview)
-                <source src="{{ $preview['url'] }}" type="{{ $preview['mimeType'] }}">
-            @endforeach
-
-            </video>
-
-        </div>
+        <x-preview-item :item="$item" />
     </a>
     <div class="p-5">
         <a id="title" href="{{ route('video', ['slug' => $item->slug]) }}">
@@ -136,28 +108,5 @@
     </div>
 </div>
 
-<script>
-    function preview() {
-        return {
-            playing: false,
-            play() {
-                const v = this.$refs.vid;
-                v.style.opacity = '1';
-                v.play();
-                this.playing = true;
-            },
-            reset() {
-                const v = this.$refs.vid;
-                v.pause();
-                v.currentTime = 0;
-                v.style.opacity = '0';
-                this.playing = false;
-            },
-            toggle() {
-                // Mobile tap: start if stopped, otherwise stop
-                this.playing ? this.reset() : this.play();
-            }
-        };
-    }
-</script>
+<x-preview-scripts />
 
