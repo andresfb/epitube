@@ -36,7 +36,7 @@ use Spatie\Tags\HasTags;
  * @property bool $active
  * @property bool $viewed
  * @property int $like_status
- * @property int $view_content
+ * @property int $view_count
  * @property string $og_path
  * @property string $notes
  * @property CarbonImmutable $added_at

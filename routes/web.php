@@ -6,7 +6,8 @@ use App\Http\Controllers\ContentController;
 use App\Http\Controllers\EncodeErrorsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SwitchCategoryController;
-use App\Http\Controllers\VideosController;
+use App\Http\Controllers\VideoProgressController;
+use App\Http\Controllers\VideoController;
 use App\Models\Tube\Category;
 use Illuminate\Support\Facades\Route;
 
@@ -16,7 +17,11 @@ Route::get('/switch/{category}', SwitchCategoryController::class)
     ->name('switch.category')
     ->whereIn('category', Category::getSlugs());
 
-Route::get('/videos/{slug}', VideosController::class)->name('video');
+Route::get('/videos/{slug}', VideoController::class)
+    ->name('video');
+
+Route::post('/videos/{slug}/progress', VideoProgressController::class)
+    ->name('progress');
 
 Route::get('/contents', [ContentController::class, 'index'])
     ->name('content.list');

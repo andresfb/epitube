@@ -46,7 +46,7 @@
                     currentTime: 0,
                     duration: 0,
                     lastSentTime: 0,
-                    updateInterval: 10, // Send update every 10 seconds
+                    updateInterval: 10, // Send an update every 10 seconds
 
                     handlePlay() {
                         this.playing = true;
@@ -56,7 +56,7 @@
                     handleTimeUpdate() {
                         this.currentTime = this.$refs.videoPlayer.currentTime;
 
-                        // Only send update if 10 seconds have passed since last update
+                        // Only send an update if 10 seconds have passed since the last update
                         if (this.currentTime - this.lastSentTime >= this.updateInterval) {
                             this.sendProgress();
                         }
@@ -79,16 +79,14 @@
                         this.lastSentTime = this.currentTime;
 
                         // Using htmx.ajax to send the progress data
-                        console.log(this.currentTime + "| " + this.duration + " | " + completed);
-                        {{--htmx.ajax('POST', '{{ route("video", $video->slug) }}/progress', {--}}
-                        {{--    values: {--}}
-                        {{--        video_id: {{ $video->id }},--}}
-                        {{--        current_time: this.currentTime,--}}
-                        {{--        duration: this.duration,--}}
-                        {{--        completed: completed,--}}
-                        {{--        _token: '{{ csrf_token() }}'--}}
-                        {{--    }--}}
-                        {{--});--}}
+                        htmx.ajax("post", '{{ route("progress", $video->slug) }}/progress', {
+                            values: {
+                                current_time: this.currentTime,
+                                duration: this.duration,
+                                completed: completed,
+                                _token: '{{ csrf_token() }}'
+                            }
+                        });
                     }
                 }
             }

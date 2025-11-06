@@ -8,7 +8,7 @@ use App\Actions\FeedAction;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 
-final class VideosController extends Controller
+final class VideoController extends Controller
 {
     public function __invoke(string $slug, FeedAction $feedAction): Factory|View
     {
