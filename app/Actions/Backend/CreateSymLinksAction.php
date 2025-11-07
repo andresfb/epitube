@@ -4,40 +4,46 @@ declare(strict_types=1);
 
 namespace App\Actions\Backend;
 
+use App\Traits\Screenable;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-// todo: recreate the missing symlinks
-final readonly class CreateSymLinksAction
+final class CreateSymLinksAction
 {
-    public function handle(Media $media): void
+    use Screenable;
+
+    public function handle(Media $media, bool $skipDelete = false): void
     {
-        Log::notice('Replacing video file with symlink');
+        $this->notice("Replacing video file with symlink for Media Id: $media->id");
 
         $ogFile = $media->getCustomProperty('og_path', '');
         if (blank($ogFile)) {
-            Log::warning("Media $media->id does not have a original path");
+            $this->warning("Media $media->id does not have a original path");
 
             return;
         }
 
         $mediaPath = $media->getPath();
         if (is_link($mediaPath)) {
-            Log::warning("Media $media->id already has a symlink");
+            $this->warning("Media $media->id already has a symlink");
 
             return;
         }
 
-        if (! File::delete($mediaPath)) {
+        if ( ! $skipDelete && ! File::delete($mediaPath)) {
             throw new RuntimeException("Unable to delete media file: $mediaPath");
+        }
+
+        $mediaDir = dirname($mediaPath);
+        if (! is_dir($mediaDir) && ! mkdir($mediaDir, 0777, true) && ! is_dir($mediaDir)) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $mediaDir));
         }
 
         if (! symlink($ogFile, $mediaPath)) {
             throw new RuntimeException("Unable to link symlink: $ogFile -> $mediaPath");
         }
 
-        Log::notice('Done replacing video file with symlink');
+        $this->notice('Done replacing video file with symlink');
     }
 }

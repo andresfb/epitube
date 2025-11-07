@@ -16,6 +16,7 @@
     @mouseenter="play()"
     @mouseleave="reset()"
     @touchstart.prevent="toggle()"
+    {{-- TODO: remove the touchend event --}}
     @touchend="reset()"
     @touchcancel="reset()"
     class="group relative overflow-hidden bg-gray-800">
