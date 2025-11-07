@@ -24,6 +24,7 @@
                     x-ref="videoPlayer"
                     class="w-full aspect-video"
                     controls
+                    playsinline
                     preload="metadata"
                     @play="handlePlay()"
                     @timeupdate="handleTimeUpdate()"
@@ -461,19 +462,23 @@
                 this.currentTime = this.$refs.videoPlayer.currentTime;
             },
 
-            // TODO: check why a patch to this router is not working
             sendProgress(completed = false) {
                 this.lastSentTime = this.currentTime;
 
-                // Using htmx.ajax to send the progress data
-                htmx.ajax("patch", '{{ route("videos.progress", $video->slug) }}', {
-                    values: {
+                // Send progress data using Fetch API
+                fetch('{{ route("videos.progress", $video->slug) }}', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
                         current_time: this.currentTime,
                         duration: this.duration,
-                        completed: completed,
-                        _token: '{{ csrf_token() }}'
-                    }
-                });
+                        completed: completed
+                    })
+                }).catch(error => console.error('Progress tracking error:', error));
             }
         }
     }

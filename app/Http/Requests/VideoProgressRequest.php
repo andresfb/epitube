@@ -6,10 +6,15 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class VideoProgressRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     public function rules(): array
     {
         return [
-            'current_time' => 'required|numeric:',
+            'current_time' => 'required|numeric',
             'duration' => 'required|numeric',
             'completed' => 'required|boolean',
         ];

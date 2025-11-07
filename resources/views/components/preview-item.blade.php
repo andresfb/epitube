@@ -15,9 +15,8 @@
     x-data="preview()"
     @mouseenter="play()"
     @mouseleave="reset()"
-    @touchstart.prevent="toggle()"
-    {{-- TODO: remove the touchend event --}}
-    @touchend="reset()"
+    @touchstart="handleTouchStart()"
+    @touchend="handleTouchEnd($event)"
     @touchcancel="reset()"
     class="group relative overflow-hidden bg-gray-800">
 

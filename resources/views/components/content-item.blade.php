@@ -4,17 +4,18 @@
 ])
 
 <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-    <a href="{{ route('videos', ['slug' => $item->slug]) }}" @class([
-        'block',
-        'overflow-hidden',
-        'rounded-t-lg',
-        'bg-gray-100',
-        'dark:bg-gray-900',
-    ])>
+    <a href="{{ route('videos', ['slug' => $item->slug]) }}"
+        @class([
+            'block',
+            'overflow-hidden',
+            'rounded-t-lg',
+            'bg-gray-100',
+            'dark:bg-gray-900',
+        ])>
         <x-preview-item :item="$item" />
     </a>
     <div class="p-5">
-        <a id="title" href="{{ route('videos', ['slug' => $item->slug]) }}">
+        <a id="title" class="hover:cursor-pointer" href="{{ route('videos', ['slug' => $item->slug]) }}">
             <h5 class="mb-2 text font-bold tracking-tight text-gray-900 dark:text-white">
             @if($item->is_hd)
                 <span class="bg-red-100 text-red-800 text-sm font-semibold me-1 px-1 py-0.5 rounded-sm dark:bg-red-900 dark:text-red-300">
