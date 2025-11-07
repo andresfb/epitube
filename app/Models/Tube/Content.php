@@ -43,6 +43,12 @@ use Spatie\Tags\HasTags;
  * @property CarbonImmutable $deleted_at
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable $updated_at
+ * @property-read Category $category
+ * @property-read Collection<int, View> $views
+ * @property-read Collection<int, Media> $media
+ * @property-read Collection<int, Tag> $tags
+ * @property-read Collection<int, Content> $related
+ * @property-read Collection<int, Content> $relatedToThis
  */
 #[ObservedBy([ContentObserver::class])]
 final class Content extends Model implements HasMedia

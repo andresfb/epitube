@@ -26,7 +26,7 @@ return [
 
     'min_down_res' => (int) env('MINIMUM_DOWNSCALE_ROUND', 1080),
 
-    'viewed_threshold' => (float) env('VIDEO_VIEWED_THRESHOLD', 70.00),
+    'viewed_threshold' => (float) env('VIDEO_VIEWED_THRESHOLD', 60.00),
 
     'thumbnails' => [
         'total' => (int) env('POSTERS_NUMBER_THUMBNAILS', 6),

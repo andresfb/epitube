@@ -420,7 +420,7 @@
                         'dark:text-gray-200',
                     ]) aria-labelledby="dropdownLargeButton">
                         <li>
-                            <a href="{{ route('content.list') }}" @class([
+                            <a href="{{ route('contents.list') }}" @class([
                                'block',
                                'px-4',
                                'py-2',

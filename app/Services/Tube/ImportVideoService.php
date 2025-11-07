@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Tube;
 
-use App\Actions\CreateSymLinksAction;
-use App\Actions\TranscodeMediaAction;
+use App\Actions\Backend\CreateSymLinksAction;
+use App\Actions\Backend\TranscodeMediaAction;
 use App\Dtos\Tube\ImportVideoItem;
 use App\Dtos\Tube\VideoInfoItem;
 use App\Libraries\Tube\MediaNamesLibrary;

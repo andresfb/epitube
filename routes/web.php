@@ -6,8 +6,8 @@ use App\Http\Controllers\ContentController;
 use App\Http\Controllers\EncodeErrorsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SwitchCategoryController;
-use App\Http\Controllers\VideoProgressController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\VideoStatusController;
 use App\Models\Tube\Category;
 use Illuminate\Support\Facades\Route;
 
@@ -18,13 +18,32 @@ Route::get('/switch/{category}', SwitchCategoryController::class)
     ->whereIn('category', Category::getSlugs());
 
 Route::get('/videos/{slug}', VideoController::class)
-    ->name('video');
+    ->name('videos');
 
-Route::post('/videos/{slug}/progress', VideoProgressController::class)
-    ->name('progress');
+Route::controller(VideoStatusController::class)->group(function () {
+    Route::post('/videos/{slug}/like', 'like')
+        ->name('videos.like');
 
-Route::get('/contents', [ContentController::class, 'index'])
-    ->name('content.list');
+    Route::put('/videos/{slug}/dislike', 'dislike')
+        ->name('videos.dislike');
+
+    Route::patch('/videos/{slug}/progress', 'progress')
+        ->name('videos.progress');
+
+    Route::delete('/videos/{slug}/disable', 'disable')
+        ->name('videos.disable');
+});
+
+Route::controller(ContentController::class)->group(function () {
+    Route::get('/contents', 'index')
+        ->name('contents.list');
+
+    Route::get('/contents/{slug}/edit', 'edit')
+        ->name('contents.edit');
+
+    Route::put('/contents/{slug}', 'update')
+        ->name('contents.update');
+});
 
 // TODO: add the controller to load the Contents from a giving tag
 Route::get('/tags/{slug}', static function (string $slug) {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\FeedAction;
+use App\Actions\Frontend\FeedAction;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 

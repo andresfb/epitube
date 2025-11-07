@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace App\Actions\Backend;
 
 use App\Dtos\Tube\VideoProgressItem;
 use App\Models\Tube\Content;
@@ -17,9 +17,12 @@ final readonly class VideoProgressAction
     /**
      * @throws Throwable
      */
-    public function handle(VideoProgressItem $item, Content $content): void
+    public function handle(string $slug, VideoProgressItem $item): void
     {
-        DB::transaction(function () use ($item, $content): void {
+        DB::transaction(function () use ($slug, $item): void {
+            $content = Content::where('slug', $slug)
+                ->firstOrFail();
+
             View::create([
                 'content_id' => $content->id,
                 'seconds_played' => $item->current_time,
@@ -40,7 +43,7 @@ final readonly class VideoProgressAction
 
         $content->viewed = true;
         ++$content->view_count;
-        $content->save();
+        $content->update();
 
         Cache::tags('feed')->flush();
     }

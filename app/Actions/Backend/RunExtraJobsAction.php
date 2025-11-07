@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace App\Actions\Backend;
 
 use App\Jobs\Tube\CreatePreviewsJob;
 use App\Jobs\Tube\ExtractThumbnailsJob;

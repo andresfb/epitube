@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace App\Actions\Frontend;
 
 use App\Dtos\Tube\FeedItem;
 use App\Models\Tube\Content;

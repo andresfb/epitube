@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\Tube;
 
-use App\Actions\RunExtraJobsAction;
+use App\Actions\Backend\RunExtraJobsAction;
 use Exception;
 
 use function Laravel\Prompts\clear;

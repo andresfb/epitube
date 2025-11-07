@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions;
+namespace App\Actions\Backend;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;

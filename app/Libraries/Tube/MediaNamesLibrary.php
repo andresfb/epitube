@@ -30,9 +30,4 @@ final readonly class MediaNamesLibrary
     {
         return 'thumbnails';
     }
-
-    public static function hlsConversion(): string
-    {
-        return 'hls';
-    }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\FeedsAction;
+use App\Actions\Frontend\FeedsAction;
 use Illuminate\Support\Facades\Config;
 use Illuminate\View\View;
 

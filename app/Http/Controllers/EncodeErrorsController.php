@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Actions\EncodeErrorsAction;
-use App\Actions\HasRejectedAction;
-use App\Actions\MarkNotificationReadAction;
+use App\Actions\Frontend\EncodeErrorsAction;
+use App\Actions\Frontend\HasRejectedAction;
+use App\Actions\Frontend\MarkNotificationReadAction;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Log;

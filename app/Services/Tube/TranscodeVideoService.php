@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Tube;
 
-use App\Actions\RunExtraJobsAction;
+use App\Actions\Backend\RunExtraJobsAction;
 use App\Exceptions\ProcessRunningException;
 use App\Libraries\Tube\MasterVideoLibrary;
 use App\Libraries\Tube\MediaNamesLibrary;
