@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Actions\Backend\CreateSymLinksAction;
@@ -13,7 +15,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class RecreateSymlinksCommand extends Command
+final class RecreateSymlinksCommand extends Command
 {
     protected $signature = 'recreate:symlinks';
 
@@ -53,7 +55,7 @@ class RecreateSymlinksCommand extends Command
     {
         $video = $content->getMedia(MediaNamesLibrary::videos())->first();
         if ($video === null) {
-            echo 'x' . PHP_EOL;
+            echo 'x'.PHP_EOL;
 
             return;
         }

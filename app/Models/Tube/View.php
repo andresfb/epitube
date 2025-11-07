@@ -25,8 +25,8 @@ final class View extends Model
     protected function secondsPlayed(): Attribute
     {
         return Attribute::make(
-            get: static fn ($value) => $value / 1000,
-            set: static fn($value) => $value * 1000,
+            get: static fn ($value): int|float => $value / 1000,
+            set: static fn ($value): int|float => $value * 1000,
         );
     }
 }

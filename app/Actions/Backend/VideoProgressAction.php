@@ -42,7 +42,7 @@ final readonly class VideoProgressAction
         }
 
         $content->viewed = true;
-        ++$content->view_count;
+        $content->view_count++;
         $content->update();
 
         Cache::tags('feed')->flush();

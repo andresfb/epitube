@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dtos\Tube;
 
 use Spatie\LaravelData\Data;
 
-class VideoProgressItem extends Data
+final class VideoProgressItem extends Data
 {
     public function __construct(
         public float $current_time,
