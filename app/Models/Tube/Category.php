@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Cache;
  * @property CarbonInterface|null $deleted_at
  * @property CarbonInterface|null $created_at
  * @property CarbonInterface|null $updated_at
+ * @property-read Content $content
  */
 final class Category extends Model
 {

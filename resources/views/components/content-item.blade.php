@@ -78,25 +78,26 @@
     @if ($showTags)
         <div id="tags" class="mt-8 font-normal text-gray-700 dark:text-gray-400 flex flex-wrap items-center gap-2">
         @foreach($item->tags as $slug => $tag)
-            <a href="{{ route('tags', ['slug' => $slug]) }}" @class([
-                'bg-yellow-100',
-                'hover:bg-yellow-200',
-                'text-yellow-800',
-                'text-xs',
-                'font-medium',
-                'px-2.5',
-                'py-0.5',
-                'rounded-sm',
-                'dark:bg-gray-700',
-                'dark:text-yellow-400',
-                'border',
-                'border-yellow-400',
-                'inline-flex',
-                'items-center',
-                'justify-center',
-            ])>
-                {{ $tag }}
-            </a>
+            <a href="{{ route('tags', ['slug' => $slug]) }}"
+                @class([
+                    'bg-yellow-100',
+                    'hover:bg-yellow-200',
+                    'text-yellow-800',
+                    'text-xs',
+                    'font-medium',
+                    'px-2.5',
+                    'py-0.5',
+                    'rounded-sm',
+                    'dark:bg-gray-700',
+                    'dark:text-yellow-400',
+                    'border',
+                    'border-yellow-400',
+                    'inline-flex',
+                    'items-center',
+                    'justify-center',
+                ])>
+                    {{ $tag }}
+                </a>
         @endforeach
         </div>
 

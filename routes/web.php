@@ -41,7 +41,7 @@ Route::controller(ContentController::class)->group(function () {
     Route::get('/contents/{slug}/edit', 'edit')
         ->name('contents.edit');
 
-    Route::put('/contents/{slug}', 'update')
+    Route::put('/contents', 'update')
         ->name('contents.update');
 });
 

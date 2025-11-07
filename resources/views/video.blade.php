@@ -42,137 +42,10 @@
         {{-- Video Info Section --}}
         <div class="w-full bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
             <div class="space-y-4">
-                {{-- Buttons, Title and Stats --}}
+                {{-- Title and Stats --}}
                 <div>
-
-                    {{-- Action Buttons --}}
-                    <div class="flex gap-2 mb-4" x-data="{ likeStatus: {{ $video->like_status }} }">
-                        <a id="like"
-                           href="#"
-                           hx-post="{{ route('videos.like', $video->slug) }}"
-                           hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
-                           hx-swap="none"
-                           hx-on::after-request="handleLikeResponse(event)"
-                           @class([
-                               'inline-flex',
-                               'items-center',
-                               'justify-center',
-                               'w-10',
-                               'h-10',
-                               'rounded-lg',
-                               'bg-gray-100',
-                               'hover:bg-gray-200',
-                               'dark:bg-gray-800',
-                               'dark:hover:bg-gray-700',
-                               'text-gray-700',
-                               'dark:text-gray-300',
-                               'transition-colors',
-                           ])
-                           title="Like">
-                            <svg x-show="likeStatus === 1" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
-                            </svg>
-                            <svg x-show="likeStatus !== 1" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
-                            </svg>
-                        </a>
-
-                        <a id="dislike"
-                           href="#"
-                           hx-put="{{ route('videos.dislike', $video->slug) }}"
-                           hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
-                           hx-swap="none"
-                           hx-on::after-request="handleLikeResponse(event)"
-                           @class([
-                               'inline-flex',
-                               'items-center',
-                               'justify-center',
-                               'w-10',
-                               'h-10',
-                               'rounded-lg',
-                               'bg-gray-100',
-                               'hover:bg-gray-200',
-                               'dark:bg-gray-800',
-                               'dark:hover:bg-gray-700',
-                               'text-gray-700',
-                               'dark:text-gray-300',
-                               'transition-colors',
-                           ])
-                           title="Dislike">
-                            <svg x-show="likeStatus === -1" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3zm7-13h3a2 2 0 012 2v7a2 2 0 01-2 2h-3"/>
-                            </svg>
-                            <svg x-show="likeStatus !== -1" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"/>
-                            </svg>
-                        </a>
-
-                        <a id="disable"
-                           href="#"
-                           hx-delete="{{ route('videos.disable', $video->slug) }}"
-                           hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
-                           hx-confirm="Are you sure you want to disable this video?"
-                           hx-on::after-request="handleDeleteResponse(event)"
-                           @class([
-                               'inline-flex',
-                               'items-center',
-                               'justify-center',
-                               'w-10',
-                               'h-10',
-                               'rounded-lg',
-                               'bg-gray-100',
-                               'hover:bg-gray-200',
-                               'dark:bg-gray-800',
-                               'dark:hover:bg-gray-700',
-                               'text-gray-700',
-                               'dark:text-gray-300',
-                               'transition-colors',
-                           ])
-                           title="Disable">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                            </svg>
-                        </a>
-
-                        <a id="edit"
-                            href="#"
-                            @click.prevent="$dispatch('open-edit-modal')"
-                            hx-get="{{ route('contents.edit', $video->slug) }}"
-                            hx-target="#edit-modal-content"
-                            hx-trigger="click"
-                           @class([
-                               'inline-flex',
-                               'items-center',
-                               'justify-center',
-                               'w-10',
-                               'h-10',
-                               'rounded-lg',
-                               'bg-gray-100',
-                               'hover:bg-gray-200',
-                               'dark:bg-gray-800',
-                               'dark:hover:bg-gray-700',
-                               'text-gray-700',
-                               'dark:text-gray-300',
-                               'transition-colors',
-                           ])
-                           title="Edit">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                        </a>
-                    </div>
-
                     {{-- Title --}}
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    <h1 id="title" class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                         {{ $video->title }}
                     </h1>
 
@@ -214,7 +87,7 @@
 
                 {{-- Category --}}
                 <div>
-                    <a href="{{ route('switch.category', $video->category_id) }}"
+                    <a id="category" href="{{ route('switch.category', $video->category_id) }}"
                        @class([
                            'inline-flex',
                            'items-center',
@@ -235,35 +108,163 @@
                     </a>
                 </div>
 
-                {{-- Tags --}}
-                @if(count($video->tags) > 0)
-                    <div>
-                        <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Tags</h3>
-                        <div class="flex flex-wrap gap-2">
-                            @foreach($video->tags as $tag)
-                                <a href="{{ route('tags', $tag) }}"
-                                   @class([
-                                       'inline-flex',
-                                       'items-center',
-                                       'px-3',
-                                       'py-1',
-                                       'text-xs',
-                                       'font-medium',
-                                       'text-blue-800',
-                                       'bg-blue-100',
-                                       'rounded-full',
-                                       'hover:bg-blue-200',
-                                       'dark:bg-blue-900',
-                                       'dark:text-blue-300',
-                                       'dark:hover:bg-blue-800',
-                                       'transition-colors',
-                                   ])>
-                                    #{{ $tag }}
-                                </a>
-                            @endforeach
-                        </div>
+            {{-- Tags --}}
+            @if(count($video->tags) > 0)
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Tags</h3>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($video->tags as $slug => $tag)
+                            <a href="{{ route('tags', $slug) }}"
+                               @class([
+                                'bg-yellow-100',
+                                'hover:bg-yellow-200',
+                                'text-yellow-800',
+                                'text-xs',
+                                'font-medium',
+                                'px-2.5',
+                                'py-0.5',
+                                'rounded-sm',
+                                'dark:bg-gray-700',
+                                'dark:text-yellow-400',
+                                'border',
+                                'border-yellow-400',
+                                'inline-flex',
+                                'items-center',
+                                'justify-center',
+                               ])>
+                                {{ $tag }}
+                            </a>
+                        @endforeach
                     </div>
-                @endif
+                </div>
+            @endif
+
+                {{-- Action Buttons --}}
+                <div class="flex gap-2 pt-4" x-data="{ likeStatus: {{ $video->like_status }} }">
+                    <a id="like"
+                       href="#"
+                       hx-post="{{ route('videos.like', $video->slug) }}"
+                       hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+                       hx-swap="none"
+                       hx-on::after-request="handleLikeResponse(event)"
+                       @class([
+                           'inline-flex',
+                           'items-center',
+                           'justify-center',
+                           'w-10',
+                           'h-10',
+                           'rounded-lg',
+                           'bg-gray-100',
+                           'hover:bg-gray-200',
+                           'dark:bg-gray-800',
+                           'dark:hover:bg-gray-700',
+                           'text-gray-700',
+                           'dark:text-gray-300',
+                           'transition-colors',
+                       ])
+                       title="Like">
+                        <svg x-show="likeStatus === 1" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
+                        </svg>
+                        <svg x-show="likeStatus !== 1" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                        </svg>
+                    </a>
+
+                    <a id="dislike"
+                       href="#"
+                       hx-put="{{ route('videos.dislike', $video->slug) }}"
+                       hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+                       hx-swap="none"
+                       hx-on::after-request="handleLikeResponse(event)"
+                       @class([
+                           'inline-flex',
+                           'items-center',
+                           'justify-center',
+                           'w-10',
+                           'h-10',
+                           'rounded-lg',
+                           'bg-gray-100',
+                           'hover:bg-gray-200',
+                           'dark:bg-gray-800',
+                           'dark:hover:bg-gray-700',
+                           'text-gray-700',
+                           'dark:text-gray-300',
+                           'transition-colors',
+                       ])
+                       title="Dislike">
+                        <svg x-show="likeStatus === -1" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3zm7-13h3a2 2 0 012 2v7a2 2 0 01-2 2h-3"/>
+                        </svg>
+                        <svg x-show="likeStatus !== -1" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5"/>
+                        </svg>
+                    </a>
+
+                    <a id="disable"
+                       href="#"
+                       hx-delete="{{ route('videos.disable', $video->slug) }}"
+                       hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+                       hx-confirm="Are you sure you want to disable this video?"
+                       hx-on::after-request="handleDeleteResponse(event)"
+                       @class([
+                           'inline-flex',
+                           'items-center',
+                           'justify-center',
+                           'w-10',
+                           'h-10',
+                           'rounded-lg',
+                           'bg-gray-100',
+                           'hover:bg-gray-200',
+                           'dark:bg-gray-800',
+                           'dark:hover:bg-gray-700',
+                           'text-gray-700',
+                           'dark:text-gray-300',
+                           'transition-colors',
+                       ])
+                       title="Disable">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                        </svg>
+                    </a>
+
+                    <a id="edit"
+                       href="#"
+                       @click.prevent="$dispatch('open-edit-modal')"
+                       hx-get="{{ route('contents.edit', $video->slug) }}"
+                       hx-target="#edit-modal-content"
+                       hx-trigger="click"
+                       @class([
+                           'inline-flex',
+                           'items-center',
+                           'justify-center',
+                           'w-10',
+                           'h-10',
+                           'rounded-lg',
+                           'bg-gray-100',
+                           'hover:bg-gray-200',
+                           'dark:bg-gray-800',
+                           'dark:hover:bg-gray-700',
+                           'text-gray-700',
+                           'dark:text-gray-300',
+                           'transition-colors',
+                       ])
+                       title="Edit">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </a>
+                </div>
+
             </div>
         </div>
 
@@ -324,7 +325,7 @@
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
                  @click="open = false"
-                 class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-75">
+                 class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-75 z-40">
             </div>
 
             {{-- Modal Content --}}
@@ -336,7 +337,7 @@
                  x-transition:leave="ease-in duration-200"
                  x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                 class="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-lg">
+                 class="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-gray-800 shadow-xl rounded-lg relative z-50">
 
                 {{-- Modal Header --}}
                 <div class="flex items-center justify-between mb-4">
@@ -392,8 +393,30 @@
 
     function handleEditResponse(event) {
         if (event.detail.successful) {
+            const response = JSON.parse(event.detail.xhr.response);
+            const content = response.data.content;
+
+            // If video is inactive, redirect to home
+            if (!content.active) {
+                window.location.href = '{{ route('home') }}';
+                return;
+            }
+
+            // Update title in DOM
+            const titleElement = document.getElementById('title');
+            if (titleElement) {
+                titleElement.textContent = content.title;
+            }
+
+            // Update category link and text in DOM
+            const categoryLink = document.getElementById('category');
+            if (categoryLink) {
+                categoryLink.href = '/switch/' + content.category_id;
+                categoryLink.textContent = content.category;
+            }
+
+            // Close the modal
             window.dispatchEvent(new CustomEvent('close-edit-modal'));
-            window.location.reload();
         } else if (event.detail.xhr.status === 422) {
             const response = JSON.parse(event.detail.xhr.response);
             alert('Validation Error: ' + Object.values(response.errors).flat().join(', '));
@@ -438,6 +461,7 @@
                 this.currentTime = this.$refs.videoPlayer.currentTime;
             },
 
+            // TODO: check why a patch to this router is not working
             sendProgress(completed = false) {
                 this.lastSentTime = this.currentTime;
 

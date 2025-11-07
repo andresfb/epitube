@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use RuntimeException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+// todo: recreate the missing symlinks
 final readonly class CreateSymLinksAction
 {
     public function handle(Media $media): void

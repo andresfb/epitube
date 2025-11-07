@@ -14,5 +14,6 @@ export default defineConfig({
     ],
     server: {
         cors: true,
+        host: 'epitube.lan',
     },
 });

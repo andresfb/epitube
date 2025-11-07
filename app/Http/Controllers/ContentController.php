@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\Frontend\ContentEditAction;
 use App\Actions\Frontend\ContentGetAction;
 use App\Actions\Frontend\ContentListAction;
+use App\Dtos\Tube\ContentEditItem;
 use App\Dtos\Tube\ContentListItem;
 use App\Http\Requests\ContentListRequest;
 use App\Http\Requests\ContentUpdateRequest;
 use App\Models\Tube\Category;
-use App\Models\Tube\Content;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Throwable;
 
 final class ContentController extends Controller
 {
@@ -33,29 +34,21 @@ final class ContentController extends Controller
     {
         return view('content.edit-form', [
             'content' => $action->handle($slug),
+            'categories' => Category::all(),
         ]);
     }
 
-    public function update(ContentUpdateRequest $request, string $slug): JsonResponse
+    public function update(ContentUpdateRequest $request, ContentEditAction $action): JsonResponse
     {
         try {
-            $content = Content::query()->where('slug', $slug)->firstOrFail();
-
-            $content->update([
-                'title' => $request->validated('title'),
-                'slug' => $request->validated('slug'),
-                'category_id' => $request->validated('category_id'),
-                'service_url' => $request->validated('service_url'),
-                'active' => $request->boolean('active'),
-            ]);
-
             return response()->json([
                 'data' => [
                     'status' => 200,
                     'message' => 'Content updated successfully',
+                    'content' => $action->handle(ContentEditItem::from($request)),
                 ],
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             Log::error($e->getMessage());
 
             return response()->json([
