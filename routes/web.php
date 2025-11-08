@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ContentController;
+use App\Http\Controllers\DurationController;
 use App\Http\Controllers\EncodeErrorsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SwitchCategoryController;
@@ -12,6 +13,9 @@ use App\Models\Tube\Category;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+
+Route::get('/duration/{duration}', DurationController::class)
+    ->name('duration');
 
 Route::get('/switch/{category}', SwitchCategoryController::class)
     ->name('switch.category')

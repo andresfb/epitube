@@ -1,7 +1,8 @@
+@php use App\Enums\Durations; @endphp
 <nav class="bg-zinc-50 border-gray-200 dark:bg-gray-900">
     <div class="w-full max-w-[90%] mx-auto sm:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl 2xl:max-w-[90%] py-2 md:p-4 flex flex-wrap items-center justify-between">
         <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
-            <x-entypo-video class="h-8 text-blue-700" />
+            <x-entypo-video class="h-8 text-blue-700"/>
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
                 {{ config('app.name') }}
             </span>
@@ -11,21 +12,21 @@
                     data-collapse-toggle="navbar-search"
                     aria-controls="navbar-search"
                     aria-expanded="false"
-                    @class([
-                        'md:hidden',
-                        'text-gray-500',
-                        'dark:text-gray-400',
-                        'hover:bg-gray-100',
-                        'dark:hover:bg-gray-700',
-                        'focus:outline-none',
-                        'focus:ring-4',
-                        'focus:ring-gray-200',
-                        'dark:focus:ring-gray-700',
-                        'rounded-lg',
-                        'text-sm',
-                        'p-2.5',
-                        'me-1',
-                    ])>
+                @class([
+                    'md:hidden',
+                    'text-gray-500',
+                    'dark:text-gray-400',
+                    'hover:bg-gray-100',
+                    'dark:hover:bg-gray-700',
+                    'focus:outline-none',
+                    'focus:ring-4',
+                    'focus:ring-gray-200',
+                    'dark:focus:ring-gray-700',
+                    'rounded-lg',
+                    'text-sm',
+                    'p-2.5',
+                    'me-1',
+                ])>
                 <svg class="w-5 h-5"
                      aria-hidden="true"
                      xmlns="http://www.w3.org/2000/svg"
@@ -176,26 +177,26 @@
             ])>
                 <button id="categoryDropdownLink"
                         data-dropdown-toggle="categoryDropdown"
-                        @class([
-                            'flex',
-                            'items-center',
-                            'justify-between',
-                            'w-full',
-                            'py-2',
-                            'px-3',
-                            'text-gray-900',
-                            'hover:bg-gray-100',
-                            'md:hover:bg-transparent',
-                            'md:border-0',
-                            'md:hover:text-blue-700',
-                            'md:p-0',
-                            'md:w-auto',
-                            'dark:text-white',
-                            'md:dark:hover:text-blue-500',
-                            'dark:focus:text-white',
-                            'dark:hover:bg-gray-700',
-                            'md:dark:hover:bg-transparent',
-                        ])>
+                    @class([
+                        'flex',
+                        'items-center',
+                        'justify-between',
+                        'w-full',
+                        'py-2',
+                        'px-3',
+                        'text-gray-900',
+                        'hover:bg-gray-100',
+                        'md:hover:bg-transparent',
+                        'md:border-0',
+                        'md:hover:text-blue-700',
+                        'md:p-0',
+                        'md:w-auto',
+                        'dark:text-white',
+                        'md:dark:hover:text-blue-500',
+                        'dark:focus:text-white',
+                        'dark:hover:bg-gray-700',
+                        'md:dark:hover:bg-transparent',
+                    ])>
                     {{ $category }} {{ $icon }}
                     <svg class="w-2.5 h-2.5 ms-2.5"
                          aria-hidden="true"
@@ -208,66 +209,66 @@
                 </button>
                 <!-- Dropdown menu -->
                 <div id="categoryDropdown"
-                     @class([
-                         'z-10',
-                         'hidden',
-                         'font-normal',
-                         'bg-white',
-                         'divide-y',
-                         'divide-gray-100',
-                         'rounded-lg',
-                         'shadow-sm',
-                         'w-44',
-                         'dark:bg-gray-700',
-                         'dark:divide-gray-600',
-                     ])>
+                    @class([
+                        'z-10',
+                        'hidden',
+                        'font-normal',
+                        'bg-white',
+                        'divide-y',
+                        'divide-gray-100',
+                        'rounded-lg',
+                        'shadow-sm',
+                        'w-44',
+                        'dark:bg-gray-700',
+                        'dark:divide-gray-600',
+                    ])>
                     <ul @class([
                         'py-2',
                         'text-sm',
                         'text-gray-700',
                         'dark:text-gray-200',
                     ]) aria-labelledby="dropdownLargeButton">
-                    @foreach($categories as $category)
-                        <li>
-                            <a href="{{ route('switch.category', ['category' => $category['slug']]) }}"
-                               @class([
-                                   'block',
-                                   'px-4',
-                                   'py-2',
-                                   'text-lg',
-                                   'hover:bg-gray-100',
-                                   'dark:hover:bg-gray-600',
-                                   'dark:hover:text-white',
-                               ])>{{ $category['icon'] }} {{ $category['name'] }}</a>
-                        </li>
-                    @endforeach
+                        @foreach($categories as $category)
+                            <li>
+                                <a href="{{ route('switch.category', ['category' => $category['slug']]) }}"
+                                    @class([
+                                        'block',
+                                        'px-4',
+                                        'py-2',
+                                        'text-lg',
+                                        'hover:bg-gray-100',
+                                        'dark:hover:bg-gray-600',
+                                        'dark:hover:text-white',
+                                    ])>{{ $category['icon'] }} {{ $category['name'] }}</a>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
                 <li>
                     <button id="mega-menu-full-dropdown-button"
                             data-collapse-toggle="mega-menu-full-dropdown"
-                            @class([
-                                'flex',
-                                'items-center',
-                                'justify-between',
-                                'w-full',
-                                'py-2',
-                                'px-3',
-                                'text-gray-900',
-                                'rounded-sm',
-                                'md:w-auto',
-                                'hover:bg-gray-100',
-                                'md:hover:bg-transparent',
-                                'md:border-0',
-                                'md:hover:text-blue-600',
-                                'md:p-0',
-                                'dark:text-white',
-                                'md:dark:hover:text-blue-500',
-                                'dark:hover:bg-gray-700',
-                                'dark:hover:text-blue-500',
-                                'md:dark:hover:bg-transparent',
-                                'dark:border-gray-700',
-                            ])>
+                        @class([
+                            'flex',
+                            'items-center',
+                            'justify-between',
+                            'w-full',
+                            'py-2',
+                            'px-3',
+                            'text-gray-900',
+                            'rounded-sm',
+                            'md:w-auto',
+                            'hover:bg-gray-100',
+                            'md:hover:bg-transparent',
+                            'md:border-0',
+                            'md:hover:text-blue-600',
+                            'md:p-0',
+                            'dark:text-white',
+                            'md:dark:hover:text-blue-500',
+                            'dark:hover:bg-gray-700',
+                            'dark:hover:text-blue-500',
+                            'md:dark:hover:bg-transparent',
+                            'dark:border-gray-700',
+                        ])>
                         Tags
                         <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                              fill="none" viewBox="0 0 10 6">
@@ -276,21 +277,134 @@
                         </svg>
                     </button>
                 </li>
-{{-- TODO: check this <li> for a reference on how to do a selected menu --}}
-{{--                <li>--}}
-{{--                    <a href="#" @class([--}}
-{{--                        'block',--}}
-{{--                        'py-2',--}}
-{{--                        'px-3',--}}
-{{--                        'text-white',--}}
-{{--                        'bg-blue-700',--}}
-{{--                        'rounded-sm',--}}
-{{--                        'md:bg-transparent',--}}
-{{--                        'md:text-blue-700',--}}
-{{--                        'md:p-0',--}}
-{{--                        'md:dark:text-blue-500',--}}
-{{--                    ]) aria-current="page">Home</a>--}}
-{{--                </li>--}}
+                {{-- TODO: check this <li> for a reference on how to do a selected menu --}}
+                {{--                <li>--}}
+                {{--                    <a href="#" @class([--}}
+                {{--                        'block',--}}
+                {{--                        'py-2',--}}
+                {{--                        'px-3',--}}
+                {{--                        'text-white',--}}
+                {{--                        'bg-blue-700',--}}
+                {{--                        'rounded-sm',--}}
+                {{--                        'md:bg-transparent',--}}
+                {{--                        'md:text-blue-700',--}}
+                {{--                        'md:p-0',--}}
+                {{--                        'md:dark:text-blue-500',--}}
+                {{--                    ]) aria-current="page">Home</a>--}}
+                {{--                </li>--}}
+                <button id="durationDropdownLink"
+                        data-dropdown-toggle="durationDropdown"
+                    @class([
+                        'flex',
+                        'items-center',
+                        'justify-between',
+                        'w-full',
+                        'py-2',
+                        'px-3',
+                        'text-gray-900',
+                        'hover:bg-gray-100',
+                        'md:hover:bg-transparent',
+                        'md:border-0',
+                        'md:hover:text-blue-700',
+                        'md:p-0',
+                        'md:w-auto',
+                        'dark:text-white',
+                        'md:dark:hover:text-blue-500',
+                        'dark:focus:text-white',
+                        'dark:hover:bg-gray-700',
+                        'md:dark:hover:bg-transparent',
+                    ])>
+                    Duration
+                    <svg class="w-2.5 h-2.5 ms-2.5"
+                         aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                              stroke-width="2" d="m1 1 4 4 4-4"/>
+                    </svg>
+                </button>
+                <div id="durationDropdown"
+                    @class([
+                        'z-10',
+                        'hidden',
+                        'font-normal',
+                        'bg-white',
+                        'divide-y',
+                        'divide-gray-100',
+                        'rounded-lg',
+                        'shadow-sm',
+                        'w-44',
+                        'dark:bg-gray-700',
+                        'dark:divide-gray-600',
+                    ])>
+                    <ul @class([
+                        'py-2',
+                        'text-sm',
+                        'text-gray-700',
+                        'dark:text-gray-200',
+                    ]) aria-labelledby="dropdownLargeButton">
+                        <li>
+                            <a href="{{ route('duration', Durations::QUICK) }}"
+                            @class([
+                               'block',
+                               'px-4',
+                               'py-2',
+                               'hover:bg-gray-100',
+                               'dark:hover:bg-gray-600',
+                               'dark:hover:text-white',
+                            ])>
+                                Quickies <small class="text-sm">(1-3 mins)</small>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('duration', Durations::SHORT) }}"
+                            @class([
+                               'block',
+                               'px-4',
+                               'py-2',
+                               'hover:bg-gray-100',
+                               'dark:hover:bg-gray-600',
+                               'dark:hover:text-white',
+                            ])>
+                                Short <small class="text-sm">(3-10 mins)</small>
+                            </a>
+                            <a href="{{ route('duration', Durations::MEDIUM) }}"
+                            @class([
+                               'block',
+                               'px-4',
+                               'py-2',
+                               'hover:bg-gray-100',
+                               'dark:hover:bg-gray-600',
+                               'dark:hover:text-white',
+                            ])>
+                                Medium <small class="text-sm">(10-30 mins)</small>
+                            </a>
+                            <a href="{{ route('duration', Durations::LONG) }}"
+                            @class([
+                               'block',
+                               'px-4',
+                               'py-2',
+                               'hover:bg-gray-100',
+                               'dark:hover:bg-gray-600',
+                               'dark:hover:text-white',
+                            ])>
+                                Long <small class="text-sm">(30-60 mins)</small>
+                            </a>
+                            <a href="{{ route('duration', Durations::FEATURE) }}"
+                            @class([
+                               'block',
+                               'px-4',
+                               'py-2',
+                               'hover:bg-gray-100',
+                               'dark:hover:bg-gray-600',
+                               'dark:hover:text-white',
+                            ])>
+                                Feature Length
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 <button id="optionsDropdownLink"
                         data-dropdown-toggle="optionsDropdown"
                     @class([
@@ -313,7 +427,7 @@
                         'dark:hover:bg-gray-700',
                         'md:dark:hover:bg-transparent',
                     ])>
-                    Options
+                    Selects
                     <svg class="w-2.5 h-2.5 ms-2.5"
                          aria-hidden="true"
                          xmlns="http://www.w3.org/2000/svg"
@@ -450,17 +564,17 @@
 
     <!-- Tags list display -->
     <div id="mega-menu-full-dropdown"
-         @class([
-             'mt-1',
-             'border-gray-200',
-             'shadow-xs',
-             'bg-gray-50',
-             'md:bg-white',
-             'border-y',
-             'dark:bg-gray-800',
-             'dark:border-gray-600',
-             'hidden',
-         ])>
+        @class([
+            'mt-1',
+            'border-gray-200',
+            'shadow-xs',
+            'bg-gray-50',
+            'md:bg-white',
+            'border-y',
+            'dark:bg-gray-800',
+            'dark:border-gray-600',
+            'hidden',
+        ])>
         <div
             @class([
                 'max-w-screen-xl',
@@ -473,18 +587,21 @@
                 'md:px-6',
             ])>
             <ul class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-            @foreach($tags as $tag)
-                <li>
-                    <a href="{{ route('tags', ['slug' => $tag->slug]) }}"
-                       class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <div class="font-semibold">{{ $tag->name }}</div>
-                    </a>
-                </li>
-            @endforeach
+                @foreach($tags as $tag)
+                    <li>
+                        <a href="{{ route('tags', ['slug' => $tag->slug]) }}"
+                           class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <div class="font-semibold">{{ $tag->name }}</div>
+                        </a>
+                    </li>
+                @endforeach
                 <li>
                     <a href="{{ route('tags.list') }}"
                        class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <div class="font-semibold"><x-bi-tags class="inline mr-2" />All Tags</div>
+                        <div class="font-semibold">
+                            <x-bi-tags class="inline mr-2"/>
+                            All Tags
+                        </div>
                     </a>
                 </li>
             </ul>
