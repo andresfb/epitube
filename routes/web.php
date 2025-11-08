@@ -21,6 +21,9 @@ Route::get('/videos/{slug}', VideoController::class)
     ->name('videos');
 
 Route::controller(VideoStatusController::class)->group(function () {
+    Route::get('/videos/{slug}/viewed', 'viewed')
+        ->name('videos.viewed');
+
     Route::post('/videos/{slug}/like', 'like')
         ->name('videos.like');
 

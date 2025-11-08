@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Frontend\ContentChangeStatusAction;
 use App\Actions\Frontend\ContentDisableAction;
+use App\Actions\Frontend\ContentViewedAction;
 use App\Dtos\Tube\VideoProgressItem;
 use App\Http\Requests\VideoProgressRequest;
 use App\Jobs\Tube\VideoProgressJob;
@@ -16,6 +17,24 @@ use Throwable;
 final class VideoStatusController extends Controller
 {
     public function __construct(private readonly ContentChangeStatusAction $changeStatusAction) {}
+
+    public function viewed(ContentViewedAction $action, string $slug)
+    {
+        try {
+            $action->handle($slug);
+
+            return response()->noContent();
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'data' => [
+                    'status' => 500,
+                    'message' => $e->getMessage(),
+                ],
+            ], 500);
+        }
+    }
 
     public function like(string $slug): JsonResponse
     {

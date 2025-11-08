@@ -208,6 +208,36 @@
                         </svg>
                     </a>
 
+                    <a id="viewed"
+                       href="#"
+                       hx-get="{{ route('videos.viewed', $video->slug) }}"
+                       hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+                       hx-swap="none"
+                       hx-on::after-request="handleDeleteResponse(event)"
+                       @class([
+                           'inline-flex',
+                           'items-center',
+                           'justify-center',
+                           'w-10',
+                           'h-10',
+                           'rounded-lg',
+                           'bg-gray-100',
+                           'hover:bg-gray-200',
+                           'dark:bg-gray-800',
+                           'dark:hover:bg-gray-700',
+                           'text-gray-700',
+                           'dark:text-gray-300',
+                           'transition-colors',
+                       ])
+                       title="Mark Viewed">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                            <path fill-rule="evenodd"
+                                  d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                    </a>
+
                     <a id="disable"
                        href="#"
                        hx-delete="{{ route('videos.disable', $video->slug) }}"

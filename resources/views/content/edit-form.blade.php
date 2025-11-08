@@ -49,11 +49,25 @@
                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
         </div>
 
+        {{-- Active Status --}}
+        <div>
+            <label for="active" class="inline-flex items-center cursor-pointer mt-2 mb-1">
+                <input type="checkbox"
+                       id="active"
+                       name="active"
+                       value="1"
+                       class="sr-only peer"
+                    {{ $content->active ? 'checked' : '' }}>
+                <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Active</span>
+            </label>
+        </div>
+
         {{-- Service URL --}}
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <div class="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Service URL
-            </label>
+            </div>
             <a href="{{ $content->service_url }}"
                target="_blank"
                rel="noopener noreferrer"
@@ -65,22 +79,9 @@
             </a>
         </div>
 
-        {{-- Active Status --}}
-        <div class="flex items-center">
-            <input type="checkbox"
-                   id="active"
-                   name="active"
-                   value="1"
-                   {{ $content->active ? 'checked' : '' }}
-                   class="w-4 h-4 mt-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700">
-            <label for="active" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Active
-            </label>
-        </div>
-
         {{-- Display Only Info --}}
-        <div class="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
-            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Video Information</h4>
+        <div class="pt-5 border-t border-gray-200 dark:border-gray-700 space-y-2">
+            <h4 class="text-sm mt-3 font-semibold text-gray-700 dark:text-gray-300">Video Information</h4>
             <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
                 <div>
                     <span class="font-medium">Duration:</span> {{ $content->duration }}

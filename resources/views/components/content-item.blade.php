@@ -77,7 +77,7 @@
         </p>
 
     @if ($showTags)
-        <div id="tags" class="mt-8 font-normal text-gray-700 dark:text-gray-400 flex flex-wrap items-center gap-2">
+        <div id="tags" class="mt-4 font-normal text-gray-700 dark:text-gray-400 flex flex-wrap items-center gap-2">
         @foreach($item->tags as $slug => $tag)
             <a href="{{ route('tags', ['slug' => $slug]) }}"
                 @class([
@@ -102,7 +102,7 @@
         @endforeach
         </div>
 
-        <p class="mt-5 text-xs font-normal text-gray-500 dark:text-gray-300">
+        <p class="hidden md:block mt-5 text-xs font-normal text-gray-500 dark:text-gray-300">
             Added: {{ $item->added_at }}
         </p>
     @endif
