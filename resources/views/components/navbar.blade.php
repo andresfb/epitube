@@ -466,6 +466,18 @@
                                'hover:bg-gray-100',
                                'dark:hover:bg-gray-600',
                                'dark:hover:text-white',
+                            ])>👀 Watched</a>
+                        </li>
+                        {{-- TODO: add another menu to list the `featured` videos. This will need a new field for the Content and Feed and a new button to mark it in the edit-form.blade --}}
+                        <li>
+                            <a href="#" @class([
+                               'block',
+                               'px-4',
+                               'py-2',
+                               'text-lg',
+                               'hover:bg-gray-100',
+                               'dark:hover:bg-gray-600',
+                               'dark:hover:text-white',
                             ])>❤️ Likes</a>
                         </li>
                         <li>

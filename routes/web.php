@@ -7,10 +7,14 @@ use App\Http\Controllers\DurationController;
 use App\Http\Controllers\EncodeErrorsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SwitchCategoryController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoStatusController;
 use App\Models\Tube\Category;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/tests', TestController::class)
+    ->name('tests');
 
 Route::get('/', HomeController::class)->name('home');
 
