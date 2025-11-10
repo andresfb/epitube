@@ -458,19 +458,41 @@
                         'dark:text-gray-200',
                     ]) aria-labelledby="dropdownLargeButton">
                         <li>
-                            <a href="#" @class([
-                               'block',
-                               'px-4',
-                               'py-2',
-                               'text-lg',
-                               'hover:bg-gray-100',
-                               'dark:hover:bg-gray-600',
-                               'dark:hover:text-white',
-                            ])>👀 Watched</a>
+                            <a href="#"
+                                @class([
+                                   'block',
+                                   'px-4',
+                                   'py-2',
+                                   'text-lg',
+                                   'hover:bg-gray-100',
+                                   'dark:hover:bg-gray-600',
+                                   'dark:hover:text-white',
+                                ])>
+                                {{ config('content.featured_icon') }} {{ config('content.featured_title') }}
+                            </a>
                         </li>
-                        {{-- TODO: add another menu to list the `featured` videos. This will need a new field for the Content and Feed and a new button to mark it in the edit-form.blade --}}
+                    <ul @class([
+                        'py-2',
+                        'text-sm',
+                        'text-gray-700',
+                        'dark:text-gray-200',
+                    ]) aria-labelledby="dropdownLargeButton">
                         <li>
-                            <a href="#" @class([
+                            <a href="#"
+                                @class([
+                                   'block',
+                                   'px-4',
+                                   'py-2',
+                                   'text-lg',
+                                   'hover:bg-gray-100',
+                                   'dark:hover:bg-gray-600',
+                                   'dark:hover:text-white',
+                                ])>👀 Watched
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#"
+                            @class([
                                'block',
                                'px-4',
                                'py-2',
@@ -481,7 +503,8 @@
                             ])>❤️ Likes</a>
                         </li>
                         <li>
-                            <a href="#" @class([
+                            <a href="#"
+                            @class([
                                'block',
                                'px-4',
                                'py-2',

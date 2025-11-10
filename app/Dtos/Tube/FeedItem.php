@@ -18,6 +18,7 @@ final class FeedItem extends Data
         public string $title,
         public bool $active,
         public bool $viewed,
+        public bool $featured,
         public int $like_status,
         public int $view_count,
         public string $thumbnail,

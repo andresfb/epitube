@@ -37,6 +37,7 @@ use Spatie\Tags\HasTags;
  * @property bool $viewed
  * @property int $like_status
  * @property int $view_count
+ * @property bool $featured
  * @property string $og_path
  * @property string $notes
  * @property CarbonImmutable $added_at
@@ -307,6 +308,7 @@ final class Content extends Model implements HasMedia
         return [
             'active' => 'bool',
             'viewed' => 'bool',
+            'featured' => 'bool',
             'like_status' => 'int',
             'view_count' => 'int',
             'added_at' => 'datetime',

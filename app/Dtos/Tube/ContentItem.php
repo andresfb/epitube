@@ -34,6 +34,7 @@ final class ContentItem extends Data
         public bool $viewed,
         public int $like_status,
         public int $view_count,
+        public bool $featured,
         public string $service_url,
         public Carbon $added_at,
         public Carbon $created_at,

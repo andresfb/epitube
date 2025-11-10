@@ -12,8 +12,8 @@
 @endphp
 
 <div
-    x-data="preview()"
-    @mouseenter="play()"
+    x-data="preview(@js($item['previews']))"
+    @mouseenter="loadAndPlay()"
     @mouseleave="reset()"
     @touchstart="handleTouchStart()"
     @touchend="handleTouchEnd($event)"
@@ -28,14 +28,10 @@
         x-ref="vid"
         muted
         playsinline
-        preload="metadata"
+        preload="none"
         loop
         class="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-200">
-
-        @foreach($item['previews'] as $preview)
-            <source src="{{ $preview['url'] }}" type="{{ $preview['mimeType'] }}">
-        @endforeach
-
+        <!-- Sources loaded dynamically on hover -->
     </video>
 
 </div>

@@ -64,4 +64,8 @@ return [
 
     'related_checks_key' => env('RELATED_CHECKS_KEY', 'RELATED:VIDEOS:CHECKED'),
 
+    'featured_title' => env('CONTENT_FEATURED_TITLE', 'Featured'),
+
+    'featured_icon' => env('CONTENT_FEATURED_ICON', '⭐'),
+
 ];

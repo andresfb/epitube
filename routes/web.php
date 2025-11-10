@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SwitchCategoryController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\VideoEngageController;
 use App\Http\Controllers\VideoStatusController;
 use App\Models\Tube\Category;
 use Illuminate\Support\Facades\Route;
@@ -28,21 +29,26 @@ Route::get('/switch/{category}', SwitchCategoryController::class)
 Route::get('/videos/{slug}', VideoController::class)
     ->name('videos');
 
-Route::controller(VideoStatusController::class)->group(function () {
-    Route::get('/videos/{slug}/viewed', 'viewed')
+Route::controller(VideoEngageController::class)->group(function () {
+    Route::post('/videos/{slug}/viewed', 'store')
         ->name('videos.viewed');
 
-    Route::post('/videos/{slug}/like', 'like')
-        ->name('videos.like');
-
-    Route::put('/videos/{slug}/dislike', 'dislike')
-        ->name('videos.dislike');
-
-    Route::patch('/videos/{slug}/progress', 'progress')
+    Route::put('/videos/{slug}/progress', 'update')
         ->name('videos.progress');
 
-    Route::delete('/videos/{slug}/disable', 'disable')
+    Route::delete('/videos/{slug}/disable', 'delete')
         ->name('videos.disable');
+});
+
+Route::controller(VideoStatusController::class)->group(function () {
+    Route::post('/videos/{slug}/like', 'store')
+        ->name('videos.like');
+
+    Route::put('/videos/{slug}/feature', 'update')
+        ->name('videos.feature');
+
+    Route::delete('/videos/{slug}/dislike', 'delete')
+        ->name('videos.dislike');
 });
 
 Route::controller(ContentController::class)->group(function () {

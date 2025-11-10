@@ -177,7 +177,7 @@
 
                     <a id="dislike"
                        href="#"
-                       hx-put="{{ route('videos.dislike', $video->slug) }}"
+                       hx-delete="{{ route('videos.dislike', $video->slug) }}"
                        hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
                        hx-swap="none"
                        hx-on::after-request="handleLikeResponse(event)"
@@ -210,7 +210,7 @@
 
                     <a id="viewed"
                        href="#"
-                       hx-get="{{ route('videos.viewed', $video->slug) }}"
+                       hx-post="{{ route('videos.viewed', $video->slug) }}"
                        hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
                        hx-swap="none"
                        hx-on::after-request="handleDeleteResponse(event)"
@@ -236,6 +236,31 @@
                                   d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
                                   clip-rule="evenodd"/>
                         </svg>
+                    </a>
+
+                    <a id="feature"
+                       href="#"
+                       hx-put="{{ route('videos.feature', $video->slug) }}"
+                       hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+                       hx-swap="none"
+                       hx-on::after-request="handleDeleteResponse(event)"
+                       @class([
+                           'inline-flex',
+                           'items-center',
+                           'justify-center',
+                           'w-10',
+                           'h-10',
+                           'rounded-lg',
+                           'bg-gray-100',
+                           'hover:bg-gray-200',
+                           'dark:bg-gray-800',
+                           'dark:hover:bg-gray-700',
+                           'text-gray-700',
+                           'dark:text-gray-300',
+                           'transition-colors',
+                       ])
+                       title="Feature">
+                        {{ config('content.featured_icon') }}
                     </a>
 
                     <a id="disable"
