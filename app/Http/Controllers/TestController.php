@@ -2,27 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Dtos\Tube\FeedItem;
-use App\Models\Tube\Content;
-use App\Models\Tube\Feed;
+use Illuminate\Http\Request;
 
 class TestController extends Controller
 {
-    public function __invoke()
+    public function index()
     {
-        // TODO: implement Tagify: https://github.com/yairEO/tagify
+        return view('test.index');
+    }
 
-        $content = Content::query()
-            ->where('active', true)
-            ->inRandomOrder()
-            ->firstOrFail();
-
-        $feed = Feed::query()
-            ->where('slug', $content->slug)
-            ->firstOrFail();
-
-        $feedItem = FeedItem::forDetail($feed);
-
-        return view('test.index', ['feed' => $feedItem]);
+    public function update(Request $request, string $slug): void
+    {
+        //
     }
 }

@@ -7,6 +7,7 @@ namespace App\Actions\Frontend;
 use App\Dtos\Tube\FeedItem;
 use App\Dtos\Tube\FeedListItem;
 use App\Enums\Durations;
+use App\Factories\FeedItemFactory;
 use App\Models\Tube\Category;
 use App\Models\Tube\Feed;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -46,7 +47,7 @@ final readonly class FeedGetDurationAction
                 });
 
         return new FeedListItem(
-            $feed->map(fn (Feed $feed): FeedItem => FeedItem::forListing($feed)),
+            $feed->map(fn (Feed $feed): FeedItem => FeedItemFactory::forListing($feed)),
             $feed->links(),
         );
     }

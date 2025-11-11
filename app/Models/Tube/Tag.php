@@ -16,11 +16,28 @@ use Spatie\Tags\Tag as SpatieTag;
 
 final class Tag extends SpatieTag
 {
-    public static function getList(string $categorySlug): Collection
+    public static function getList(): array
     {
         return Cache::tags('tags')
             ->remember(
-                md5("TAG:LIST:$categorySlug"),
+                md5("TAG:LIST"),
+                now()->addHours(5),
+                static function (): array {
+                    return self::query()
+                        ->orderBy('order_column')
+                        ->orderBy('name')
+                        ->get()
+                        ->pluck('name', 'slug')
+                        ->toArray();
+                }
+            );
+    }
+
+    public static function getCategoryList(string $categorySlug): Collection
+    {
+        return Cache::tags('tags')
+            ->remember(
+                md5("TAG:CATEGORY:LIST:$categorySlug"),
                 now()->addHours(5),
                 static function () use ($categorySlug): Collection {
                     return self::query()
@@ -39,7 +56,7 @@ final class Tag extends SpatieTag
 
     public static function getMenuList(string $categorySlug): Collection
     {
-        return self::getList($categorySlug)
+        return self::getCategoryList($categorySlug)
             ->take(Config::integer('constants.main_tags_limit') - 1);
     }
 

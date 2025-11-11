@@ -49,6 +49,18 @@
                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
         </div>
 
+        {{-- Tags --}}
+        <div>
+            <label for="tags" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Tags
+            </label>
+            <input type="text"
+                   id="tags"
+                   name="tags"
+                   value=""
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+        </div>
+
         {{-- Active Status --}}
         <div>
             <label for="active" class="inline-flex items-center cursor-pointer mt-2 mb-1">
@@ -64,7 +76,7 @@
         </div>
 
         {{-- Service URL --}}
-        <div>
+        <div class="pt-5 border-t border-gray-200 dark:border-gray-700 space-y-2">
             <div class="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Service URL
             </div>
@@ -102,7 +114,7 @@
         <div class="flex gap-3 pt-4">
             <button type="submit"
                     class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700">
-                Save Changes
+                Save
             </button>
             <button type="button"
                     @click="$dispatch('close-edit-modal')"
@@ -112,3 +124,18 @@
         </div>
     </form>
 </div>
+
+<script>
+    let input = document.querySelector('input[name=tags]');
+    let tagify = new Tagify(input, {
+        enforceWhitelist: true,
+        autoComplete: {
+            enabled: true,
+            tabKey: true
+        },
+        whitelist: {!! $tags !!}
+    });
+
+    tagify.addTags({!! $content->tag_list !!})
+
+</script>

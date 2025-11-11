@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Tube;
 
-use App\Dtos\Tube\ContentItem;
+use App\Factories\ContentItemFactory;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -54,7 +54,7 @@ final class Feed extends Model
     {
         self::query()->updateOrCreate(
             ['id' => $content->id],
-            ContentItem::withRelated($content)->toArray()
+            ContentItemFactory::withRelated($content)->toArray()
         );
     }
 

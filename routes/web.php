@@ -14,8 +14,13 @@ use App\Http\Controllers\VideoStatusController;
 use App\Models\Tube\Category;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/tests', TestController::class)
-    ->name('tests');
+Route::controller(TestController::class)->group(function () {
+    Route::get('/tests', 'index')
+        ->name('tests');
+
+    Route::post('/tests/{slug}', 'update')
+        ->name('tests.update');
+});
 
 Route::get('/', HomeController::class)->name('home');
 

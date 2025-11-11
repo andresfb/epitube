@@ -6,10 +6,12 @@ namespace App\Actions\Frontend;
 
 use App\Dtos\Tube\ContentEditItem;
 use App\Dtos\Tube\ContentItem;
+use App\Factories\ContentItemFactory;
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use JsonException;
 use Throwable;
 
 final readonly class ContentEditAction
@@ -19,7 +21,9 @@ final readonly class ContentEditAction
      */
     public function handle(ContentEditItem $item): ContentItem
     {
-        return DB::transaction(static function () use ($item): ContentItem {
+        return DB::transaction(function () use ($item): ContentItem {
+            $tags = $this->parseTags($item->tags);
+
             $content = Content::query()
                 ->where('slug', $item->slug)
                 ->firstOrFail();
@@ -29,6 +33,8 @@ final readonly class ContentEditAction
             $content->active = $item->active;
             $content->updateQuietly();
             $content = $content->fresh();
+
+            $content->syncTags($tags);
 
             Feed::where('slug', $item->slug)
                 ->update([
@@ -40,7 +46,17 @@ final readonly class ContentEditAction
 
             Cache::tags('feed')->flush();
 
-            return ContentItem::withContent($content);
+            return ContentItemFactory::withContent($content);
         });
+    }
+
+    /**
+     * @throws JsonException
+     */
+    private function parseTags(string $tags): array
+    {
+        return collect(json_decode($tags, true, 512, JSON_THROW_ON_ERROR))
+            ->pluck('value')
+            ->toArray();
     }
 }

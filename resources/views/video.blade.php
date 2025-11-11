@@ -1,4 +1,8 @@
 <x-layouts.app>
+    <script src="/vendor/yaireo/tagify.js"></script>
+    <script src="/vendor/yaireo/tagify.polyfills.min.js"></script>
+    <link href="/vendor/yaireo/tagify.css" rel="stylesheet" type="text/css" />
+
     <div class="w-full space-y-6">
         {{-- Video Player Section --}}
         <div class="w-full" x-data="videoPlayer()">

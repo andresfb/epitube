@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Frontend;
 
 use App\Dtos\Tube\FeedItem;
+use App\Factories\FeedItemFactory;
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -18,7 +19,7 @@ final readonly class FeedAction
             return $this->generateFeed($slug);
         }
 
-        return FeedItem::forDetail($feed);
+        return FeedItemFactory::forDetail($feed);
     }
 
     private function generateFeed(string $slug): FeedItem
@@ -35,7 +36,7 @@ final readonly class FeedAction
             throw (new ModelNotFoundException)->setModel(Feed::class);
         }
 
-        return FeedItem::forDetail($feed);
+        return FeedItemFactory::forDetail($feed);
     }
 
     private function getFeed(string $slug): ?Feed

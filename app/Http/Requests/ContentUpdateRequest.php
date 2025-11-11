@@ -19,6 +19,7 @@ final class ContentUpdateRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', 'exists:contents,slug'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'tags' => ['required', 'json'],
             'active' => ['nullable', 'boolean'],
         ];
     }
@@ -32,6 +33,7 @@ final class ContentUpdateRequest extends FormRequest
             'slug.exits' => 'The content requested does not exist.',
             'category_id.required' => 'Please select a category.',
             'category_id.exists' => 'The selected category does not exist.',
+            'tags.required' => 'Please select at least one tag.',
         ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Frontend;
 
 use App\Dtos\Tube\ContentItem;
+use App\Factories\ContentItemFactory;
 use App\Models\Tube\Content;
 
 final readonly class ContentGetAction
@@ -15,6 +16,6 @@ final readonly class ContentGetAction
             ->where('slug', $slug)
             ->firstOrFail();
 
-        return ContentItem::withContent($content);
+        return ContentItemFactory::withFormatedTags($content);
     }
 }

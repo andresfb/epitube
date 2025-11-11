@@ -12,6 +12,7 @@ final class ContentEditItem extends Data
         public string $slug,
         public string $title,
         public int $category_id,
+        public string $tags,
         public bool $active,
     ) {}
 }

@@ -6,6 +6,7 @@ namespace App\Actions\Frontend;
 
 use App\Dtos\Tube\ContentItem;
 use App\Dtos\Tube\ContentListItem;
+use App\Factories\ContentItemFactory;
 use App\Models\Tube\Content;
 use Exception;
 use Illuminate\Support\Collection;
@@ -95,7 +96,7 @@ final readonly class ContentListAction
                         ->paginate(100)
                         ->appends($item->toArray())
                         ->map(function (Content $content): ContentItem {
-                            return ContentItem::forListing($content);
+                            return ContentItemFactory::forListing($content);
                         });
                 });
     }
