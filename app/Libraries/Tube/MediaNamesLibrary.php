@@ -30,4 +30,15 @@ final readonly class MediaNamesLibrary
     {
         return 'thumbnails';
     }
+
+    public static function all(): array
+    {
+        return [
+            self::videos(),
+            self::transcoded(),
+            self::downscaled(),
+            self::previews(),
+            self::thumbnails(),
+        ];
+    }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Tube;
 
 use App\Dtos\Tube\PreviewItem;
-use App\Jobs\EncodePreviewJob;
+use App\Jobs\Tube\EncodePreviewJob;
 use App\Libraries\Tube\MasterVideoLibrary;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;

@@ -34,7 +34,7 @@ final class EncodePreviewService extends BaseEncodeService
     public function execute(PreviewItem $item): void
     {
         try {
-            $this->prepare($item->mediaId, "$item->size:$item->extension");
+            $this->prepare($item->mediaId, "$item->size:$item->extension:$item->bitRate");
         } catch (ProcessRunningException $ex) {
             $this->error($ex->getMessage());
 
