@@ -1,15 +1,26 @@
 @props([
     'items',
     'links',
+    'count',
 ])
+
+@if($count > 0)
+<div class="w-full mb-4">
+    <span class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+        {{ number_format($count) }} {{ Str::plural('video', $count) }}
+    </span>
+</div>
+@endif
+
+@if($items->isEMpty())
+<div class="w-full text-3xl text-center text-gray-700">No Videos Found</div>
+@endif
 
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
 
-@forelse($items as $item)
+@foreach($items as $item)
     <x-content-item :item="$item" />
-@empty
-    <div class="text-3xl text-gray-600 text-center">No Videos Found</div>
-@endforelse
+@endforeach
 
 </div>
 @if ($links !== null)

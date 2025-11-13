@@ -1,6 +1,6 @@
 <x-layouts.app>
     <x-list-title>
-        {{ $duration }} Videos <span class="text-xs">{{ $range }}</span>
+        Videos Tagged as: <span class="font-normal text-gray-600">{{ $tag->name }}</span>
     </x-list-title>
 
     <x-content-list

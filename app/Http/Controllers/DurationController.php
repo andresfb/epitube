@@ -16,7 +16,8 @@ class DurationController extends Controller
             [
                 'feed' => $feedList->feed,
                 'links' => $feedList->links,
-                'duration' => Durations::description($duration),
+                'count' => $feedList->total,
+                'duration' => Durations::title($duration),
                 'range' => sprintf(
                     '(%s mins)',
                     collect(Durations::list($duration))

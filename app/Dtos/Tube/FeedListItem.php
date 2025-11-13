@@ -12,5 +12,6 @@ final class FeedListItem
     public function __construct(
         public ?Collection $feed = null,
         public ?Htmlable $links = null,
+        public int $total = 0,
     ) {}
 }

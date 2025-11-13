@@ -1,5 +1,7 @@
 <x-layouts.app>
-    <div class="w-full text-2xl text-left font-semibold text-gray-700 mt-2 mb-8">Videos of the Day</div>
+    <x-list-title>
+        Videos of the Day
+    </x-list-title>
 
 @props([
     'reloadTimer' => true,
@@ -31,6 +33,7 @@
     <x-content-list
         :items="$feed"
         :links="$links"
+        :count="$count"
     />
 @endif
 

@@ -6,7 +6,7 @@ namespace App\Actions\Frontend;
 
 use App\Dtos\Tube\FeedItem;
 use App\Dtos\Tube\FeedListItem;
-use App\Enums\Durations;
+use App\Enums\Selects;
 use App\Factories\FeedItemFactory;
 use App\Models\Tube\Category;
 use App\Models\Tube\Feed;
@@ -15,35 +15,41 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 
-final readonly class FeedGetDurationAction
+final readonly class FeedGetSelectsAction
 {
-    public function handle(Durations $duration, int $page): FeedListItem
+    /**
+     * Execute the action.
+     */
+    public function handle(Selects $select, int $page): FeedListItem
     {
-        $durations = Durations::list($duration);
         $cateSlug = Session::get(
             'category',
             Config::string('constants.main_category')
         );
 
         $perPage = Config::integer('feed.per_page');
-        $cacheKey = "FEED:CATE:$cateSlug:DURATION:$duration->value:PAGE:$page:$perPage";
+        $cacheKey = "FEED:CATE:$cateSlug:SELECTS:$select->value:PAGE:$page:$perPage";
 
         $feed = Cache::tags('feed')
             ->remember(
                 md5($cacheKey),
                 now()->addHour(),
-                function () use ($perPage, $cateSlug, $durations): LengthAwarePaginator {
-                    return Feed::query()
+                function () use ($perPage, $cateSlug, $select): LengthAwarePaginator {
+                    $query = Feed::query()
                         ->where('category_id', Category::getId($cateSlug))
                         ->where('active', true)
-                        ->where('viewed', false)
-                        ->where('like_status', '>=', 0)
-                        ->whereBetween('length', $durations)
-                        ->orderBy('length')
                         ->orderByDesc('published')
                         ->orderBy('order')
-                        ->limit(Config::integer('feed.max_feed_limit'))
-                        ->paginate($perPage);
+                        ->limit(Config::integer('feed.max_feed_limit'));
+
+                    match ($select) {
+                        Selects::FEATURED => $query->where('featured', true),
+                        Selects::LIKED => $query->where('like_status', 1),
+                        Selects::DISLIKED => $query->where('like_status', -1),
+                        default => $query->where('viewed', true),
+                    };
+
+                    return $query->paginate($perPage);
                 });
 
         return new FeedListItem(

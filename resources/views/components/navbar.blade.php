@@ -1,4 +1,4 @@
-@php use App\Enums\Durations; @endphp
+@php use App\Enums\Durations;use App\Enums\Selects; @endphp
 <nav class="bg-zinc-50 border-gray-200 dark:bg-gray-900">
     <div class="w-full max-w-[90%] mx-auto sm:max-w-screen-lg lg:max-w-screen-xl xl:max-w-screen-2xl 2xl:max-w-[90%] py-2 md:p-4 flex flex-wrap items-center justify-between">
         <a href="{{ route('home') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -344,65 +344,21 @@
                         'text-gray-700',
                         'dark:text-gray-200',
                     ]) aria-labelledby="dropdownLargeButton">
-                        <li>
-                            <a href="{{ route('duration', Durations::QUICK) }}"
-                            @class([
-                               'block',
-                               'px-4',
-                               'py-2',
-                               'hover:bg-gray-100',
-                               'dark:hover:bg-gray-600',
-                               'dark:hover:text-white',
-                            ])>
-                                Quickies <small class="text-sm">(1-3 mins)</small>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('duration', Durations::SHORT) }}"
-                            @class([
-                               'block',
-                               'px-4',
-                               'py-2',
-                               'hover:bg-gray-100',
-                               'dark:hover:bg-gray-600',
-                               'dark:hover:text-white',
-                            ])>
-                                Short <small class="text-sm">(3-10 mins)</small>
-                            </a>
-                            <a href="{{ route('duration', Durations::MEDIUM) }}"
-                            @class([
-                               'block',
-                               'px-4',
-                               'py-2',
-                               'hover:bg-gray-100',
-                               'dark:hover:bg-gray-600',
-                               'dark:hover:text-white',
-                            ])>
-                                Medium <small class="text-sm">(10-30 mins)</small>
-                            </a>
-                            <a href="{{ route('duration', Durations::LONG) }}"
-                            @class([
-                               'block',
-                               'px-4',
-                               'py-2',
-                               'hover:bg-gray-100',
-                               'dark:hover:bg-gray-600',
-                               'dark:hover:text-white',
-                            ])>
-                                Long <small class="text-sm">(30-60 mins)</small>
-                            </a>
-                            <a href="{{ route('duration', Durations::FEATURE) }}"
-                            @class([
-                               'block',
-                               'px-4',
-                               'py-2',
-                               'hover:bg-gray-100',
-                               'dark:hover:bg-gray-600',
-                               'dark:hover:text-white',
-                            ])>
-                                Feature Length
-                            </a>
-                        </li>
+                        @foreach(Durations::cases() as $duration)
+                            <li>
+                                <a href="{{ route('duration', $duration) }}"
+                                    @class([
+                                       'block',
+                                       'px-4',
+                                       'py-2',
+                                       'hover:bg-gray-100',
+                                       'dark:hover:bg-gray-600',
+                                       'dark:hover:text-white',
+                                    ])>
+                                    {{ Durations::title($duration) }} <small class="text-sm">{{ Durations::description($duration) }}</small>
+                                </a>
+                            </li>
+                        @endforeach
                     </ul>
                 </div>
                 <button id="optionsDropdownLink"
@@ -457,8 +413,9 @@
                         'text-gray-700',
                         'dark:text-gray-200',
                     ]) aria-labelledby="dropdownLargeButton">
+                    @foreach(Selects::cases() as $select)
                         <li>
-                            <a href="#"
+                            <a href="{{ route('selects', $select) }}"
                                 @class([
                                    'block',
                                    'px-4',
@@ -468,52 +425,10 @@
                                    'dark:hover:bg-gray-600',
                                    'dark:hover:text-white',
                                 ])>
-                                {{ config('content.featured_icon') }} {{ config('content.featured_title') }}
+                                {{ Selects::icon($select) }}&nbsp;&nbsp;{{ Selects::title($select) }}
                             </a>
                         </li>
-                    <ul @class([
-                        'py-2',
-                        'text-sm',
-                        'text-gray-700',
-                        'dark:text-gray-200',
-                    ]) aria-labelledby="dropdownLargeButton">
-                        <li>
-                            <a href="#"
-                                @class([
-                                   'block',
-                                   'px-4',
-                                   'py-2',
-                                   'text-lg',
-                                   'hover:bg-gray-100',
-                                   'dark:hover:bg-gray-600',
-                                   'dark:hover:text-white',
-                                ])>👀 Watched
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#"
-                            @class([
-                               'block',
-                               'px-4',
-                               'py-2',
-                               'text-lg',
-                               'hover:bg-gray-100',
-                               'dark:hover:bg-gray-600',
-                               'dark:hover:text-white',
-                            ])>❤️ Likes</a>
-                        </li>
-                        <li>
-                            <a href="#"
-                            @class([
-                               'block',
-                               'px-4',
-                               'py-2',
-                               'text-lg',
-                               'hover:bg-gray-100',
-                               'dark:hover:bg-gray-600',
-                               'dark:hover:text-white',
-                            ])>👎 Dislikes</a>
-                        </li>
+                    @endforeach
                     </ul>
                 </div>
                 <button id="toolsDropdownLink"

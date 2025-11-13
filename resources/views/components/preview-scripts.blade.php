@@ -7,19 +7,24 @@
             touchStartTime: 0,
             longPressThreshold: 300, // milliseconds for long press
 
-            // init() {
-            //     // Preload videos when they come into viewport
-            //     const observer = new IntersectionObserver((entries) => {
-            //         entries.forEach(entry => {
-            //             if (entry.isIntersecting) {
-            //                 this.loadSources();
-            //                 observer.unobserve(entry.target);
-            //             }
-            //         });
-            //     }, { rootMargin: '100px' }); // Start loading 100px before entering viewport
-            //
-            //     observer.observe(this.$el);
-            // },
+            init() {
+                // Only preload videos on mobile devices (screens smaller than 768px)
+                const isMobile = window.matchMedia('(max-width: 767px)').matches;
+
+                if (isMobile) {
+                    // Preload videos when they come into viewport
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                this.loadSources();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { rootMargin: '80px' }); // Start loading 80px before entering viewport
+
+                    observer.observe(this.$el);
+                }
+            },
 
             loadSources() {
                 if (this.loaded) return;
@@ -44,7 +49,13 @@
             play() {
                 const v = this.$refs.vid;
                 v.style.opacity = '1';
-                v.play();
+                v.play().catch(error => {
+                    // Silently handle abort errors when user moves away quickly
+                    if (error.name !== 'AbortError') {
+                            console.error('Video play error:', error);
+                        }
+                    });
+
                 this.playing = true;
             },
 
@@ -76,4 +87,5 @@
             }
         };
     }
+
 </script>

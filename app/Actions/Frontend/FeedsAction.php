@@ -10,6 +10,7 @@ use App\Factories\FeedItemFactory;
 use App\Jobs\Tube\CreateFeedJob;
 use App\Models\Tube\Category;
 use App\Models\Tube\Feed;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -50,8 +51,9 @@ final readonly class FeedsAction
         }
 
         return new FeedListItem(
-            $feed->map(fn (Feed $feed): FeedItem => FeedItemFactory::forListing($feed)),
-            $feed->links(),
+            feed: $feed->map(fn(Feed $feed): FeedItem => FeedItemFactory::forListing($feed)),
+            links: $feed->links(),
+            total: $feed->total(),
         );
     }
 }

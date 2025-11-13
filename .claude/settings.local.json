@@ -9,7 +9,9 @@
       "Bash(npm install)",
       "Bash(php artisan make:request:*)",
       "Bash(vendor/bin/pint:*)",
-      "Bash(php artisan:*)"
+      "Bash(php artisan:*)",
+      "Bash(convert:*)",
+      "Bash(magick:*)"
     ]
   },
   "enabledMcpjsonServers": [

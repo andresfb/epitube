@@ -6,7 +6,9 @@ use App\Http\Controllers\ContentController;
 use App\Http\Controllers\DurationController;
 use App\Http\Controllers\EncodeErrorsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SelectController;
 use App\Http\Controllers\SwitchCategoryController;
+use App\Http\Controllers\TaggedVideoController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoEngageController;
@@ -26,6 +28,9 @@ Route::get('/', HomeController::class)->name('home');
 
 Route::get('/duration/{duration}', DurationController::class)
     ->name('duration');
+
+Route::get('/selects/{select}', SelectController::class)
+    ->name('selects');
 
 Route::get('/switch/{category}', SwitchCategoryController::class)
     ->name('switch.category')
@@ -67,13 +72,11 @@ Route::controller(ContentController::class)->group(function () {
         ->name('contents.update');
 });
 
-// TODO: add the controller to load the Contents from a giving tag
-Route::get('/tags/{slug}', static function (string $slug) {
-    echo $slug;
-})->name('tags');
+Route::get('/tags/{slug}', TaggedVideoController::class)
+    ->name('tags');
 
 // TODO: add the controller to list all the tags (with a tally of how many contents they have)
-Route::get('/tags/list', static function () {
+Route::get('/tags-list', static function () {
     echo 'tag list';
 })->name('tags.list');
 

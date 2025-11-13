@@ -23,7 +23,7 @@ enum Durations: string
         };
     }
 
-    public static function description(self $duration): string
+    public static function title(self $duration): string
     {
         return match ($duration) {
             self::QUICK => 'Quick',
@@ -32,5 +32,19 @@ enum Durations: string
             self::LONG => 'Long',
             default => 'Feature Length',
         };
+    }
+
+    public static function description(self $duration): string
+    {
+        $durations = self::list($duration);
+
+        if ($duration === self::FEATURE) {
+            return '';
+        }
+
+        $low = (int) floor($durations[0] / 60);
+        $max = (int) floor($durations[1] / 60);
+
+        return sprintf("(%s-%s mins)", $low, $max);
     }
 }

@@ -1,6 +1,6 @@
 <x-layouts.app>
     <x-list-title>
-        {{ $duration }} Videos <span class="text-xs">{{ $range }}</span>
+        {{ $select }} Videos
     </x-list-title>
 
     <x-content-list
