@@ -8,36 +8,59 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Personal video content management and streaming
 - Video transcoding capabilities using FFmpeg
-- HLS (HTTP Live Streaming) support for adaptive video delivery
+- Direct video streaming with progressive download
+- Full-text search with real-time word suggestions via Meilisearch
+- Advanced tagging system with autocomplete and tag-based filtering
+- Video engagement tracking (likes, views, progress, featured status)
+- Duration-based filtering and curated collections
+- Video preview generation for quick browsing
 - Media library integration with Spatie packages for file handling
 - Queue-based background processing for video operations
-- Tagging system for content organization
+- MongoDB integration for flexible feed storage
 
 ## Architecture & Key Components
 
 ### Core Models
-- **Content**: Main video content entity with media collections, tags, and file hashing
+- **Content**: Main video content entity with media collections, tags, file hashing, engagement tracking (likes, views, featured status), and slug-based routing
+- **Feed**: MongoDB-based denormalized video metadata for fast querying, integrated with Scout/Meilisearch
+- **SearchableWord**: Scout-indexed word database for real-time search suggestions (1-word, 2-word, and 3-word combinations)
 - **Media**: Extended Spatie Media model with soft deletes
 - **MimeType**: Supported video formats and transcoding requirements
+- **SpecialTag**: Tag management system with types (BANDED, DE_TITLE_WORDS, RE_TITLE_WORDS)
+- **TitleTag**: Automatic tag assignment based on title keywords
+- **SharedTag/SharedTagItem**: Tag grouping and organization
+- **View**: Video viewing history with millisecond-precision progress tracking
 
 ### Service Layer
 - **ImportVideosService**: Scans content paths and queues videos for import
 - **ImportVideoService**: Handles individual video file processing
 - **TranscodeVideoService**: Converts videos to MP4 format
-- **HlsConverterService**: Generates HLS playlists and segments
+- **SearchableWordsService**: Extracts 1-word, 2-word, and 3-word combinations from titles/tags with banned word filtering
+- **SyncFeedRecordsService**: Synchronizes Content to MongoDB Feed records
+- **DeleteDisabledService**: Complete cleanup of disabled content across all relations
+- **ContentItemFactory**: Centralized content item creation with caching
+- **FeedItemFactory**: Context-specific feed item creation (listing vs detail views)
 
 ### Queue Architecture
 The application heavily relies on background job processing:
 - **ImportVideosJob**: Bulk video discovery and queuing
 - **ImportVideoJob**: Individual video import processing
 - **TranscodeVideoJob**: Video format conversion
-- **GenerateHlsVideosJob**: HLS playlist generation
+- **SearchableWordsFromContentJob**: Extract searchable words from content titles/tags
+- **SearchableWordsFromMediaJob**: Extract searchable words from media filenames
+- **VideoProgressJob**: Async video progress updates
+- **DeleteDisabledJob**: Background cleanup of disabled content
 
 ### Media Collections
 Content uses multiple Spatie Media Library collections:
 - `videos`: Original uploaded files (various formats)
 - `transcoded`: MP4 converted videos
 - `thumb`: Generated thumbnails with responsive images
+- `previews`: Video previews at multiple resolutions (360p, 180p) in multiple formats (webm, mp4)
+
+### Key Enums
+- **Durations**: Video length categories (Quick: 1-3min, Short: 3-10min, Medium: 10-30min, Long: 30-60min, Feature: 60+min)
+- **Selects**: Curated collections (Featured, Watched, Liked, Disliked)
 
 ## Development Commands
 
@@ -60,6 +83,9 @@ Content uses multiple Spatie Media Library collections:
 
 ### Video Processing
 - `php artisan horizon`: Queue dashboard and monitoring
+- `php artisan extract:words`: Extract searchable words from content
+- `php artisan tube:delete-disabled`: Delete disabled content with full cleanup
+- `php artisan tube:recreate-symlinks`: Recreate missing symbolic links
 - Content import and processing happen via scheduled jobs
 
 ## Key Technologies
@@ -67,32 +93,48 @@ Content uses multiple Spatie Media Library collections:
 ### Backend Stack
 - **Laravel 12** with streamlined structure
 - **Laravel Horizon 5** for queue management
+- **Laravel Scout 10** with Meilisearch for full-text search
+- **MongoDB** via jenssegers/mongodb for flexible feed storage
 - **Pest 4** for testing (with browser testing capabilities)
+- **Spatie Laravel Data** for DTOs and data transformation
 
 ### Frontend Stack
 - **Tailwind CSS 4** for styling
-- **Alpine.js**
-- **htmx**
+- **Alpine.js** for reactive components
+- **htmx** for AJAX interactions
+- **Tagify** (Yaireo) for rich tag editing interface
+- **Flowbite** for UI components
 - **Vite** for asset building
 
 ### Media Processing
-- **pbmedia/laravel-ffmpeg**: Video transcoding
-- **Spatie Media Library**: File management
-- **Spatie Tags**: Content categorization
+- **pbmedia/laravel-ffmpeg**: Video transcoding and preview generation
+- **Spatie Media Library**: File management with responsive images
+- **Spatie Tags**: Content categorization and tagging
 
 ## Database Schema
 
 ### Core Tables
-- `contents`: Video metadata with name/file hashing
+- `contents`: Video metadata with name/file hashing, slug, featured status, like_status, view tracking
+- `feeds`: MongoDB collection for denormalized video data with Scout integration
+- `searchable_words`: Word index (1-3 word combinations) with Scout/Meilisearch integration
 - `media`: Spatie media library files
 - `mime_types`: Supported formats and transcoding flags
 - `tags`/`taggables`: Content categorization system
+- `special_tags`: Tag management with type categorization
+- `title_tags`: Automatic tag assignment based on keywords
+- `shared_tags`/`shared_tag_items`: Tag grouping system
+- `views`: Video viewing history with millisecond-precision progress tracking
 - Queue tables (`jobs`, `failed_jobs`, `job_batches`)
 
 ### Key Relationships
-- Content → Media (videos, transcoded, thumbnails)
+- Content → Media (videos, transcoded, thumbnails, previews)
 - Content → Tags (many-to-many)
+- Content → Feed (synchronized via observer)
+- Content → SearchableWords (via jobs)
+- Content → Views (user viewing history)
 - Media → MimeType (format validation)
+- TitleTag → Tag (keyword-based auto-assignment)
+- SharedTag → SharedTagItem → Tag (grouping)
 
 ## File Structure Notes
 
@@ -102,10 +144,54 @@ This Laravel 12 application uses the modern streamlined structure:
 - Middleware registration in `bootstrap/app.php`
 - Console commands auto-register from `app/Console/Commands/`
 - Uses Livewire Volt for interactive pages (single-file components)
+- DTOs using Spatie Laravel Data in `app/Data/`
+- Enums for type-safe constants in `app/Enums/`
+- Factory pattern services in `app/Factories/`
+- Observer pattern for model lifecycle events in `app/Observers/`
+
+## Key Features & Routes
+
+### Search System
+- `/search` - Full video search
+- `/search/words` - Real-time word suggestions (AJAX)
+- Meilisearch-powered full-text search on Feed and SearchableWord models
+- 1-3 word combination indexing for accurate suggestions
+
+### Tag Management
+- `/tags-list` - Browse all tags
+- `/tags/{slug}` - Videos filtered by specific tag
+- `/tags/` - Tag search with autocomplete (AJAX)
+- Tagify.js integration for rich tag editing
+
+### Video Engagement
+- `/videos/{slug}/viewed` - Mark video as viewed
+- `/videos/{slug}/progress` - Update viewing progress
+- `/videos/{slug}/feature` - Toggle featured status
+- Like/Dislike tracking with integer status field
+
+### Filtering & Collections
+- `/duration/{duration}` - Filter by video length (Quick, Short, Medium, Long, Feature)
+- `/selects/{select}` - Curated collections (Featured, Watched, Liked, Disliked)
+
+### Content Management
+- `/contents` - Content listing with editing capabilities
+- `/contents/{slug}/edit` - Edit content metadata and tags
 
 ## Environment Setup
 
 The application processes video files from a configured content path and manages them through the queue system. Video processing operations are resource-intensive and designed to run in the background.
+
+### Required Services
+- **MySQL/MariaDB**: Primary relational database
+- **MongoDB**: Feed storage and flexible querying
+- **Meilisearch**: Full-text search engine for Scout
+- **Redis**: Queue backend and caching
+- **FFmpeg**: Video transcoding and preview generation
+
+### Configuration Files
+- `config/content.php`: Content-specific settings (search indexes, featured customization, preview encoding)
+- `config/scout.php`: Meilisearch configuration with filterable/sortable attributes
+- `config/database.php`: MongoDB connection alongside MySQL
 
 ===
 
