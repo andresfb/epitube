@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\Tube;
 
+use App\Libraries\Tube\CacheLibrary;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\error;
@@ -37,7 +37,7 @@ final class ResetCacheCommand extends Command
                 'tags',
             ];
 
-            Cache::tags($tags)->flush();
+            CacheLibrary::clear($tags);
         } catch (Exception $e) {
             error($e->getMessage());
         } finally {

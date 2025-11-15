@@ -9,6 +9,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SelectController;
 use App\Http\Controllers\SwitchCategoryController;
 use App\Http\Controllers\TaggedVideoController;
+use App\Http\Controllers\TagListController;
+use App\Http\Controllers\TagsSearchController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoEngageController;
@@ -73,12 +75,13 @@ Route::controller(ContentController::class)->group(function () {
 });
 
 Route::get('/tags/{slug}', TaggedVideoController::class)
-    ->name('tags');
+    ->name('tag');
 
-// TODO: add the controller to list all the tags (with a tally of how many contents they have)
-Route::get('/tags-list', static function () {
-    echo 'tag list';
-})->name('tags.list');
+Route::get('/tags-list', TagListController::class)
+    ->name('tags.list');
+
+Route::post('/tags/', TagsSearchController::class)
+    ->name('tags.search');
 
 Route::get('/encoding/errors', EncodeErrorsController::class)
     ->name('encoding.errors');

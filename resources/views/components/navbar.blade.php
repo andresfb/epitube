@@ -539,7 +539,7 @@
             <ul class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
                 @foreach($tags as $tag)
                     <li>
-                        <a href="{{ route('tags', ['slug' => $tag->slug]) }}"
+                        <a href="{{ route('tag', ['slug' => $tag->slug]) }}"
                            class="block p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                             <div class="font-semibold">{{ $tag->name }}</div>
                         </a>

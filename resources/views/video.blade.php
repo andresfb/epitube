@@ -119,7 +119,7 @@
                     <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Tags</h3>
                     <div class="flex flex-wrap gap-2">
                         @foreach($video->tags as $slug => $tag)
-                            <a href="{{ route('tags', $slug) }}"
+                            <a href="{{ route('tag', $slug) }}"
                                @class([
                                 'bg-yellow-100',
                                 'hover:bg-yellow-200',

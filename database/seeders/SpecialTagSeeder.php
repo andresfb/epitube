@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Enums\SpecialTagType;
+use App\Libraries\Tube\CacheLibrary;
 use App\Models\Tube\SpecialTag;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -20,7 +20,7 @@ final class SpecialTagSeeder extends Seeder
         $this->importDeTitleTags();
         $this->importReTitleTags();
 
-        Cache::tags('special-tags')->flush();
+        CacheLibrary::clear(['special-tags']);
     }
 
     private function importBanded(): void

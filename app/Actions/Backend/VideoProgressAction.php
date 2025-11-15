@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Actions\Backend;
 
 use App\Dtos\Tube\VideoProgressItem;
+use App\Libraries\Tube\CacheLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\View;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -45,6 +45,6 @@ final readonly class VideoProgressAction
         $content->view_count++;
         $content->update();
 
-        Cache::tags('feed')->flush();
+        CacheLibrary::clear(['feed']);
     }
 }

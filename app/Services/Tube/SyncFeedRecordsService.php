@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Tube;
 
+use App\Libraries\Tube\CacheLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
 use App\Traits\Screenable;
@@ -92,7 +93,7 @@ final class SyncFeedRecordsService
         $this->info('Done recreating search index');
 
         $this->info('Clearing feed cache');
-        Cache::tags('feed')->flush();
+        CacheLibrary::clear(['feed']);
 
         $this->warning("\nDone recreating Feed data\n");
     }

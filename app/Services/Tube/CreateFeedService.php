@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Tube;
 
+use App\Libraries\Tube\CacheLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
@@ -53,7 +53,7 @@ final readonly class CreateFeedService
             $index++;
         }
 
-        Cache::tags('feed')->flush();
+        CacheLibrary::clear(['feed']);
         Log::notice('Finished creating feed');
     }
 

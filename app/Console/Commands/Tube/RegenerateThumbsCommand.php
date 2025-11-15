@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Console\Commands\Tube;
 
 use App\Jobs\Tube\RegenerateThumbsJob;
+use App\Libraries\Tube\CacheLibrary;
 use App\Models\Tube\Content;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
@@ -57,7 +57,7 @@ final class RegenerateThumbsCommand extends Command
             });
 
             $this->newLine();
-            Cache::tags('feed')->flush();
+            CacheLibrary::clear(['feed']);
         } catch (Exception $e) {
             error($e->getMessage());
         } finally {

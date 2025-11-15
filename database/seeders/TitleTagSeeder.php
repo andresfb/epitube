@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Libraries\Tube\CacheLibrary;
 use App\Models\Tube\TitleTag;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
@@ -38,6 +38,6 @@ final class TitleTagSeeder extends Seeder
             ]);
         }
 
-        Cache::tags('title-tags')->flush();
+        CacheLibrary::clear(['title-tags']);
     }
 }

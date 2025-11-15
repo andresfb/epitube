@@ -60,6 +60,38 @@ final class Tag extends SpatieTag
             ->take(Config::integer('constants.main_tags_limit') - 1);
     }
 
+    public static function getListWithCount(): Collection
+    {
+        return Cache::tags('tags')
+            ->remember(
+                md5("TAG:LIST:COUNTED"),
+                now()->addHour(),
+                static function (): Collection {
+                    return self::query()
+                        ->select('tags.slug', 'tags.name', DB::raw('COUNT(taggables.tag_id) as count'))
+                        ->leftJoin('taggables', 'tags.id', '=', 'taggables.tag_id')
+                        ->where('taggables.taggable_type', Content::class)
+                        ->groupBy('tags.id')
+                        ->get()
+                        ->sortBy('name')
+                        ->map(function (Tag $tag) {
+                            return [
+                                'name' => $tag->name,
+                                'slug' => $tag->slug,
+                                'count' => $tag->count
+                            ];
+                        });
+                });
+    }
+
+    public static function search(string $term): Collection
+    {
+        return self::getListWithCount()
+            ->filter(function (array $tag) use ($term) {
+                return str($tag['name'])->contains($term, true);
+            });
+    }
+
     #[Scope]
     protected function contentFromCategory(Builder $query, string $categorySlug): Builder
     {

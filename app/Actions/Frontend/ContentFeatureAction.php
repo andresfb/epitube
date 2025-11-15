@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Actions\Frontend;
 
+use App\Libraries\Tube\CacheLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -36,7 +36,7 @@ final readonly class ContentFeatureAction
                     'featured' => true,
                 ]);
 
-            Cache::tags('feed')->flush();
+            CacheLibrary::clear(['feed']);
         });
     }
 }

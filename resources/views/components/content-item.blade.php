@@ -77,7 +77,7 @@
 
         <div id="tags" class="mt-4 font-normal text-gray-700 dark:text-gray-400 flex flex-wrap items-center gap-2">
         @foreach($item->tags as $slug => $tag)
-            <a href="{{ route('tags', ['slug' => $slug]) }}"
+            <a href="{{ route('tag', ['slug' => $slug]) }}"
                 @class([
                     'bg-yellow-100',
                     'hover:bg-yellow-200',
