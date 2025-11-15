@@ -61,6 +61,14 @@ final class SpecialTag extends Model
                 });
     }
 
+    public static function getRemovable(): array
+    {
+        $banded = self::getBanded();
+        $deTitle = self::getDeTitle();
+
+        return array_unique(array_merge($banded, $deTitle));
+    }
+
     public static function getReTitle(): Collection
     {
         return Cache::tags('special-tags')

@@ -144,6 +144,12 @@ return [
         'typoTolerance' => ['minWordSizeForTypos' => ['oneTypo' => 4, 'twoTypos' => 8]],
         'rankingRules' => ['words', 'typo', 'proximity', 'attribute', 'sort', 'exactness'],
         'index-settings' => [
+            App\Models\Tube\SearchableWord::class => [
+                'filterableAttributes' => [
+                    'words'
+                ],
+                'stopWords' => ['the', 'of', 'to'],
+            ],
             App\Models\Tube\Feed::class => [
                 'filterableAttributes' => [
                     'id',

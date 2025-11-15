@@ -20,4 +20,6 @@ return [
 
     'admin_name' => env('ADMIN_NAME', ''),
 
+    'removable_words' => explode(',', env('REMOVABLE_WORDS', '')),
+
 ];

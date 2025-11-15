@@ -7,6 +7,7 @@ namespace App\Actions\Backend;
 use App\Jobs\Tube\CreatePreviewsJob;
 use App\Jobs\Tube\ExtractThumbnailsJob;
 use App\Jobs\Tube\GenerateDownscalesJob;
+use App\Jobs\Tube\SearchableWordsJob;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
@@ -19,6 +20,8 @@ final readonly class RunExtraJobsAction
 
             return;
         }
+
+        SearchableWordsJob::dispatch($mediaId);
 
         ExtractThumbnailsJob::dispatch($mediaId);
 
