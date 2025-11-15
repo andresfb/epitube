@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Models\Tube\Content;
-use App\Services\Tube\SearchableWordsService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -28,13 +26,6 @@ final class TestAppCommand extends Command
         try {
             clear();
             intro('Starting test');
-
-            $content = Content::query()
-                ->inRandomOrder()
-                ->firstOrFail();
-
-            $srv = app(SearchableWordsService::class);
-            $srv->execute($content);
 
         } catch (Throwable $e) {
             error($e->getMessage());

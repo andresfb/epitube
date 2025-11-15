@@ -12,7 +12,8 @@
       "Bash(php artisan:*)",
       "Bash(convert:*)",
       "Bash(magick:*)",
-      "mcp__laravel-boost__browser-logs"
+      "mcp__laravel-boost__browser-logs",
+      "mcp__laravel-boost__database-schema"
     ]
   },
   "enabledMcpjsonServers": [

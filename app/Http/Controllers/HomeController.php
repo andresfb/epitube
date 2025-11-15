@@ -20,6 +20,7 @@ final class HomeController extends Controller
                 'feed' => $feedList->feed,
                 'links' => $feedList->links,
                 'count' => $feedList->total,
+                'title' => 'Videos of the Day',
                 'timeout' => Config::integer('feed.not_found_timeout', 5000),
                 'maxRefresh' => Config::integer('feed.max_not_foud_runs', 3),
             ]

@@ -85,7 +85,6 @@ final class Feed extends Model
     public function toSearchableArray(): array
     {
         return $this->except([
-            'order',
             'published',
             'tag_array',
             'videos',

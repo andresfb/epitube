@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Frontend\TagsSearchAction;
+use App\Actions\Frontend\TagSearchAction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Throwable;
 
-class TagsSearchController extends Controller
+class TagSearchController extends Controller
 {
     /**
      * @throws Throwable
      */
-    public function __invoke(Request $request, TagsSearchAction $action)
+    public function __invoke(Request $request, TagSearchAction $action): Response
     {
         $request->validate([
             'term' => 'string|required|min:2',

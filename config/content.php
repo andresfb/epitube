@@ -68,4 +68,5 @@ return [
 
     'featured_icon' => env('CONTENT_FEATURED_ICON', '⭐'),
 
+    'search_word_index' => env('CONTENT_SEARCH_WORD_INDEX', 'epitube_words_index'),
 ];

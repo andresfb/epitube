@@ -10,11 +10,13 @@ use App\Http\Controllers\SelectController;
 use App\Http\Controllers\SwitchCategoryController;
 use App\Http\Controllers\TaggedVideoController;
 use App\Http\Controllers\TagListController;
-use App\Http\Controllers\TagsSearchController;
+use App\Http\Controllers\TagSearchController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\VideoEngageController;
+use App\Http\Controllers\VideoSearchController;
 use App\Http\Controllers\VideoStatusController;
+use App\Http\Controllers\WordSearchController;
 use App\Models\Tube\Category;
 use Illuminate\Support\Facades\Route;
 
@@ -74,13 +76,19 @@ Route::controller(ContentController::class)->group(function () {
         ->name('contents.update');
 });
 
+Route::get('/search', VideoSearchController::class)
+    ->name('search');
+
+Route::post('/search/words', WordSearchController::class)
+    ->name('words.search');
+
 Route::get('/tags/{slug}', TaggedVideoController::class)
     ->name('tag');
 
 Route::get('/tags-list', TagListController::class)
     ->name('tags.list');
 
-Route::post('/tags/', TagsSearchController::class)
+Route::post('/tags/', TagSearchController::class)
     ->name('tags.search');
 
 Route::get('/encoding/errors', EncodeErrorsController::class)

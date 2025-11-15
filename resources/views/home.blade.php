@@ -1,6 +1,6 @@
 <x-layouts.app>
     <x-list-title>
-        Videos of the Day
+        {{ $title }}
     </x-list-title>
 
 @props([

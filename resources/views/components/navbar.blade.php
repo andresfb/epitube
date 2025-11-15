@@ -40,45 +40,118 @@
                 </svg>
                 <span class="sr-only">Search</span>
             </button>
-            <div class="relative hidden md:block">
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg @class([
-                        'w-4',
-                        'h-4',
-                        'text-gray-500',
-                        'dark:text-gray-400',
-                    ]) aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                    </svg>
-                    <span class="sr-only">Search icon</span>
-                </div>
-                <input type="text"
-                       id="search-navbar"
-                       @class([
-                           'block',
-                           'w-full',
-                           'p-2',
-                           'ps-10',
-                           'text-sm',
-                           'text-gray-900',
-                           'border',
-                           'border-gray-300',
-                           'rounded-lg',
-                           'bg-gray-50',
-                           'focus:ring-blue-500',
-                           'focus:border-blue-500',
-                           'dark:bg-gray-700',
-                           'dark:border-gray-600',
-                           'dark:placeholder-gray-400',
-                           'dark:text-white',
-                           'dark:focus:ring-blue-500',
-                           'dark:focus:border-blue-500',
-                       ])
-                       placeholder="Search...">
+            <div class="relative hidden md:block"
+                 x-data="{
+                     searchTerm: '{{ $term ?? '' }}',
+                     showResults: false,
+                     selectedIndex: -1,
+                     words: [],
+                     selectWord(word) {
+                         this.searchTerm = word;
+                         this.showResults = false;
+                         this.selectedIndex = -1;
+                         this.$nextTick(() => {
+                             this.$refs.searchForm.submit();
+                         });
+                     },
+                     handleKeydown(event) {
+                         if (event.key === 'ArrowDown') {
+                             if (this.showResults && this.words.length > 0) {
+                                 event.preventDefault();
+                                 this.selectedIndex = (this.selectedIndex + 1) % this.words.length;
+                             }
+                         } else if (event.key === 'ArrowUp') {
+                             if (this.showResults && this.words.length > 0) {
+                                 event.preventDefault();
+                                 this.selectedIndex = this.selectedIndex <= 0 ? this.words.length - 1 : this.selectedIndex - 1;
+                             }
+                         } else if (event.key === 'Enter') {
+                             if (this.showResults && this.selectedIndex >= 0 && this.words.length > 0) {
+                                 event.preventDefault();
+                                 this.selectWord(this.words[this.selectedIndex]);
+                             }
+                         } else if (event.key === 'Escape') {
+                             this.showResults = false;
+                             this.selectedIndex = -1;
+                         }
+                     }
+                 }"
+                 @htmx:after-swap.window="if ($event.detail.target.id === 'search-results') {
+                     words = Array.from($event.detail.target.querySelectorAll('[data-word]')).map(el => el.dataset.word);
+                     selectedIndex = -1;
+                 }">
+                <form action="{{ route('search') }}" method="GET" x-ref="searchForm">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg @class([
+                                'w-4',
+                                'h-4',
+                                'text-gray-500',
+                                'dark:text-gray-400',
+                            ]) aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                            <span class="sr-only">Search icon</span>
+                        </div>
+                        <input type="text"
+                               id="search-navbar"
+                               name="term"
+                               x-model="searchTerm"
+                               @keydown="handleKeydown"
+                               @class([
+                                   'block',
+                                   'w-full',
+                                   'p-2',
+                                   'ps-10',
+                                   'text-sm',
+                                   'text-gray-900',
+                                   'border',
+                                   'border-gray-300',
+                                   'rounded-lg',
+                                   'bg-gray-50',
+                                   'focus:ring-blue-500',
+                                   'focus:border-blue-500',
+                                   'dark:bg-gray-700',
+                                   'dark:border-gray-600',
+                                   'dark:placeholder-gray-400',
+                                   'dark:text-white',
+                                   'dark:focus:ring-blue-500',
+                                   'dark:focus:border-blue-500',
+                               ])
+                               placeholder="Search..."
+                               hx-post="{{ route('words.search') }}"
+                               hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+                               hx-trigger="keyup changed delay:300ms[event.key != 'ArrowDown' && event.key != 'ArrowUp' && event.key != 'Enter' && event.key != 'Escape']"
+                               hx-target="#search-results"
+                               hx-include="[name='term']"
+                               @focus="showResults = true"
+                               @click.away="showResults = false; selectedIndex = -1"
+                               autocomplete="off">
+                    </div>
+                    <div id="search-results"
+                         x-show="showResults && searchTerm.length >= 2"
+                         x-cloak
+                         @class([
+                             'absolute',
+                             'z-50',
+                             'w-full',
+                             'mt-1',
+                             'bg-white',
+                             'border',
+                             'border-gray-300',
+                             'rounded-lg',
+                             'shadow-lg',
+                             'max-h-96',
+                             'overflow-y-auto',
+                             'dark:bg-gray-700',
+                             'dark:border-gray-600',
+                         ])>
+                    </div>
+                </form>
             </div>
             <button data-collapse-toggle="navbar-search"
                     type="button"
@@ -118,40 +191,113 @@
             </button>
         </div>
         <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-search">
-            <div class="relative mt-3 md:hidden">
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400"
-                         aria-hidden="true"
-                         xmlns="http://www.w3.org/2000/svg"
-                         fill="none"
-                         viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                              stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                    </svg>
-                </div>
-                <input type="text"
-                       id="search-navbar"
-                       @class([
-                           'block',
-                           'w-full',
-                           'p-2',
-                           'ps-10',
-                           'text-sm',
-                           'text-gray-900',
-                           'border',
-                           'border-gray-300',
-                           'rounded-lg',
-                           'bg-gray-50',
-                           'focus:ring-blue-500',
-                           'focus:border-blue-500',
-                           'dark:bg-gray-700',
-                           'dark:border-gray-600',
-                           'dark:placeholder-gray-400',
-                           'dark:text-white',
-                           'dark:focus:ring-blue-500',
-                           'dark:focus:border-blue-500',
-                       ])
-                       placeholder="Search...">
+            <div class="relative mt-3 md:hidden"
+                 x-data="{
+                     searchTerm: '{{ $term ?? '' }}',
+                     showResults: false,
+                     selectedIndex: -1,
+                     words: [],
+                     selectWord(word) {
+                         this.searchTerm = word;
+                         this.showResults = false;
+                         this.selectedIndex = -1;
+                         this.$nextTick(() => {
+                             this.$refs.searchFormMobile.submit();
+                         });
+                     },
+                     handleKeydown(event) {
+                         if (event.key === 'ArrowDown') {
+                             if (this.showResults && this.words.length > 0) {
+                                 event.preventDefault();
+                                 this.selectedIndex = (this.selectedIndex + 1) % this.words.length;
+                             }
+                         } else if (event.key === 'ArrowUp') {
+                             if (this.showResults && this.words.length > 0) {
+                                 event.preventDefault();
+                                 this.selectedIndex = this.selectedIndex <= 0 ? this.words.length - 1 : this.selectedIndex - 1;
+                             }
+                         } else if (event.key === 'Enter') {
+                             if (this.showResults && this.selectedIndex >= 0 && this.words.length > 0) {
+                                 event.preventDefault();
+                                 this.selectWord(this.words[this.selectedIndex]);
+                             }
+                         } else if (event.key === 'Escape') {
+                             this.showResults = false;
+                             this.selectedIndex = -1;
+                         }
+                     }
+                 }"
+                 @htmx:after-swap.window="if ($event.detail.target.id === 'search-results-mobile') {
+                     words = Array.from($event.detail.target.querySelectorAll('[data-word]')).map(el => el.dataset.word);
+                     selectedIndex = -1;
+                 }">
+                <form action="{{ route('search') }}" method="GET" x-ref="searchFormMobile">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                 aria-hidden="true"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 fill="none"
+                                 viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                        </div>
+                        <input type="text"
+                               id="search-navbar-mobile"
+                               name="term"
+                               x-model="searchTerm"
+                               @keydown="handleKeydown"
+                               @class([
+                                   'block',
+                                   'w-full',
+                                   'p-2',
+                                   'ps-10',
+                                   'text-sm',
+                                   'text-gray-900',
+                                   'border',
+                                   'border-gray-300',
+                                   'rounded-lg',
+                                   'bg-gray-50',
+                                   'focus:ring-blue-500',
+                                   'focus:border-blue-500',
+                                   'dark:bg-gray-700',
+                                   'dark:border-gray-600',
+                                   'dark:placeholder-gray-400',
+                                   'dark:text-white',
+                                   'dark:focus:ring-blue-500',
+                                   'dark:focus:border-blue-500',
+                               ])
+                               placeholder="Search..."
+                               hx-post="{{ route('words.search') }}"
+                               hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+                               hx-trigger="keyup changed delay:300ms[event.key != 'ArrowDown' && event.key != 'ArrowUp' && event.key != 'Enter' && event.key != 'Escape']"
+                               hx-target="#search-results-mobile"
+                               hx-include="[name='term']"
+                               @focus="showResults = true"
+                               @click.away="showResults = false; selectedIndex = -1"
+                               autocomplete="off">
+                    </div>
+                    <div id="search-results-mobile"
+                         x-show="showResults && searchTerm.length >= 2"
+                         x-cloak
+                         @class([
+                             'absolute',
+                             'z-50',
+                             'w-full',
+                             'mt-1',
+                             'bg-white',
+                             'border',
+                             'border-gray-300',
+                             'rounded-lg',
+                             'shadow-lg',
+                             'max-h-96',
+                             'overflow-y-auto',
+                             'dark:bg-gray-700',
+                             'dark:border-gray-600',
+                         ])>
+                    </div>
+                </form>
             </div>
             <ul @class([
                 'flex',
@@ -277,21 +423,6 @@
                         </svg>
                     </button>
                 </li>
-                {{-- TODO: check this <li> for a reference on how to do a selected menu --}}
-                {{--                <li>--}}
-                {{--                    <a href="#" @class([--}}
-                {{--                        'block',--}}
-                {{--                        'py-2',--}}
-                {{--                        'px-3',--}}
-                {{--                        'text-white',--}}
-                {{--                        'bg-blue-700',--}}
-                {{--                        'rounded-sm',--}}
-                {{--                        'md:bg-transparent',--}}
-                {{--                        'md:text-blue-700',--}}
-                {{--                        'md:p-0',--}}
-                {{--                        'md:dark:text-blue-500',--}}
-                {{--                    ]) aria-current="page">Home</a>--}}
-                {{--                </li>--}}
                 <button id="durationDropdownLink"
                         data-dropdown-toggle="durationDropdown"
                     @class([
@@ -431,82 +562,83 @@
                     @endforeach
                     </ul>
                 </div>
-                <button id="toolsDropdownLink"
-                        data-dropdown-toggle="toolsDropdown"
-                    @class([
-                        'flex',
-                        'items-center',
-                        'justify-between',
-                        'w-full',
-                        'py-2',
-                        'px-3',
-                        'text-gray-900',
-                        'hover:bg-gray-100',
-                        'md:hover:bg-transparent',
-                        'md:border-0',
-                        'md:hover:text-blue-700',
-                        'md:p-0',
-                        'md:w-auto',
-                        'dark:text-white',
-                        'md:dark:hover:text-blue-500',
-                        'dark:focus:text-white',
-                        'dark:hover:bg-gray-700',
-                        'md:dark:hover:bg-transparent',
-                    ])>
-                    Tools
-                    <svg class="w-2.5 h-2.5 ms-2.5"
-                         aria-hidden="true"
-                         xmlns="http://www.w3.org/2000/svg"
-                         fill="none"
-                         viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                              stroke-width="2" d="m1 1 4 4 4-4"/>
-                    </svg>
-                </button>
-                <div id="toolsDropdown"
-                    @class([
-                        'z-10',
-                        'hidden',
-                        'font-normal',
-                        'bg-white',
-                        'divide-y',
-                        'divide-gray-100',
-                        'rounded-lg',
-                        'shadow-sm',
-                        'w-44',
-                        'dark:bg-gray-700',
-                        'dark:divide-gray-600',
-                    ])>
-                    <ul @class([
-                        'py-2',
-                        'text-sm',
-                        'text-gray-700',
-                        'dark:text-gray-200',
-                    ]) aria-labelledby="dropdownLargeButton">
-                        <li>
-                            <a href="{{ route('contents.list') }}" @class([
-                               'block',
-                               'px-4',
-                               'py-2',
-                               'text-lg',
-                               'hover:bg-gray-100',
-                               'dark:hover:bg-gray-600',
-                               'dark:hover:text-white',
-                            ])>✏️ Edit Contents</a>
-                        </li>
-                        <li>
-                            <a href="#" @class([
-                               'block',
-                               'px-4',
-                               'py-2',
-                               'text-lg',
-                               'hover:bg-gray-100',
-                               'dark:hover:bg-gray-600',
-                               'dark:hover:text-white',
-                            ])>📥 Downloads</a>
-                        </li>
-                    </ul>
-                </div>
+                    {{-- TODO: implement the "Tools" section, eventually --}}
+{{--                <button id="toolsDropdownLink"--}}
+{{--                        data-dropdown-toggle="toolsDropdown"--}}
+{{--                    @class([--}}
+{{--                        'flex',--}}
+{{--                        'items-center',--}}
+{{--                        'justify-between',--}}
+{{--                        'w-full',--}}
+{{--                        'py-2',--}}
+{{--                        'px-3',--}}
+{{--                        'text-gray-900',--}}
+{{--                        'hover:bg-gray-100',--}}
+{{--                        'md:hover:bg-transparent',--}}
+{{--                        'md:border-0',--}}
+{{--                        'md:hover:text-blue-700',--}}
+{{--                        'md:p-0',--}}
+{{--                        'md:w-auto',--}}
+{{--                        'dark:text-white',--}}
+{{--                        'md:dark:hover:text-blue-500',--}}
+{{--                        'dark:focus:text-white',--}}
+{{--                        'dark:hover:bg-gray-700',--}}
+{{--                        'md:dark:hover:bg-transparent',--}}
+{{--                    ])>--}}
+{{--                    Tools--}}
+{{--                    <svg class="w-2.5 h-2.5 ms-2.5"--}}
+{{--                         aria-hidden="true"--}}
+{{--                         xmlns="http://www.w3.org/2000/svg"--}}
+{{--                         fill="none"--}}
+{{--                         viewBox="0 0 10 6">--}}
+{{--                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"--}}
+{{--                              stroke-width="2" d="m1 1 4 4 4-4"/>--}}
+{{--                    </svg>--}}
+{{--                </button>--}}
+{{--                <div id="toolsDropdown"--}}
+{{--                    @class([--}}
+{{--                        'z-10',--}}
+{{--                        'hidden',--}}
+{{--                        'font-normal',--}}
+{{--                        'bg-white',--}}
+{{--                        'divide-y',--}}
+{{--                        'divide-gray-100',--}}
+{{--                        'rounded-lg',--}}
+{{--                        'shadow-sm',--}}
+{{--                        'w-44',--}}
+{{--                        'dark:bg-gray-700',--}}
+{{--                        'dark:divide-gray-600',--}}
+{{--                    ])>--}}
+{{--                    <ul @class([--}}
+{{--                        'py-2',--}}
+{{--                        'text-sm',--}}
+{{--                        'text-gray-700',--}}
+{{--                        'dark:text-gray-200',--}}
+{{--                    ]) aria-labelledby="dropdownLargeButton">--}}
+{{--                        <li>--}}
+{{--                            <a href="{{ route('contents.list') }}" @class([--}}
+{{--                               'block',--}}
+{{--                               'px-4',--}}
+{{--                               'py-2',--}}
+{{--                               'text-lg',--}}
+{{--                               'hover:bg-gray-100',--}}
+{{--                               'dark:hover:bg-gray-600',--}}
+{{--                               'dark:hover:text-white',--}}
+{{--                            ])>✏️ Edit Contents</a>--}}
+{{--                        </li>--}}
+{{--                        <li>--}}
+{{--                            <a href="#" @class([--}}
+{{--                               'block',--}}
+{{--                               'px-4',--}}
+{{--                               'py-2',--}}
+{{--                               'text-lg',--}}
+{{--                               'hover:bg-gray-100',--}}
+{{--                               'dark:hover:bg-gray-600',--}}
+{{--                               'dark:hover:text-white',--}}
+{{--                            ])>📥 Downloads</a>--}}
+{{--                        </li>--}}
+{{--                    </ul>--}}
+{{--                </div>--}}
             </ul>
 
         </div>

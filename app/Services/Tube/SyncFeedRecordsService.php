@@ -11,7 +11,6 @@ use App\Traits\Screenable;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Cache;
 
 final class SyncFeedRecordsService
 {
@@ -46,11 +45,17 @@ final class SyncFeedRecordsService
 
         $this->info('Creating Feed records');
         $found = false;
+        $count = 0;
+        $total = Content::query()
+            ->with('related')
+            ->hasAllMedia()
+            ->count();
+
         Content::query()
             ->with('related')
             ->hasAllMedia()
-            ->chunk(self::CHUNK_SIZE, function (Collection $list) use (&$found): void {
-                $this->notice(sprintf('Working on the next batch of %s Feed records', self::CHUNK_SIZE));
+            ->chunk(self::CHUNK_SIZE, function (Collection $list) use (&$found, &$count, $total): void {
+                $this->notice(sprintf('Working on the next %s records', self::CHUNK_SIZE));
 
                 try {
                     $list->each(function (Content $content) use (&$found): void {
@@ -66,7 +71,8 @@ final class SyncFeedRecordsService
                     $this->notice('');
                 }
 
-                $this->notice('');
+                $count += self::CHUNK_SIZE;
+                $this->notice(sprintf("Completed %s of %s Feed records\n", $count, $total));
             });
         $this->info('Done creating Feed records');
 

@@ -8,7 +8,7 @@ use App\Dtos\Tube\TagListItem;
 use App\Models\Tube\Tag;
 use Illuminate\Support\Collection;
 
-final readonly class TagsSearchAction
+final readonly class TagSearchAction
 {
     /**
      * @return Collection<TagListItem>

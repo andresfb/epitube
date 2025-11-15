@@ -146,7 +146,7 @@ return [
         'index-settings' => [
             App\Models\Tube\SearchableWord::class => [
                 'filterableAttributes' => [
-                    'words'
+                    'words',
                 ],
                 'stopWords' => ['the', 'of', 'to'],
             ],
@@ -156,6 +156,7 @@ return [
                     'title',
                     'active',
                     'viewed',
+                    'category_id',
                     'category',
                     'tags',
                     'tag_slugs',
@@ -164,11 +165,10 @@ return [
                 'sortableAttributes' => [
                     'added_at',
                     'created_at',
-                    'title',
-                    'viewed',
                     'like_status',
                     'view_count',
                     'length',
+                    'order',
                 ],
                 'stopWords' => ['the', 'of', 'to'],
             ],

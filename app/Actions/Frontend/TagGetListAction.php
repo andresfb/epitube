@@ -8,7 +8,7 @@ use App\Dtos\Tube\TagListItem;
 use App\Models\Tube\Tag;
 use Illuminate\Support\Collection;
 
-final readonly class TagsGetListAction
+final readonly class TagGetListAction
 {
     /**
      * @return Collection<TagListItem>
@@ -16,6 +16,6 @@ final readonly class TagsGetListAction
     public function handle(): Collection
     {
         return Tag::getListWithCount()
-            ->map(fn(array $tag) => TagListItem::from($tag));
+            ->map(fn (array $tag) => TagListItem::from($tag));
     }
 }
