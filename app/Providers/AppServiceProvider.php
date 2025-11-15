@@ -36,12 +36,7 @@ final class AppServiceProvider extends ServiceProvider
         $this->configureModels();
         $this->configureVite();
 
-        if ($this->app->isProduction()) {
-            $this->app['request']->server->set('HTTPS', 'on');
-            URL::forceScheme('https');
-        } else {
-            URL::forceScheme('http');
-        }
+        URL::forceScheme('http');
 
         View::composer('components.navbar', static function (ConcreteView $view) {
             $slug = Session::get(
