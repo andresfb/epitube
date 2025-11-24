@@ -26,6 +26,17 @@ trait Screenable
         echo $character;
     }
 
+    public function line(int $count = 1): void
+    {
+        if (! $this->toScreen) {
+            return;
+        }
+
+        for ($i = 0; $i < $count; $i++) {
+            echo PHP_EOL;
+        }
+    }
+
     public function notice(string $message): void
     {
         if ($message !== '') {

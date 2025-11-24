@@ -19,8 +19,8 @@ final readonly class JellyfinLibrary
             $provider = Jellyfin::getProvider();
             $result = $provider->getItems();
 
-            if (blank($result)) {
-                Log::error('Api returned empty array');
+            if (! is_array($result) || blank($result)) {
+                Log::error('Items API returned empty result');
 
                 return [];
             }
@@ -48,19 +48,19 @@ final readonly class JellyfinLibrary
             $provider = Jellyfin::getProvider();
             $result = $provider->getSimilarItems($itemId);
 
-            if (blank($result)) {
-                Log::error('Api returned empty array');
+            if (! is_array($result) || blank($result)) {
+                Log::error('Similar Items API returned empty result');
 
                 return [];
             }
 
-            if (! is_array($result) || blank($result['Items'])) {
-                Log::error('No items found');
+            if (blank($result['Items'])) {
+                Log::error('No similar items found');
 
                 return [];
             }
 
-            Log::notice("Found {$result['TotalRecordCount']} items");
+            Log::notice("Found {$result['TotalRecordCount']} similar items");
 
             return $result['Items'];
         } catch (Exception $e) {

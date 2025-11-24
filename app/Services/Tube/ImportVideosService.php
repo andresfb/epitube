@@ -90,7 +90,7 @@ final class ImportVideosService
             $this->scanned++;
         }
 
-        Log::notice('Loading Items done');
+        Log::notice("Loading Items done. Found {$videos->count()} videos to import");
 
         return $videos;
     }
