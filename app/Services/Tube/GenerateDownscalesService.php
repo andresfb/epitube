@@ -41,10 +41,8 @@ final class GenerateDownscalesService
             throw new RuntimeException("Media not supported: $media->id");
         }
 
-        $mediaHeight = (int) $media->getCustomProperty('height');
-        $minDowRes = Config::integer('content.min_down_res', 1080);
-
-        if ($mediaHeight < $minDowRes) {
+        $mediaHeight = $this->needsDownscale($media);
+        if ($mediaHeight <= 0) {
             Log::notice(sprintf(
                 "Media doesn't need downscaling at %sp resolution",
                 $mediaHeight
@@ -70,13 +68,25 @@ final class GenerateDownscalesService
             ->filter(fn (int $resolution): bool => $resolution < $mediaHeight);
     }
 
-    private function canConvert(Media $media): bool
+    public function canConvert(Media $media): bool
     {
         if (! $this->requirementsAreInstalled()) {
             return false;
         }
 
         return $this->canHandleMimeType(Str::lower($media->mime_type));
+    }
+
+    public function needsDownscale(Media $media): int
+    {
+        $mediaHeight = (int) $media->getCustomProperty('height');
+        $minDowRes = Config::integer('content.min_down_res', 1080);
+
+        if ($mediaHeight < $minDowRes) {
+            return 0;
+        }
+
+        return $mediaHeight;
     }
 
     private function canHandleMimeType(string $mime): bool
