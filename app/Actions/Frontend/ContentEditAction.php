@@ -7,7 +7,7 @@ namespace App\Actions\Frontend;
 use App\Dtos\Tube\ContentEditItem;
 use App\Dtos\Tube\ContentItem;
 use App\Factories\ContentItemFactory;
-use App\Jobs\SearchableWordsFromContentJob;
+use App\Jobs\Tube\SearchableWordsFromContentJob;
 use App\Libraries\Tube\CacheLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;

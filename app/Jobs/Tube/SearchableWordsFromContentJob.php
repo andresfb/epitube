@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Jobs;
+namespace App\Jobs\Tube;
 
 use App\Models\Tube\Content;
 use App\Services\Tube\SearchableWordsService;

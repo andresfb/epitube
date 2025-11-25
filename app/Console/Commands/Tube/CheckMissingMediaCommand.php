@@ -92,7 +92,7 @@ class CheckMissingMediaCommand extends Command
 
                             if (! $content->hasMedia(MediaNamesLibrary::previews())) {
                                 $this->processMissingMedia($content, MediaNamesLibrary::previews());
-                            } else if ($content->getMedia(MediaNamesLibrary::previews())->count() < 4) {
+                            } else if ($content->getMedia(MediaNamesLibrary::previews())->count() < 2) {
                                 $this->processMissingMedia($content, MediaNamesLibrary::previews());
                             } else {
                                 $this->line('Has Previews');
