@@ -105,7 +105,8 @@ final class Content extends Model implements HasMedia
             'content_related',
             'content_id',
             'related_content_id'
-        );
+        )
+        ->where('category_id', $this->category_id);
     }
 
     // Contents that list this content as related
@@ -212,6 +213,7 @@ final class Content extends Model implements HasMedia
         $tags = $this->tags->pluck('name')->toArray();
         $tagged = self::query()
             ->withAnyTags($tags)
+            ->whereCategoryId($this->category_id)
             ->whereNotIn('id', $ids)
             ->usable()
             ->inRandomOrder()

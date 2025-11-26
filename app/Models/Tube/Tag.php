@@ -57,7 +57,8 @@ final class Tag extends SpatieTag
     public static function getMenuList(string $categorySlug): Collection
     {
         return self::getCategoryList($categorySlug)
-            ->take(Config::integer('constants.main_tags_limit') - 1);
+            ->take(Config::integer('constants.main_tags_limit') - 1)
+            ->sortBy('name');
     }
 
     public static function getListWithCount(): Collection

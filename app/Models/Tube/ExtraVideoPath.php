@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Tube;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ExtraVideoPath extends Model
+final class ExtraVideoPath extends Model
 {
     public $timestamps = false;
 
