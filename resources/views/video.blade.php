@@ -111,6 +111,27 @@
                        ])>
                         {{ $video->category }}
                     </a>
+
+                @if ($video->featured)
+                    <span
+                       @class([
+                           'ml-3',
+                           'inline-flex',
+                           'items-center',
+                           'px-3',
+                           'py-1.5',
+                           'text-sm',
+                           'font-medium',
+                           'text-gray-900',
+                           'bg-blue-100',
+                           'rounded-lg',
+                           'dark:bg-gray-700',
+                           'dark:text-white',
+                           'transition-colors',
+                       ])>
+                       {{ config('content.featured_icon') }}&nbsp;&nbsp;{{ config('content.featured_title') }}
+                    </span>
+                @endif
                 </div>
 
             {{-- Tags --}}
@@ -430,9 +451,19 @@
 <x-preview-scripts />
 
 <script>
+    function returnBack() {
+        if (history.length > 1) {
+            history.back();
+        } else if (document.referrer) {
+            window.location.href = document.referrer;
+        } else {
+            window.location.href = '{{ route('home') }}';
+        }
+    }
+
     function handleDeleteResponse(event) {
         if (event.detail.successful) {
-            window.location.href = '{{ route('home') }}';
+            returnBack();
         } else if (event.detail.xhr.status === 500) {
             const response = JSON.parse(event.detail.xhr.response);
             alert('Error: ' + response.data.message);
@@ -458,7 +489,7 @@
 
             // If video is inactive, redirect to home
             if (!content.active) {
-                window.location.href = '{{ route('home') }}';
+                returnBack();
                 return;
             }
 
