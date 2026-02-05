@@ -6,6 +6,7 @@ use App\Http\Controllers\ContentController;
 use App\Http\Controllers\DurationController;
 use App\Http\Controllers\EncodeErrorsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RandomVideosController;
 use App\Http\Controllers\SelectController;
 use App\Http\Controllers\SwitchCategoryController;
 use App\Http\Controllers\TaggedVideoController;
@@ -93,3 +94,6 @@ Route::post('/tags/', TagSearchController::class)
 
 Route::get('/encoding/errors', EncodeErrorsController::class)
     ->name('encoding.errors');
+
+Route::get('/random', RandomVideosController::class)
+    ->name('random');

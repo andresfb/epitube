@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\Frontend\FeedGetSelectsAction;
 use App\Enums\Selects;
 
-class SelectController extends Controller
+final class SelectController extends Controller
 {
     public function __invoke(FeedGetSelectsAction $action, Selects $select)
     {

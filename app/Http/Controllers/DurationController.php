@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\Frontend\FeedGetDurationAction;
 use App\Enums\Durations;
 
-class DurationController extends Controller
+final class DurationController extends Controller
 {
     public function __invoke(FeedGetDurationAction $action, Durations $duration)
     {

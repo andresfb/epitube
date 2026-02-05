@@ -10,7 +10,7 @@ use App\Jobs\Tube\VideoProgressJob;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class VideoEngageController extends Controller
+final class VideoEngageController extends Controller
 {
     public function store(ContentViewedAction $action, string $slug)
     {
