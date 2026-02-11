@@ -191,6 +191,7 @@
             </button>
         </div>
         <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-search">
+            <!--suppress BadExpressionStatementJS -->
             <div class="relative mt-3 md:hidden"
                  x-data="{
                      searchTerm: '{{ $term ?? '' }}',
@@ -573,11 +574,12 @@
                            'py-2',
                            'px-3',
                            'text-blue-700' => $isRandom,
-                           'text-heading' => !$isRandom,
+                           'text-gray-900' => !$isRandom,
                            'rounded',
-                           'hover:bg-neutral-tertiary',
+                           'hover:bg-gray-100',
                            'md:hover:bg-transparent',
                            'md:border-0',
+                           'md:hover:text-blue-700',
                            'md:hover:text-fg-brand',
                            'md:p-0',
                            'md:dark:hover:bg-transparent',
