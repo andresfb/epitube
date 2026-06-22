@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/blank-livewire-starter-kit",
+    "name": "andresfb/epitube",
     "type": "project",
-    "description": "The official Laravel starter kit for Livewire.",
+    "description": "A self-hosted video streaming application",
     "keywords": [
         "laravel",
         "framework"
@@ -14,10 +14,12 @@
         "ext-fileinfo": "*",
         "davidhsianturi/blade-bootstrap-icons": "^2.1",
         "faisal50x/blade-ionicons": "^1.1",
+        "grazulex/laravel-apiroute": "^2.1",
         "http-interop/http-factory-guzzle": "^1.2",
         "landrok/language-detector": "^1.4",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.33",
+        "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.19",
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "*",
@@ -37,7 +39,7 @@
         "fakerphp/faker": "^1.23",
         "laradumps/laradumps": "^4.5",
         "larastan/larastan": "^3.7",
-        "laravel/boost": "^1.1",
+        "laravel/boost": "^2.4",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.18",
         "laravel/sail": "^1.41",

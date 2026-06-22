@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\Cache;
 
 class FeedItemFactory
 {
-    public static function forListing(Feed $feed): FeedItem
+    public static function forListingArray(Feed $feed): array
     {
         return Cache::tags('feed')
             ->remember(
                 md5("FEED:LISTING:ITEM:$feed->slug"),
                 now()->addMinutes(5),
-                static function () use ($feed): FeedItem {
+                static function () use ($feed): array {
                     $feedArray = self::getBaseArray($feed);
 
                     $feedArray['previews'] = $feed->previews;
@@ -23,9 +23,16 @@ class FeedItemFactory
                     $feedArray['videos'] = [];
                     $feedArray['related'] = [];
 
-                    return FeedItem::from($feedArray);
+                    return $feedArray;
                 }
             );
+    }
+
+    public static function forListing(Feed $feed): FeedItem
+    {
+        return FeedItem::from(
+            self::forListingArray($feed)
+        );
     }
 
     public static function forDetail(Feed $feed): FeedItem
