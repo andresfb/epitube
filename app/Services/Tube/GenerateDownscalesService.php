@@ -33,8 +33,9 @@ final class GenerateDownscalesService
      */
     public function execute(int $mediaId): void
     {
-        Log::notice("Starting generating downscales for: $mediaId");
-        $media = Media::where('id', $mediaId)
+        Log::notice("Starting generating downscales for: {$mediaId}");
+        $media = Media::query()
+            ->where('id', $mediaId)
             ->firstOrFail();
 
         if (! $this->canConvert($media)) {
@@ -55,7 +56,7 @@ final class GenerateDownscalesService
         $resolutions = $this->getResolutions($mediaHeight);
 
         foreach ($resolutions as $resolution) {
-            Log::notice("Queueing downscaling for resolution: $resolution");
+            Log::notice("Queueing downscaling for resolution: {$resolution}");
             EncodeDownscaleJob::dispatch($resolution, $mediaId);
         }
 

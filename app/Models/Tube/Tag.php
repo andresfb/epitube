@@ -37,7 +37,7 @@ final class Tag extends SpatieTag
     {
         return Cache::tags('tags')
             ->remember(
-                md5("TAG:CATEGORY:LIST:$categorySlug"),
+                md5("TAG:CATEGORY:LIST:{$categorySlug}"),
                 now()->addHours(5),
                 static function () use ($categorySlug): Collection {
                     return self::query()
@@ -64,7 +64,7 @@ final class Tag extends SpatieTag
     public static function getListWithCount(): Collection
     {
         return self::getWithCount()
-            ->map(function (Tag $tag) {
+            ->map(function (Tag $tag): array {
                 return [
                     'name' => $tag->name,
                     'slug' => $tag->slug,

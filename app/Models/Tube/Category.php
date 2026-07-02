@@ -29,22 +29,25 @@ final class Category extends Model
 
     public static function getMain(): self
     {
-        return self::where('main', true)->firstOrFail();
+        return self::query()->where('main', true)->firstOrFail();
     }
 
     public static function getAlt(): self
     {
-        return self::where('main', false)->firstOrFail();
+        return self::query()->where('main', false)->firstOrFail();
     }
 
     public static function getId(string $slug): int
     {
-        return (int) Cache::tags('categories')
+        return Cache::tags('categories')
             ->remember(
                 md5(sprintf('%s:%s:%s', self::class, __FUNCTION__, $slug)),
                 now()->addDay(),
                 function () use ($slug): int {
-                    return self::where('slug', $slug)->firstOrFail()->id;
+                    return self::query()
+                        ->where('slug', $slug)
+                        ->firstOrFail()
+                        ->id;
                 });
     }
 
@@ -55,7 +58,9 @@ final class Category extends Model
                 md5(sprintf('%s:%s:%s', self::class, __FUNCTION__, $slug)),
                 now()->addDay(),
                 function () use ($slug): string {
-                    return self::where('slug', $slug)->firstOrFail()->name;
+                    return self::query()
+                        ->where('slug', $slug)->firstOrFail()
+                        ->name;
                 });
     }
 
@@ -66,7 +71,10 @@ final class Category extends Model
                 md5(sprintf('%s:%s:%s', self::class, __FUNCTION__, $slug)),
                 now()->addDay(),
                 function () use ($slug): string {
-                    return self::where('slug', $slug)->firstOrFail()->icon;
+                    return self::query()
+                        ->where('slug', $slug)
+                        ->firstOrFail()
+                        ->icon;
                 });
     }
 

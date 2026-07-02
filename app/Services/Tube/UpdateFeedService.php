@@ -13,7 +13,7 @@ class UpdateFeedService
 
     public function execute(?CarbonInterface $froDate = null, int $limit = 0): void
     {
-        if ($froDate === null) {
+        if (!$froDate instanceof CarbonInterface) {
             $froDate = now()->subDay()->endOfDay();
         }
 
@@ -21,7 +21,7 @@ class UpdateFeedService
             $limit = Config::integer('content.max_import_videos') * 2;
         }
 
-        $this->info("Feed update with Contents created before {$froDate->toDateTimeString()} with a count of $limit\n");
+        $this->info("Feed update with Contents created before {$froDate->toDateTimeString()} with a count of {$limit}\n");
 
         Content::query()
             ->usable()

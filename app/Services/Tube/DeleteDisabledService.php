@@ -2,6 +2,7 @@
 
 namespace App\Services\Tube;
 
+use Illuminate\Support\Sleep;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
@@ -41,7 +42,7 @@ class DeleteDisabledService
 
                 $this->notice('Deleting Media records...');
                 foreach (MediaNamesLibrary::all() as $mediaName) {
-                    $this->notice("Looking for media collection $mediaName");
+                    $this->notice("Looking for media collection {$mediaName}");
 
                     $medias = $content->getMedia($mediaName);
                     if ($medias->isEmpty()) {
@@ -50,13 +51,15 @@ class DeleteDisabledService
                         continue;
                     }
 
-                    $this->notice("Deleting media items for $mediaName");
+                    $this->notice("Deleting media items for {$mediaName}");
                     foreach ($medias as $media) {
                         $this->character('.');
                         $media->forceDelete();
                     }
+
                     $this->character("\n");
                 }
+
                 $this->notice('Done deleting media records');
 
                 $this->notice('Deleting Tags...');
@@ -72,21 +75,24 @@ class DeleteDisabledService
                 $this->notice('Done deleting related Contents');
 
                 $this->notice('Adding Content to the Rejected table...');
-                Rejected::updateOrCreate([
-                    'item_id' => $content->item_id
-                ], [
-                    'og_path' => $content->og_path,
-                    'reason' => "Deleted disabled content $content->id | $content->slug",
-                    'duration' => $duration,
-                    'height' => $height,
-                    'width' => $width,
-                ]);
-                $this->notice('Done deleting related Contents');
+                Rejected::query()
+                        ->updateOrCreate([
+                        'item_id' => $content->item_id
+                    ], [
+                        'og_path' => $content->og_path,
+                        'reason' => "Deleted disabled content $content->id | $content->slug",
+                        'duration' => $duration,
+                        'height' => $height,
+                        'width' => $width,
+                    ]);
 
+                $this->notice('Done deleting related Contents');
                 $this->notice('Deleting Feed...');
+
                 Feed::query()
                     ->where('slug', $content->slug)
                     ->forceDelete();
+
                 $this->notice('Done deleting related Feed');
 
                 $this->notice('Deleting Content...');
@@ -96,7 +102,7 @@ class DeleteDisabledService
                 $this->character("\n\n");
 
                 if ($this->toScreen) {
-                    sleep(2);
+                    Sleep::sleep(2);
                 }
             });
         } finally {

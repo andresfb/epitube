@@ -9,6 +9,7 @@ use Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector;
 use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
 use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
+use Rector\Php71\Rector\FuncCall\RemoveExtraParametersRector;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
 use Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector;
 use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
@@ -31,7 +32,6 @@ return RectorConfig::configure()
         LaravelSetList::LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME,
         LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER,
         LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES,
-        LaravelSetList::LARAVEL_FACTORIES,
         LaravelSetList::LARAVEL_IF_HELPERS,
         LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES,
         LaravelSetList::LARAVEL_120,
@@ -66,6 +66,7 @@ return RectorConfig::configure()
         ThrowIfAndThrowUnlessExceptionsToUseClassStringRector::class,
         DispatchToHelperFunctionsRector::class,
         StringClassNameToClassConstantRector::class,
+        RemoveExtraParametersRector::class,
     ])
     ->withPreparedSets(
         deadCode: true,

@@ -53,7 +53,7 @@ final class RegenerateThumbsService
             }
 
             if ($isJpeg) {
-                Log::notice("Thumbnails for Content Id: $contentId are JPGs already");
+                Log::notice("Thumbnails for Content Id: {$contentId} are JPGs already");
 
                 return;
             }
@@ -63,7 +63,7 @@ final class RegenerateThumbsService
             Log::notice('Dispatching Thumbnails Job');
             ExtractThumbnailsJob::dispatch($media->id);
         } finally {
-            Log::notice("Regenerate Thumbnails done for Content Id: $contentId");
+            Log::notice("Regenerate Thumbnails done for Content Id: {$contentId}");
         }
     }
 }

@@ -171,6 +171,7 @@ final class TitleParserLibrary
             });
 
         $dirList->shift();
+
         $this->rootDirectory = str($dirList->first())->lower()->toString();
 
         $dirList->each(function (Stringable $item) use (&$titled): void {
@@ -505,7 +506,7 @@ final class TitleParserLibrary
     {
         $list = [];
         foreach ($words as $word) {
-            $list[] = " $word ";
+            $list[] = " {$word} ";
         }
 
         return $list;

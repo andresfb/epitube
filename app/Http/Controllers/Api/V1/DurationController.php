@@ -26,7 +26,7 @@ class DurationController extends Controller
                 'range' => sprintf(
                     '(%s mins)',
                     collect(Durations::list($duration))
-                        ->map(fn (int $seconds) => (int) floor($seconds / 60))
+                        ->map(fn (int $seconds): int => (int) floor($seconds / 60))
                         ->implode(' to ')
                 ),
             ],

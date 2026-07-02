@@ -37,7 +37,8 @@ final readonly class ContentEditAction
 
             $content->syncTags($tags);
 
-            Feed::where('slug', $item->slug)
+            Feed::query()
+                ->where('slug', $item->slug)
                 ->update([
                     'title' => $item->title,
                     'category_id' => $item->category_id,

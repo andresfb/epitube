@@ -40,7 +40,7 @@ final class CreatePreviewsService
             ->loadVideoInfo();
 
         $sections = $this->calculateSections($this->videoLibrary->getDuration());
-        $this->notice("Starting queuing Preview videos for: $mediaId");
+        $this->notice("Starting queuing Preview videos for: {$mediaId}");
 
         foreach (Config::array('content.preview_options.sizes') as $size => $bitRate) {
             $size = (int) $size;
@@ -70,7 +70,8 @@ final class CreatePreviewsService
     {
         $this->notice("Looking for missing Preview videos\n");
 
-        $content = Content::where('id', $contentId)
+        $content = Content::query()
+            ->where('id', $contentId)
             ->firstOrFail();
 
         $collection = MediaNamesLibrary::videos();
@@ -96,7 +97,7 @@ final class CreatePreviewsService
             foreach (Config::array('content.preview_options.extensions') as $extension) {
                 $found = false;
 
-                $this->notice("Looking for $size, $extension Preview");
+                $this->notice("Looking for {$size}, {$extension} Preview");
 
                 foreach ($previews as $preview) {
                     if ($preview->getCustomProperty('extension') !== $extension) {
@@ -112,12 +113,12 @@ final class CreatePreviewsService
                 }
 
                 if ($found) {
-                    $this->notice("Content already has a $size, $extension");
+                    $this->notice("Content already has a {$size}, {$extension}");
 
                     continue;
                 }
 
-                $this->warning("\nPreview not found. Creating $size, $extension");
+                $this->warning("\nPreview not found. Creating {$size}, {$extension}");
 
                 try {
                     $this->encodeService->execute(

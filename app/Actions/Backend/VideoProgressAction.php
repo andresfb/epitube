@@ -20,13 +20,15 @@ final readonly class VideoProgressAction
     public function handle(string $slug, VideoProgressItem $item): void
     {
         DB::transaction(function () use ($slug, $item): void {
-            $content = Content::where('slug', $slug)
+            $content = Content::query()
+                ->where('slug', $slug)
                 ->firstOrFail();
 
-            View::create([
-                'content_id' => $content->id,
-                'seconds_played' => $item->current_time,
-            ]);
+            View::query()
+                ->create([
+                    'content_id' => $content->id,
+                    'seconds_played' => $item->current_time,
+                ]);
 
             $this->markViewed($item, $content);
         });

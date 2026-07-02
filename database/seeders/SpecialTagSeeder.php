@@ -50,13 +50,14 @@ final class SpecialTagSeeder extends Seeder
     private function saveList(array $tags, SpecialTagType $type): void
     {
         foreach ($tags as $item) {
-            SpecialTag::updateOrCreate([
-                'slug' => Str::slug($item),
-                'type' => $type,
-            ], [
-                'tag' => $item,
-                'active' => true,
-            ]);
+            SpecialTag::query()
+                ->updateOrCreate([
+                    'slug' => Str::slug($item),
+                    'type' => $type,
+                ], [
+                    'tag' => $item,
+                    'active' => true,
+                ]);
         }
     }
 
@@ -73,15 +74,16 @@ final class SpecialTagSeeder extends Seeder
         foreach ($tags as $item) {
             $parts = explode('|', $item);
 
-            SpecialTag::updateOrCreate([
-                'slug' => md5($parts[0]),
-                'type' => SpecialTagType::RE_TITLE_WORDS,
-            ], [
-                'tag' => $parts[0],
-                'value' => $parts[1],
-                'active' => true,
-                'order' => $order,
-            ]);
+            SpecialTag::query()
+                ->updateOrCreate([
+                    'slug' => md5($parts[0]),
+                    'type' => SpecialTagType::RE_TITLE_WORDS,
+                ], [
+                    'tag' => $parts[0],
+                    'value' => $parts[1],
+                    'active' => true,
+                    'order' => $order,
+                ]);
 
             $order++;
         }

@@ -66,7 +66,8 @@ final class Content extends Model implements HasMedia
 
     public static function isDifferentFileVersion(string $hash, string $ogPath): bool
     {
-        return self::where('file_hash', $hash)
+        return self::query()
+            ->where('file_hash', $hash)
             ->where('og_path', '!=', $ogPath)
             ->exists();
     }
@@ -78,7 +79,8 @@ final class Content extends Model implements HasMedia
 
     public static function getImported(): array
     {
-        return self::select('item_id')
+        return self::query()
+            ->select('item_id')
             ->pluck('item_id')
             ->toArray();
     }
@@ -205,7 +207,7 @@ final class Content extends Model implements HasMedia
             ->toBase();
 
         if ($idList->count() >= $maxCount) {
-            return $idList->toArray();
+            return $idList->all();
         }
 
         // If there aren't enough related items, load contents sharing the same tags

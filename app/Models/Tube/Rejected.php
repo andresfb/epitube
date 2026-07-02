@@ -15,22 +15,24 @@ final class Rejected extends Model
 
     public static function getRejected(): array
     {
-        return self::select('item_id')
+        return self::query()
+            ->select('item_id')
             ->pluck('item_id')
             ->toArray();
     }
 
     public static function reject(ImportVideoItem $videoItem, string $message): void
     {
-        self::updateOrCreate([
-            'item_id' => $videoItem->Id,
-        ], [
-            'og_path' => $videoItem->Path,
-            'reason' => $message,
-            'duration' => $videoItem->Duration,
-            'height' => $videoItem->Height,
-            'width' => $videoItem->Width,
-        ]);
+        self::query()
+            ->updateOrCreate([
+                'item_id' => $videoItem->Id,
+            ], [
+                'og_path' => $videoItem->Path,
+                'reason' => $message,
+                'duration' => $videoItem->Duration,
+                'height' => $videoItem->Height,
+                'width' => $videoItem->Width,
+            ]);
     }
 
     protected function casts(): array

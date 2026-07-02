@@ -18,14 +18,16 @@ final readonly class ContentViewedAction
     public function handle(string $slug): void
     {
         DB::transaction(static function () use ($slug): void {
-            $content = Content::where('slug', $slug)
+            $content = Content::query()
+                ->where('slug', $slug)
                 ->firstOrFail();
 
             $content->viewed = true;
             $content->view_count++;
             $content->updateQuietly();
 
-            Feed::where('slug', $content->slug)
+            Feed::query()
+                ->where('slug', $content->slug)
                 ->update([
                     'viewed' => true,
                     'view_count' => $content->view_count,

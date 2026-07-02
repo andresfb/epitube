@@ -19,12 +19,12 @@ trait ContentIdGenerator
         for ($i = 0; $i < $maxAttempts; $i++) {
             $slug = self::generateId();
 
-            if (! Content::where('slug', $slug)->exists()) {
+            if (! Content::query()->where('slug', $slug)->exists()) {
                 return $slug;
             }
         }
 
-        throw new RuntimeException("Failed to generate unique Content ID after $maxAttempts attempts");
+        throw new RuntimeException("Failed to generate unique Content ID after {$maxAttempts} attempts");
     }
 
     /**

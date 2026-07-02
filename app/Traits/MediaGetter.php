@@ -17,7 +17,8 @@ trait MediaGetter
             $collection = MediaNamesLibrary::transcoded();
         }
 
-        return Media::where('model_id', $content->id)
+        return Media::query()
+            ->where('model_id', $content->id)
             ->where('model_type', Content::class)
             ->where('collection_name', $collection)
             ->firstOrFail();

@@ -17,6 +17,6 @@ final readonly class TagSearchAction
     public function handle(TagSearchItem $item): Collection
     {
         return Tag::search($item->term)
-            ->map(fn(array $tag) => TagListItem::from($tag));
+            ->map(fn(array $tag): TagListItem => TagListItem::from($tag));
     }
 }

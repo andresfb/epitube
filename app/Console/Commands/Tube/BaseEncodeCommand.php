@@ -20,7 +20,8 @@ abstract class BaseEncodeCommand extends Command
     protected function getContent(int $contentId = 0): Content
     {
         if ($contentId !== 0) {
-            return Content::where('id', $contentId)
+            return Content::query()
+                ->where('id', $contentId)
                 ->firstOrFail();
         }
 
@@ -29,6 +30,8 @@ abstract class BaseEncodeCommand extends Command
             throw new RuntimeException('Content id cannot be null');
         }
 
-        return Content::where('id', $contentId)->firstOrFail();
+        return Content::query()
+            ->where('id', $contentId)
+            ->firstOrFail();
     }
 }

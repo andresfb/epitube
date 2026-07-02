@@ -36,7 +36,7 @@ class ImportVideosPathsService
         $this->notice('Extra Videos Paths import started at '.now()->toDateTimeString());
 
         $paths = ExtraVideoPath::getActive();
-        if (empty($paths)) {
+        if (blank($paths)) {
             $this->warning('No Extra Videos Paths found');
 
             return;
@@ -60,15 +60,12 @@ class ImportVideosPathsService
     {
         $baseDir = sprintf('%s/%s', Config::string('content.data_path'), $path);
         if (! file_exists($baseDir)) {
-            $this->warning("Extra Videos Paths not found: $baseDir");
+            $this->warning("Extra Videos Paths not found: {$baseDir}");
 
             return;
         }
 
         $files = $this->scanPath($baseDir);
-        if (empty($files)) {
-            return;
-        }
 
         foreach ($files as $file) {
             if ($this->scanned >= $this->maxFiles) {
@@ -102,7 +99,7 @@ class ImportVideosPathsService
      */
     private function scanPath(string $baseDir): array
     {
-        $this->notice("Scanning directory $baseDir");
+        $this->notice("Scanning directory {$baseDir}");
 
         $videos = [];
         $extensions = MimeType::extensions();
@@ -137,7 +134,7 @@ class ImportVideosPathsService
         $count = count($videos);
 
         if ($count > 0) {
-            $this->notice("Found $count videos on $baseDir");
+            $this->notice("Found {$count} videos on {$baseDir}");
         }
 
         return $videos;

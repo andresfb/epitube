@@ -8,10 +8,8 @@ use App\Dtos\Tube\FeedItem;
 use App\Dtos\Tube\FeedListItem;
 use App\Dtos\Tube\RandomVideoItem;
 use App\Factories\FeedItemFactory;
-use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
 use App\Services\Tube\Feed\FeedService;
-use Illuminate\Support\Facades\Config;
 
 final readonly class RandomVideosAction
 {

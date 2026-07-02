@@ -18,7 +18,7 @@ final class ClearDirectoryDiskService
     {
         $path = Storage::disk($disk)->path('');
         if (blank($path) || ! File::exists($path)) {
-            throw new RuntimeException("Requested Disk: $disk does not exist.");
+            throw new RuntimeException("Requested Disk: {$disk} does not exist.");
         }
 
         $dirs = File::directories($path);
@@ -29,7 +29,7 @@ final class ClearDirectoryDiskService
         }
 
         collect($dirs)->each(function (string $dir) {
-            Log::notice("Preparing to delete $dir");
+            Log::notice("Preparing to delete {$dir}");
 
             if (! $this->isDirectoryEmpty($dir)) {
                 Log::warning('Directory is not empty');

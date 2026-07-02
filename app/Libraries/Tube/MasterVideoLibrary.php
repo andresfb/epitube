@@ -135,7 +135,7 @@ final class MasterVideoLibrary
 
     public function prepare(string $caller): void
     {
-        $this->notice("Preparing Master Video for: $this->mediaId from caller $caller");
+        $this->notice("Preparing Master Video for: $this->mediaId from caller {$caller}");
 
         if (! $this->getMedia()->getCustomProperty('is_video', false)) {
             throw new RuntimeException('The media provided is not a video');
@@ -145,7 +145,7 @@ final class MasterVideoLibrary
         $this->loadVideoInfo();
 
         $this->notice('Creating temp path for processing');
-        $this->tempPath = md5("$caller:{$this->getMedia()->file_name}");
+        $this->tempPath = md5("{$caller}:{$this->getMedia()->file_name}");
         $this->processingPath = Storage::disk($this->processingDisk)->path($this->tempPath);
         if (! is_dir($this->processingPath)
             && ! mkdir($this->processingPath, 0777, true)

@@ -21,7 +21,7 @@ class FeedDurationService
         );
 
         $perPage = Config::integer('feed.per_page');
-        $cacheKey = "FEED:CATE:$cateSlug:DURATION:$duration->value:PAGE:$page:$perPage";
+        $cacheKey = "FEED:CATE:{$cateSlug}:DURATION:$duration->value:PAGE:{$page}:{$perPage}";
 
         return Cache::tags('feed')
             ->remember(

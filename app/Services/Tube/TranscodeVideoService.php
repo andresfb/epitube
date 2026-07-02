@@ -49,9 +49,9 @@ final class TranscodeVideoService
      */
     public function execute(int $mediaId): void
     {
-        Log::info("Starting transcoding for video: $mediaId");
+        Log::info("Starting transcoding for video: {$mediaId}");
 
-        $this->media = Media::findOrFail($mediaId);
+        $this->media = Media::query()->findOrFail($mediaId);
 
         try {
             $this->fullPath = $this->media->getPath();
@@ -85,7 +85,7 @@ final class TranscodeVideoService
 
             $masterPath = $this->videoLibrary->getMasterFile();
 
-            Log::info("Moving the video to download folder: $masterPath");
+            Log::info("Moving the video to download folder: {$masterPath}");
             File::move($info['out_file'], $masterPath);
 
             Log::info('Processing the rest of the Encoding jobs');
@@ -102,11 +102,11 @@ final class TranscodeVideoService
         $fileType = 'Transcoding';
 
         if (! file_exists($file)) {
-            throw new RuntimeException("$fileType file not created");
+            throw new RuntimeException("{$fileType} file not created");
         }
 
         if (in_array(filesize($file), [0, false], true)) {
-            throw new RuntimeException("$fileType file is empty");
+            throw new RuntimeException("{$fileType} file is empty");
         }
 
         try {
@@ -121,7 +121,7 @@ final class TranscodeVideoService
         ]);
 
         if (! $probe->isValid($file)) {
-            throw new RuntimeException("$fileType file is not valid");
+            throw new RuntimeException("{$fileType} file is not valid");
         }
 
         $streams = $probe->streams($file);
@@ -136,7 +136,7 @@ final class TranscodeVideoService
         $threshold = 0.05 * $originalDuration;
         $difference = abs($originalDuration - $this->duration);
         if ($difference > $threshold) {
-            throw new RuntimeException("$fileType file is not complete");
+            throw new RuntimeException("{$fileType} file is not complete");
         }
 
         // has a video stream
@@ -148,7 +148,7 @@ final class TranscodeVideoService
             return;
         }
 
-        throw new RuntimeException("$fileType file is not a video");
+        throw new RuntimeException("{$fileType} file is not a video");
     }
 
     private function transcode(): array
@@ -170,7 +170,7 @@ final class TranscodeVideoService
         );
 
         Log::channel(Config::string('laravel-ffmpeg.log_channel'))
-            ->info("Transcoding ffmpeg running command: $cmd");
+            ->info("Transcoding FFmpeg running command: {$cmd}");
 
         $process = Process::fromShellCommandline($cmd)
             ->setTimeout(0)
@@ -211,7 +211,8 @@ final class TranscodeVideoService
      */
     private function addNewMedia(array $info): SpatieMedia|Media
     {
-        $content = Content::where('id', $this->media->model_id)
+        $content = Content::query()
+            ->where('id', $this->media->model_id)
             ->firstOrFail();
 
         return $content->addMedia($info['out_file'])

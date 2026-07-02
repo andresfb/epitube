@@ -18,7 +18,7 @@ final class SyncFeedService
             ->first();
 
         if ($content === null) {
-            Log::error("No content found for $contentId");
+            Log::error("No content found for {$contentId}");
 
             return;
         }

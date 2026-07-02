@@ -32,11 +32,12 @@ final class SearchableWordsService
         foreach ($list as $word) {
             $this->character('.');
 
-            SearchableWord::updateOrCreate([
-                'hash' => md5($word),
-            ], [
-                'words' => $word,
-            ]);
+            SearchableWord::query()
+                ->updateOrCreate([
+                    'hash' => md5($word),
+                ], [
+                    'words' => $word,
+                ]);
         }
     }
 
@@ -67,8 +68,8 @@ final class SearchableWordsService
                 ->replace($spaces, ' ');
 
             $words = $phrase->explode(' ')
-                ->map(fn (string $w) => trim($w))
-                ->reject(fn (string $w) => $w === ''
+                ->map(fn (string $w): string => trim($w))
+                ->reject(fn (string $w): bool => $w === ''
                     || mb_strlen($w) === 1
                     || in_array($w, $this->bandedWords, true)
                 );
@@ -107,9 +108,9 @@ final class SearchableWordsService
 
         return $list->flatten()
             ->unique()
-            ->map(fn (string $word) => trim($word))
-            ->reject(fn (string $word) => $word === '')
-            ->toArray();
+            ->map(fn (string $word): string => trim($word))
+            ->reject(fn (string $word): bool => $word === '')
+            ->all();
     }
 
     private function getRemovableWords(): array

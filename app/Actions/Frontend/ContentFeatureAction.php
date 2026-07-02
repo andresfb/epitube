@@ -18,7 +18,8 @@ final readonly class ContentFeatureAction
     public function handle(string $slug): void
     {
         DB::transaction(static function () use ($slug): void {
-            $content = Content::where('slug', $slug)
+            $content = Content::query()
+                ->where('slug', $slug)
                 ->firstOrFail();
 
             $content->like_status = 1;
@@ -28,7 +29,8 @@ final readonly class ContentFeatureAction
             $content->updateQuietly();
             $content = $content->fresh();
 
-            Feed::where('slug', $content->slug)
+            Feed::query()
+                ->where('slug', $content->slug)
                 ->update([
                     'like_status' => 1,
                     'viewed' => true,

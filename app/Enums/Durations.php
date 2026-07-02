@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Enums;
+declare(strict_types=1);
 
-use function PHPUnit\Framework\matches;
+namespace App\Enums;
 
 enum Durations: string
 {

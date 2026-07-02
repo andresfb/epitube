@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Tube;
 
+use Illuminate\Support\Facades\Date;
 use App\Actions\Backend\CreateSymLinksAction;
 use App\Actions\Backend\TranscodeMediaAction;
 use App\Dtos\Tube\ImportVideoItem;
@@ -20,7 +21,6 @@ use App\Traits\DirectoryChecker;
 use App\Traits\TagsProcessor;
 use App\Traits\VideoValidator;
 use FFMpeg\FFProbe;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -54,7 +54,9 @@ final class ImportVideoService
             Log::notice("Video already imported: $videoItem->Path");
 
             $this->parseTags(
-                Content::where('file_hash', $fileHash)->firstOrFail(),
+                Content::query()
+                    ->where('file_hash', $fileHash)
+                    ->firstOrFail(),
                 $fileInfo
             );
 
@@ -85,16 +87,17 @@ final class ImportVideoService
                 ? Config::string('constants.alt_category')
                 : Config::string('constants.main_category');
 
-            $content = Content::updateOrCreate([
-                'item_id' => $videoItem->Id,
-            ], [
-                'category_id' => Category::getId($category),
-                'file_hash' => $fileHash,
-                'title' => $tile,
-                'active' => true,
-                'og_path' => $videoItem->Path,
-                'added_at' => Carbon::parse(filemtime($videoItem->Path)),
-            ]);
+            $content = Content::query()
+                ->updateOrCreate([
+                    'item_id' => $videoItem->Id,
+                ], [
+                    'category_id' => Category::getId($category),
+                    'file_hash' => $fileHash,
+                    'title' => $tile,
+                    'active' => true,
+                    'og_path' => $videoItem->Path,
+                    'added_at' => Date::parse(filemtime($videoItem->Path)),
+                ]);
 
             $this->parseTags($content, $fileInfo);
 

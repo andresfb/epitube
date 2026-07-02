@@ -21,7 +21,7 @@ final class EncodeDownscaleService extends BaseEncodeService
      */
     public function execute(int $resolution, int $mediaId): void
     {
-        Log::notice("Starting downscaling video for media: $mediaId to resolution: $resolution");
+        Log::notice("Starting downscaling video for media: {$mediaId} to resolution: {$resolution}");
 
         try {
             $this->prepare($mediaId, (string) $resolution);
@@ -38,12 +38,12 @@ final class EncodeDownscaleService extends BaseEncodeService
 
             $file = $this->downscale($resolution);
             if (! $ffProbe->isValid($file)) {
-                throw new RuntimeException("File: $file is not a valid video");
+                throw new RuntimeException("File: {$file} is not a valid video");
             }
 
             $streams = $ffProbe->streams($file)->videos()->first();
             if ($streams === null) {
-                throw new RuntimeException("No video streams found for $file");
+                throw new RuntimeException("No video streams found for {$file}");
             }
 
             Log::notice('Adding downscale to Media');
@@ -84,7 +84,7 @@ final class EncodeDownscaleService extends BaseEncodeService
 
         Log::info('Downscaling video');
         Log::channel(Config::string('laravel-ffmpeg.log_channel'))
-            ->info("Downscaling ffmpeg running command: $cmd");
+            ->info("Downscaling FFmpeg running command: {$cmd}");
 
         $process = Process::fromShellCommandline($cmd)
             ->setTimeout(0)

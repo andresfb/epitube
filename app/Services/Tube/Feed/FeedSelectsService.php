@@ -20,7 +20,7 @@ class FeedSelectsService
         );
 
         $perPage = Config::integer('feed.per_page');
-        $cacheKey = "FEED:CATE:$cateSlug:SELECTS:$select->value:PAGE:$page:$perPage";
+        $cacheKey = "FEED:CATE:{$cateSlug}:SELECTS:$select->value:PAGE:{$page}:{$perPage}";
 
         return Cache::tags('feed')
             ->remember(

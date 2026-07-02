@@ -108,7 +108,7 @@ final readonly class ImportSelectedVideoService
         }
 
         $tags = $tags->random($selects)
-            ->toArray();
+            ->all();
 
         $content = Content::query()
             ->where('id', $contentId)

@@ -29,6 +29,6 @@ final readonly class WordSearchAction
                 'limit' => $item->count,
             ])->getHits()
         )
-            ->map(fn (array $result) => WordResultItem::from($result));
+            ->map(fn (array $result): WordResultItem => WordResultItem::from($result));
     }
 }

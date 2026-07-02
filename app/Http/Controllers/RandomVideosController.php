@@ -29,7 +29,9 @@ final class RandomVideosController extends Controller
                 'links' => $randomList->links,
                 'count' => $randomList->total,
                 'filters' => $filters,
-                'categories' => Category::all()->map(fn (Category $category) => CategoryItem::from($category)),
+                'categories' => Category::query()
+                    ->get()
+                    ->map(fn (Category $category): CategoryItem => CategoryItem::from($category)),
                 'tags' => $tagsAction->handle(),
                 'range' => [5, 25, 50, 75, 100],
             ]

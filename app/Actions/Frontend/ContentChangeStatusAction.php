@@ -22,14 +22,18 @@ final readonly class ContentChangeStatusAction
                 return $status;
             }
 
-            $content = Content::where('slug', $slug)
+            $content = Content::query()
+                ->where('slug', $slug)
                 ->firstOrFail();
 
             $content->like_status = $content->like_status === $status ? 0 : $status;
             $content->updateQuietly();
 
-            Feed::where('slug', $content->slug)
-                ->update(['like_status' => $content->like_status]);
+            Feed::query()
+                ->where('slug', $content->slug)
+                ->update([
+                    'like_status' => $content->like_status
+                ]);
 
             CacheLibrary::clear(['feed']);
 

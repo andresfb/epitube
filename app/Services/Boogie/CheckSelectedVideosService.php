@@ -56,7 +56,7 @@ final readonly class CheckSelectedVideosService
             $processedCount++;
         });
 
-        Log::notice("Queued $processedCount Videos for download");
+        Log::notice("Queued {$processedCount} Videos for download");
         Redis::expire(
             $processKey,
             (int) ceil($checkLimit * 5 * 1.5 * 60)

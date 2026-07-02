@@ -29,13 +29,14 @@ final class TitleTagSeeder extends Seeder
         }
 
         foreach ($tags as $word => $tag) {
-            TitleTag::updateOrCreate([
-                'hash' => md5($word),
-            ], [
-                'word' => $word,
-                'tag' => $tag,
-                'active' => true,
-            ]);
+            TitleTag::query()
+                ->updateOrCreate([
+                    'hash' => md5($word),
+                ], [
+                    'word' => $word,
+                    'tag' => $tag,
+                    'active' => true,
+                ]);
         }
 
         CacheLibrary::clear(['title-tags']);

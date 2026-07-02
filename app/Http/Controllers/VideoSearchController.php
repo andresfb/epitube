@@ -19,7 +19,7 @@ final class VideoSearchController extends Controller
         );
 
         if ($feed->total === 0) {
-            return redirect()->route('home')
+            return to_route('home')
                 ->with('error', 'No videos found for your search.');
         }
 

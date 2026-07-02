@@ -23,7 +23,7 @@ class FeedService
         );
 
         $perPage = Config::integer('feed.per_page');
-        $cacheKey = "FEED:CATE:$cateSlug:PAGE:$page:$perPage";
+        $cacheKey = "FEED:CATE:{$cateSlug}:PAGE:{$page}:{$perPage}";
 
         $feed = Cache::tags('feed')
             ->remember(
@@ -67,7 +67,7 @@ class FeedService
             $query->where('category_id', $filters->category_id);
         }
 
-        if (! blank($filters->tag)) {
+        if (filled($filters->tag)) {
             $query->withAnyTags($filters->tag);
         }
 
@@ -88,7 +88,7 @@ class FeedService
         );
 
         $perPage = Config::integer('feed.per_page');
-        $cacheKey = "TAGGED:$tagSlug:CATE:$cateSlug:PAGE:$page:$perPage";
+        $cacheKey = "TAGGED:{$tagSlug}:CATE:{$cateSlug}:PAGE:{$page}:{$perPage}";
 
         return Cache::tags('feed')
             ->remember(
