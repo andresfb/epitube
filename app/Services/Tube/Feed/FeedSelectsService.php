@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube\Feed;
 
 use App\Enums\Selects;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 
-class FeedSelectsService
+final class FeedSelectsService
 {
     public function execute(Selects $select, int $page): LengthAwarePaginator
     {

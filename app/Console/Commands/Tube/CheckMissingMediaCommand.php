@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Jobs\Tube\CreatePreviewsJob;
@@ -19,12 +21,12 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
-use function Laravel\Prompts\intro;
 use function Laravel\Prompts\info;
+use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\warning;
 
-class CheckMissingMediaCommand extends Command
+final class CheckMissingMediaCommand extends Command
 {
     private const int CHUNK_SIZE = 200;
 
@@ -65,7 +67,7 @@ class CheckMissingMediaCommand extends Command
 
                             $this->info("Checking content: $content->id | $content->title. Created on {$content->created_at->toDateTimeString()}");
 
-                            if (!$content->hasMedia(MediaNamesLibrary::videos())) {
+                            if (! $content->hasMedia(MediaNamesLibrary::videos())) {
                                 $this->processMissingMedia($content, MediaNamesLibrary::videos());
                             } else {
                                 $this->line('Has Video');
@@ -100,7 +102,7 @@ class CheckMissingMediaCommand extends Command
 
                             if (! $content->hasMedia(MediaNamesLibrary::downscaled())) {
                                 $this->processMissingMedia($content, MediaNamesLibrary::downscaled());
-                            } else  {
+                            } else {
                                 $this->line('Has Downscales');
                             }
                         } finally {

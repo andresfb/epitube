@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Durations;
@@ -8,7 +10,7 @@ use App\Http\Resources\Api\V1\FeedListResource;
 use App\Services\Tube\Feed\FeedDurationService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class DurationController extends Controller
+final class DurationController extends Controller
 {
     public function __invoke(
         FeedDurationService $service,
@@ -20,16 +22,16 @@ class DurationController extends Controller
                 page: (int) request('page', 1),
             )
         )
-        ->additional([
-            'meta' => [
-                'duration' => Durations::title($duration),
-                'range' => sprintf(
-                    '(%s mins)',
-                    collect(Durations::list($duration))
-                        ->map(fn (int $seconds): int => (int) floor($seconds / 60))
-                        ->implode(' to ')
-                ),
-            ],
-        ]);
+            ->additional([
+                'meta' => [
+                    'duration' => Durations::title($duration),
+                    'range' => sprintf(
+                        '(%s mins)',
+                        collect(Durations::list($duration))
+                            ->map(fn (int $seconds): int => (int) floor($seconds / 60))
+                            ->implode(' to ')
+                    ),
+                ],
+            ]);
     }
 }

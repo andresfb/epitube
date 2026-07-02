@@ -6,7 +6,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class WordSearchRequest extends FormRequest
+final class WordSearchRequest extends FormRequest
 {
     public function rules(): array
     {

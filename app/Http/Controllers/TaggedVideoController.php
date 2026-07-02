@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
 use App\Actions\Frontend\FeedGetTaggedAction;
 use App\Models\Tube\Tag;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 
 final class TaggedVideoController extends Controller
 {
@@ -19,7 +21,7 @@ final class TaggedVideoController extends Controller
                 'feed' => $feedList->feed,
                 'links' => $feedList->links,
                 'count' => $feedList->total,
-                'tag' => Tag::findFromStringOfAnyType($slug)->firstOrFail()
+                'tag' => Tag::findFromStringOfAnyType($slug)->firstOrFail(),
             ]
         );
     }

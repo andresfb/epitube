@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources\Api\V1;
 
 use App\Factories\FeedItemFactory;
@@ -9,7 +11,7 @@ use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 use Override;
 
 /** @mixin Feed */
-class FeedListResource extends JsonApiResource
+final class FeedListResource extends JsonApiResource
 {
     #[Override]
     public function toAttributes(Request $request): array

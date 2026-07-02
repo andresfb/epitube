@@ -15,7 +15,7 @@ use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class SearchableWordsFromMediaJob implements ShouldQueue
+final class SearchableWordsFromMediaJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

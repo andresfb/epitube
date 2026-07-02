@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Dtos\Tube\VideoSearchItem;
@@ -9,7 +11,7 @@ use App\Http\Resources\Api\V1\FeedListResource;
 use App\Services\Tube\Feed\VideoSearchService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class VideoSearchController extends Controller
+final class VideoSearchController extends Controller
 {
     public function __invoke(
         VideoSearchRequest $request,
@@ -20,11 +22,11 @@ class VideoSearchController extends Controller
                 VideoSearchItem::from($request)
             ),
         )
-        ->additional([
-            'meta' => [
-                'title' => "Search Results for: $request->term",
-                'term' => $request->term,
-            ],
-        ]);
+            ->additional([
+                'meta' => [
+                    'title' => "Search Results for: $request->term",
+                    'term' => $request->term,
+                ],
+            ]);
     }
 }

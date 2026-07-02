@@ -13,7 +13,7 @@ use function Laravel\Prompts\error;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class DeleteDisabledCommand extends Command
+final class DeleteDisabledCommand extends Command
 {
     protected $signature = 'delete:disabled';
 

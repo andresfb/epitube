@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
 use App\Dtos\Tube\ImportVideoItem;
@@ -16,11 +18,11 @@ use Illuminate\Support\Facades\Config;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-class ImportVideosPathsService
+final class ImportVideosPathsService
 {
     use ImportItemCreator;
-    use VideoValidator;
     use Screenable;
+    use VideoValidator;
 
     private int $maxFiles;
 
@@ -45,7 +47,7 @@ class ImportVideosPathsService
         shuffle($paths);
         foreach ($paths as $path) {
             if ($this->scanned >= $this->maxFiles) {
-                $this->warning("Maximum number of imports reached");
+                $this->warning('Maximum number of imports reached');
 
                 break;
             }
@@ -121,7 +123,7 @@ class ImportVideosPathsService
                 continue;
             }
 
-            $ext = strtolower($fileInfo->getExtension());
+            $ext = mb_strtolower($fileInfo->getExtension());
             if (! in_array($ext, $extensions, true)) {
                 continue;
             }

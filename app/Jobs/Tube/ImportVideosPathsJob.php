@@ -14,7 +14,7 @@ use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ImportVideosPathsJob implements ShouldQueue
+final class ImportVideosPathsJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

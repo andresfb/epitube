@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube\Feed;
 
 use App\Enums\Durations;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 
-class FeedDurationService
+final class FeedDurationService
 {
     public function execute(Durations $duration, int $page): LengthAwarePaginator
     {

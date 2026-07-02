@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Dtos\Tube\RandomVideoItem;
@@ -9,7 +11,7 @@ use App\Http\Resources\Api\V1\FeedListResource;
 use App\Services\Tube\Feed\FeedService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class RandomVideosController extends Controller
+final class RandomVideosController extends Controller
 {
     public function __invoke(RandomVideoRequest $form, FeedService $service): AnonymousResourceCollection
     {
@@ -21,7 +23,7 @@ class RandomVideosController extends Controller
             ->additional([
                 'meta' => [
                     'filters' => $filters,
-                    'range' => [5, 25, 50, 75, 100]
+                    'range' => [5, 25, 50, 75, 100],
                 ],
             ]);
     }

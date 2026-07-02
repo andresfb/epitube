@@ -8,7 +8,7 @@ use App\Models\Tube\Content;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
 /** @mixin Content */
-class ContentResource extends JsonApiResource
+final class ContentResource extends JsonApiResource
 {
     public static string $model = Content::class;
 

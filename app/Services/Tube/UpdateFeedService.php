@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
 use App\Models\Tube\Content;
@@ -7,13 +9,13 @@ use App\Traits\Screenable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Config;
 
-class UpdateFeedService
+final class UpdateFeedService
 {
     use Screenable;
 
     public function execute(?CarbonInterface $froDate = null, int $limit = 0): void
     {
-        if (!$froDate instanceof CarbonInterface) {
+        if (! $froDate instanceof CarbonInterface) {
             $froDate = now()->subDay()->endOfDay();
         }
 

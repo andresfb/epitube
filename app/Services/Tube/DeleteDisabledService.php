@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
-use Illuminate\Support\Sleep;
 use App\Libraries\Tube\MediaNamesLibrary;
 use App\Models\Tube\Content;
 use App\Models\Tube\Feed;
 use App\Models\Tube\Rejected;
 use App\Traits\Screenable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Sleep;
 
 use function Laravel\Prompts\confirm;
 
-class DeleteDisabledService
+final class DeleteDisabledService
 {
     use Screenable;
 
@@ -31,7 +33,7 @@ class DeleteDisabledService
                 return;
             }
 
-            if ($this->toScreen && !confirm("Deleting {$contents->count()} disabled contents. Continue?", false)) {
+            if ($this->toScreen && ! confirm("Deleting {$contents->count()} disabled contents. Continue?", false)) {
                 return;
             }
 
@@ -76,8 +78,8 @@ class DeleteDisabledService
 
                 $this->notice('Adding Content to the Rejected table...');
                 Rejected::query()
-                        ->updateOrCreate([
-                        'item_id' => $content->item_id
+                    ->updateOrCreate([
+                        'item_id' => $content->item_id,
                     ], [
                         'og_path' => $content->og_path,
                         'reason' => "Deleted disabled content $content->id | $content->slug",
@@ -120,9 +122,9 @@ class DeleteDisabledService
         $media = $content->getMedia($collection)->firstOrFail();
 
         return [
-            (int)$media->getCustomProperty('duration', 0),
-            (int)$media->getCustomProperty('height', 0),
-            (int)$media->getCustomProperty('width', 0),
+            (int) $media->getCustomProperty('duration', 0),
+            (int) $media->getCustomProperty('height', 0),
+            (int) $media->getCustomProperty('width', 0),
         ];
     }
 }

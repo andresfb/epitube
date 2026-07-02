@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube\Feed;
 
 use App\Dtos\Tube\VideoSearchItem;
@@ -9,7 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 
-class VideoSearchService
+final class VideoSearchService
 {
     public function execute(VideoSearchItem $item): LengthAwarePaginator
     {

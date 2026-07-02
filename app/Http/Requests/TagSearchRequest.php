@@ -6,7 +6,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TagSearchRequest extends FormRequest
+final class TagSearchRequest extends FormRequest
 {
     public function rules(): array
     {

@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ContentController;
 use App\Http\Controllers\Api\V1\DurationController;
@@ -19,6 +18,7 @@ use App\Http\Controllers\Api\V1\WordSearchController;
 use App\Http\Controllers\VideoEngageController;
 use App\Http\Controllers\VideoStatusController;
 use App\Models\Tube\Category;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)
     ->name('home');

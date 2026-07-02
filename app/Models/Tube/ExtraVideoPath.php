@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Tube;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,13 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 final class ExtraVideoPath extends Model
 {
     public $timestamps = false;
-
-    protected function casts(): array
-    {
-        return [
-            'active' => 'boolean',
-        ];
-    }
 
     /**
      * @return array<string>
@@ -25,5 +20,12 @@ final class ExtraVideoPath extends Model
             ->get()
             ->pluck('path')
             ->toArray();
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+        ];
     }
 }

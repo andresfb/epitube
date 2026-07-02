@@ -6,7 +6,7 @@ namespace App\Dtos\Tube;
 
 use Spatie\LaravelData\Data;
 
-class WordSearchItem extends Data
+final class WordSearchItem extends Data
 {
     public function __construct(
         public string $term,

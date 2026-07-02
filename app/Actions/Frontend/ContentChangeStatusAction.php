@@ -32,7 +32,7 @@ final readonly class ContentChangeStatusAction
             Feed::query()
                 ->where('slug', $content->slug)
                 ->update([
-                    'like_status' => $content->like_status
+                    'like_status' => $content->like_status,
                 ]);
 
             CacheLibrary::clear(['feed']);

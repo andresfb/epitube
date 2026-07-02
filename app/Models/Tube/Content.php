@@ -108,7 +108,7 @@ final class Content extends Model implements HasMedia
             'content_id',
             'related_content_id'
         )
-        ->where('category_id', $this->category_id);
+            ->where('category_id', $this->category_id);
     }
 
     // Contents that list this content as related

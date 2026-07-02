@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube\Feed;
 
 use App\Dtos\Tube\RandomVideoItem;
@@ -13,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 
-class FeedService
+final class FeedService
 {
     public function getFeed(int $page, bool $fromRequest): LengthAwarePaginator
     {

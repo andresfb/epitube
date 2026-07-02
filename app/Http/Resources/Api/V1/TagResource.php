@@ -8,7 +8,7 @@ use App\Models\Tube\Tag;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
 /** @mixin Tag */
-class TagResource extends JsonApiResource
+final class TagResource extends JsonApiResource
 {
     public static string $model = Tag::class;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Factories;
 
 use App\Dtos\Tube\FeedItem;
@@ -7,7 +9,7 @@ use App\Dtos\Tube\VideoItem;
 use App\Models\Tube\Feed;
 use Illuminate\Support\Facades\Cache;
 
-class FeedItemFactory
+final class FeedItemFactory
 {
     public static function forListingArray(Feed $feed): array
     {

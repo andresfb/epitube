@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Factories;
 
 use App\Dtos\Tube\ContentItem;
@@ -12,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use JsonException;
 
-class ContentItemFactory
+final class ContentItemFactory
 {
     public static function forListing(Content $content): ContentItem
     {

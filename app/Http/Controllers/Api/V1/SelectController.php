@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\Selects;
@@ -8,7 +10,7 @@ use App\Http\Resources\Api\V1\FeedListResource;
 use App\Services\Tube\Feed\FeedSelectsService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class SelectController extends Controller
+final class SelectController extends Controller
 {
     public function __invoke(
         FeedSelectsService $service,
@@ -20,10 +22,10 @@ class SelectController extends Controller
                 page: (int) request('page', 1),
             )
         )
-        ->additional([
-            'meta' => [
-                'select' => Selects::title($select),
-            ],
-        ]);
+            ->additional([
+                'meta' => [
+                    'select' => Selects::title($select),
+                ],
+            ]);
     }
 }

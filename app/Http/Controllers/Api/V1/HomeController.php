@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
@@ -7,7 +9,7 @@ use App\Http\Resources\Api\V1\FeedListResource;
 use App\Services\Tube\Feed\FeedService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class HomeController extends Controller
+final class HomeController extends Controller
 {
     public function __invoke(FeedService $service): AnonymousResourceCollection
     {
@@ -17,10 +19,10 @@ class HomeController extends Controller
                 fromRequest: true,
             )
         )
-        ->additional([
-            'meta' => [
-                'title' => 'Videos of the Day',
-            ],
-        ]);
+            ->additional([
+                'meta' => [
+                    'title' => 'Videos of the Day',
+                ],
+            ]);
     }
 }

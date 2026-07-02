@@ -6,7 +6,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RandomVideoRequest extends FormRequest
+final class RandomVideoRequest extends FormRequest
 {
     public function rules(): array
     {

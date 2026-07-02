@@ -6,7 +6,7 @@ namespace App\Dtos\Tube;
 
 use Spatie\LaravelData\Data;
 
-class TagListItem extends Data
+final class TagListItem extends Data
 {
     public function __construct(
         public string $slug,

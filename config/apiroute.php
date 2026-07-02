@@ -40,15 +40,15 @@ return [
     |
     */
     'versions' => [
-         'v1' => [
-             'routes' => base_path('routes/api/v1.php'),
-             'middleware' => [],
-             'name' => 'api.v1.',  // Route name prefix
-             'status' => 'active',  // 'active', 'beta', 'deprecated', 'sunset'
-             'deprecated_at' => null,
-             'sunset_at' => null,
-             'successor' => null,
-         ],
+        'v1' => [
+            'routes' => base_path('routes/api/v1.php'),
+            'middleware' => [],
+            'name' => 'api.v1.',  // Route name prefix
+            'status' => 'active',  // 'active', 'beta', 'deprecated', 'sunset'
+            'deprecated_at' => null,
+            'sunset_at' => null,
+            'successor' => null,
+        ],
     ],
 
     /*

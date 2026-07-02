@@ -20,7 +20,7 @@ final class Tag extends SpatieTag
     {
         return Cache::tags('tags')
             ->remember(
-                md5("TAG:LIST"),
+                md5('TAG:LIST'),
                 now()->addHours(5),
                 static function (): array {
                     return self::query()
@@ -68,7 +68,7 @@ final class Tag extends SpatieTag
                 return [
                     'name' => $tag->name,
                     'slug' => $tag->slug,
-                    'count' => $tag->count
+                    'count' => $tag->count,
                 ];
             });
     }
@@ -77,7 +77,7 @@ final class Tag extends SpatieTag
     {
         return Cache::tags('tags')
             ->remember(
-                md5("TAG:LIST:COUNTED"),
+                md5('TAG:LIST:COUNTED'),
                 now()->addHour(),
                 static function (): Collection {
                     return self::query()
