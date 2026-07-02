@@ -10,7 +10,7 @@ use Illuminate\Contracts\View\View;
 
 final class VideoController extends Controller
 {
-    public function __invoke(string $slug, FeedAction $feedAction): Factory|View
+    public function __invoke(FeedAction $feedAction, string $slug): Factory|View
     {
         $feed = $feedAction->handle($slug);
 

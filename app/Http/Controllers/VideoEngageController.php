@@ -12,6 +12,9 @@ use Throwable;
 
 final class VideoEngageController extends Controller
 {
+    /**
+     * Mark video as viewed
+     */
     public function store(ContentViewedAction $action, string $slug)
     {
         try {
@@ -30,6 +33,9 @@ final class VideoEngageController extends Controller
         }
     }
 
+    /**
+     * Update video progress
+     */
     public function update(VideoProgressRequest $request, string $slug)
     {
         try {
@@ -51,6 +57,9 @@ final class VideoEngageController extends Controller
         }
     }
 
+    /**
+     * Disable video
+     */
     public function delete(ContentDisableAction $action, string $slug)
     {
         try {

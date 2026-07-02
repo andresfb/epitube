@@ -63,25 +63,30 @@ final class Tag extends SpatieTag
 
     public static function getListWithCount(): Collection
     {
+        return self::getWithCount()
+            ->map(function (Tag $tag) {
+                return [
+                    'name' => $tag->name,
+                    'slug' => $tag->slug,
+                    'count' => $tag->count
+                ];
+            });
+    }
+
+    public static function getWithCount(): Collection
+    {
         return Cache::tags('tags')
             ->remember(
                 md5("TAG:LIST:COUNTED"),
                 now()->addHour(),
                 static function (): Collection {
                     return self::query()
-                        ->select('tags.slug', 'tags.name', DB::raw('COUNT(taggables.tag_id) as count'))
+                        ->select('tags.id', 'tags.slug', 'tags.name', DB::raw('COUNT(taggables.tag_id) as count'))
                         ->leftJoin('taggables', 'tags.id', '=', 'taggables.tag_id')
                         ->where('taggables.taggable_type', Content::class)
                         ->groupBy('tags.id')
                         ->get()
-                        ->sortBy('name')
-                        ->map(function (Tag $tag) {
-                            return [
-                                'name' => $tag->name,
-                                'slug' => $tag->slug,
-                                'count' => $tag->count
-                            ];
-                        });
+                        ->sortBy('name');
                 });
     }
 

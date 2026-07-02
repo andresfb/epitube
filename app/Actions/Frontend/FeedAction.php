@@ -6,44 +6,16 @@ namespace App\Actions\Frontend;
 
 use App\Dtos\Tube\FeedItem;
 use App\Factories\FeedItemFactory;
-use App\Models\Tube\Content;
-use App\Models\Tube\Feed;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Services\Tube\Feed\FeedService;
 
 final readonly class FeedAction
 {
+    public function __construct(private FeedService $service) {}
+
     public function handle(string $slug): FeedItem
     {
-        $feed = $this->getFeed($slug);
-        if (! $feed instanceof Feed) {
-            return $this->generateFeed($slug);
-        }
+        $feed = $this->service->getVideo($slug);
 
         return FeedItemFactory::forDetail($feed);
-    }
-
-    private function generateFeed(string $slug): FeedItem
-    {
-        $content = Content::query()
-            ->usable()
-            ->where('slug', $slug)
-            ->firstOrFail();
-
-        Feed::activateFeed($content);
-
-        $feed = $this->getFeed($slug);
-        if (! $feed instanceof Feed) {
-            throw (new ModelNotFoundException)->setModel(Feed::class);
-        }
-
-        return FeedItemFactory::forDetail($feed);
-    }
-
-    private function getFeed(string $slug): ?Feed
-    {
-        return Feed::query()
-            ->where('active', true)
-            ->where('slug', $slug)
-            ->first();
     }
 }

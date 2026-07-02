@@ -13,6 +13,7 @@
         "ext-curl": "*",
         "ext-fileinfo": "*",
         "davidhsianturi/blade-bootstrap-icons": "^2.1",
+        "dedoc/scramble": "^0.13.30",
         "faisal50x/blade-ionicons": "^1.1",
         "grazulex/laravel-apiroute": "^2.1",
         "http-interop/http-factory-guzzle": "^1.2",
@@ -87,7 +88,8 @@
         "test:rector": "rector --dry-run",
         "test:lint": "pint --test",
         "test:types": "phpstan analyse --ansi --memory-limit=2G",
-        "test:unit": "pest --colors=always --parallel --coverage --exactly=100",
+        "test:unit": "pest --colors=always --parallel",
+        "test:coverage": "pest --colors=always --parallel --coverage --exactly=100",
         "test:type-coverage": "pest --type-coverage --min=100",
         "test": [
             "@php artisan config:clear --ansi",

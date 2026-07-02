@@ -1,0 +1,21 @@
+info:
+  name: Tags
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{process.env.API_URL}}/search/tags"
+  body:
+    type: json
+    data: |-
+      {
+        "term": "tee"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

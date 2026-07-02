@@ -1,0 +1,15 @@
+info:
+  name: Video Disliked
+  type: http
+  seq: 13
+
+http:
+  method: DELETE
+  url: "{{process.env.API_URL}}/videos/9XWQ7SSLb73/dislike"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

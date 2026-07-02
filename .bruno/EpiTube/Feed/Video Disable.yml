@@ -1,0 +1,15 @@
+info:
+  name: Video Disable
+  type: http
+  seq: 10
+
+http:
+  method: DELETE
+  url: "{{process.env.API_URL}}/videos/6qJCh7j4F3W/disable"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

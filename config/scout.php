@@ -161,6 +161,7 @@ return [
                     'tags',
                     'tag_slugs',
                     'length',
+                    'like_status',
                 ],
                 'sortableAttributes' => [
                     'added_at',

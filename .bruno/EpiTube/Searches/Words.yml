@@ -1,0 +1,22 @@
+info:
+  name: Words
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{process.env.API_URL}}/search/words"
+  body:
+    type: json
+    data: |-
+      {
+        "term": "lara",
+        "count": 20
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

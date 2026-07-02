@@ -1,45 +1,78 @@
 <?php
 
+/** @noinspection PhpUnhandledExceptionInspection */
+
 declare(strict_types=1);
 
+use Rector\Caching\ValueObject\Storage\FileCacheStorage;
+use Rector\CodingStyle\Rector\Catch_\CatchExceptionNameMatchingTypeRector;
+use Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector;
 use Rector\Config\RectorConfig;
-use Rector\Exception\Configuration\InvalidConfigurationException;
+use Rector\Php55\Rector\String_\StringClassNameToClassConstantRector;
 use Rector\Php74\Rector\Closure\ClosureToArrowFunctionRector;
 use Rector\Php81\Rector\FuncCall\NullToStrictStringFuncCallArgRector;
 use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
 use Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector;
 use Rector\TypeDeclaration\Rector\Closure\AddClosureVoidReturnTypeWhereNoReturnRector;
 use Rector\TypeDeclaration\Rector\Function_\AddFunctionVoidReturnTypeWhereNoReturnRector;
+use RectorLaravel\Rector\FuncCall\ThrowIfAndThrowUnlessExceptionsToUseClassStringRector;
+use RectorLaravel\Rector\If_\ThrowIfRector;
+use RectorLaravel\Rector\StaticCall\DispatchToHelperFunctionsRector;
+use RectorLaravel\Set\LaravelSetList;
 use RectorLaravel\Set\LaravelSetProvider;
 
-try {
-    return RectorConfig::configure()
-        ->withPaths([
-            __DIR__.'/app',
-            __DIR__.'/modules',
-            __DIR__.'/bootstrap/app.php',
-            __DIR__.'/database',
-            __DIR__.'/public',
-        ])
-        ->withPreparedSets(
-            deadCode: true,
-            codeQuality: true,
-            typeDeclarations: true,
-            privatization: true,
-            earlyReturn: true,
-        )
-        ->withPhpSets()
-        ->withSetProviders(LaravelSetProvider::class)
-        ->withComposerBased(laravel: true/** other options */)
-        ->withSkip([
-            AddOverrideAttributeToOverriddenMethodsRector::class,
-            DisallowedEmptyRuleFixerRector::class,
-            ClosureToArrowFunctionRector::class,
-            AddClosureVoidReturnTypeWhereNoReturnRector::class,
-            AddFunctionVoidReturnTypeWhereNoReturnRector::class,
-            NullToStrictStringFuncCallArgRector::class,
-        ])
-        ->withImportNames(removeUnusedImports: true);
-} catch (InvalidConfigurationException $e) {
-    echo 'Invalid configuration: '.$e->getMessage();
-}
+return RectorConfig::configure()
+    ->withSetProviders(LaravelSetProvider::class)
+    ->withSets([
+        LaravelSetList::LARAVEL_ARRAYACCESS_TO_METHOD_CALL,
+        LaravelSetList::LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL,
+        LaravelSetList::LARAVEL_CODE_QUALITY,
+        LaravelSetList::LARAVEL_COLLECTION,
+        LaravelSetList::LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME,
+        LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER,
+        LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES,
+        LaravelSetList::LARAVEL_FACTORIES,
+        LaravelSetList::LARAVEL_IF_HELPERS,
+        LaravelSetList::LARAVEL_LEGACY_FACTORIES_TO_CLASSES,
+        LaravelSetList::LARAVEL_120,
+    ])
+    ->withImportNames(
+        removeUnusedImports: true,
+    )
+    ->withComposerBased(laravel: true)
+    ->withCache(
+        cacheDirectory: '/tmp/rector',
+        cacheClass: FileCacheStorage::class,
+    )
+    ->withPaths([
+        __DIR__.'/app',
+        __DIR__.'/bootstrap/app.php',
+        __DIR__.'/config',
+        __DIR__.'/database',
+        __DIR__.'/public',
+        __DIR__.'/routes',
+        __DIR__.'/tests',
+    ])
+    ->withSkip([
+        AddOverrideAttributeToOverriddenMethodsRector::class,
+        DisallowedEmptyRuleFixerRector::class,
+        ClosureToArrowFunctionRector::class,
+        AddClosureVoidReturnTypeWhereNoReturnRector::class,
+        AddFunctionVoidReturnTypeWhereNoReturnRector::class,
+        NullToStrictStringFuncCallArgRector::class,
+        CatchExceptionNameMatchingTypeRector::class,
+        EncapsedStringsToSprintfRector::class,
+        ThrowIfRector::class,
+        ThrowIfAndThrowUnlessExceptionsToUseClassStringRector::class,
+        DispatchToHelperFunctionsRector::class,
+        StringClassNameToClassConstantRector::class,
+    ])
+    ->withPreparedSets(
+        deadCode: true,
+        codeQuality: true,
+        codingStyle: true,
+        typeDeclarations: true,
+        privatization: true,
+        earlyReturn: true,
+    )
+    ->withPhpSets();

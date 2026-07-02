@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class TagSearchRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'term' => 'string|required|min:2',
+        ];
+    }
+}

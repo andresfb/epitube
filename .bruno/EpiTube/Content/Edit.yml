@@ -1,0 +1,19 @@
+info:
+  name: Edit
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{process.env.API_URL}}/contents/vaDPs2OT410/edit?include=tags,category"
+  params:
+    - name: include
+      value: tags,category
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

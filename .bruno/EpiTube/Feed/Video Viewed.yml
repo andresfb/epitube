@@ -1,0 +1,15 @@
+info:
+  name: Video Viewed
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{process.env.API_URL}}/videos/Vk5zxgoxsyQ/viewed"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

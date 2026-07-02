@@ -16,6 +16,11 @@ class HomeController extends Controller
                 page: (int) request('page', 1),
                 fromRequest: true,
             )
-        );
+        )
+        ->additional([
+            'meta' => [
+                'title' => 'Videos of the Day',
+            ],
+        ]);
     }
 }

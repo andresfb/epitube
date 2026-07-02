@@ -28,20 +28,13 @@ class FeedItemFactory
             );
     }
 
-    public static function forListing(Feed $feed): FeedItem
-    {
-        return FeedItem::from(
-            self::forListingArray($feed)
-        );
-    }
-
-    public static function forDetail(Feed $feed): FeedItem
+    public static function forDetailArray(Feed $feed): array
     {
         return Cache::tags('feed')
             ->remember(
                 md5("FEED:DETAIL:ITEM:$feed->slug"),
                 now()->addHour(),
-                static function () use ($feed): FeedItem {
+                static function () use ($feed): array {
                     $feedArray = self::getBaseArray($feed);
 
                     $feedArray['previews'] = [];
@@ -51,9 +44,23 @@ class FeedItemFactory
                         ->each(fn (array $video): VideoItem => VideoItem::from($video))
                         ->toArray();
 
-                    return FeedItem::from($feedArray);
+                    return $feedArray;
                 }
             );
+    }
+
+    public static function forListing(Feed $feed): FeedItem
+    {
+        return FeedItem::from(
+            self::forListingArray($feed)
+        );
+    }
+
+    public static function forDetail(Feed $feed): FeedItem
+    {
+        return FeedItem::from(
+            self::forDetailArray($feed)
+        );
     }
 
     public static function getBaseArray(Feed $feed): array
@@ -77,8 +84,16 @@ class FeedItemFactory
         }
 
         return Feed::query()
-            ->whereIn('id', collect($feed->related)->pluck('id')->toArray())
+            ->whereIn(
+                'id',
+                collect($feed->related)
+                    ->pluck('id')
+                    ->toArray()
+            )
             ->where('id', '!=', $feed->id)
+            ->where('active', true)
+            ->where('like_status', '>=', 0)
+            ->where('viewed', false)
             ->get()
             ->map(function (Feed $related): FeedItem {
                 return self::forListing($related);
