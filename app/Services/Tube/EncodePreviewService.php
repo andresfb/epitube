@@ -94,7 +94,7 @@ final class EncodePreviewService extends BaseEncodeService
         $tmpFileTemplate = sprintf($fileTemplate, '_%s');
         $outputFile = sprintf($fileTemplate, '');
 
-        $this->notice("Encoding $outputFile file");
+        $this->notice("Encoding {$outputFile} file");
 
         $tmpFiles = [];
         foreach ($item->sections as $section) {

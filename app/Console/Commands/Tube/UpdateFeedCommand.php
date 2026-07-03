@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Services\Tube\UpdateFeedService;
@@ -14,7 +16,7 @@ use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\text;
 
-class UpdateFeedCommand extends Command
+final class UpdateFeedCommand extends Command
 {
     protected $signature = 'update:feed';
 

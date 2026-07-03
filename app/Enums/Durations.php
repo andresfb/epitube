@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Enums;
+declare(strict_types=1);
 
-use function PHPUnit\Framework\matches;
+namespace App\Enums;
 
 enum Durations: string
 {
@@ -45,6 +45,6 @@ enum Durations: string
         $low = (int) floor($durations[0] / 60);
         $max = (int) floor($durations[1] / 60);
 
-        return sprintf("(%s-%s mins)", $low, $max);
+        return sprintf('(%s-%s mins)', $low, $max);
     }
 }

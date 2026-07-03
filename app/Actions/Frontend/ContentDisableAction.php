@@ -18,14 +18,19 @@ final readonly class ContentDisableAction
     public function handle(string $slug): void
     {
         DB::transaction(static function () use ($slug): void {
-            $content = Content::where('slug', $slug)
+            $content = Content::query()
+                ->where('slug', $slug)
                 ->firstOrFail();
 
             $content->active = false;
-            $content->updateQuietly();
+            $content->saveQuietly();
 
-            Feed::where('slug', $content->slug)
-                ->update(['active' => false]);
+            $feed = Feed::query()
+                ->where('slug', $content->slug)
+                ->firstOrFail();
+
+            $feed->active = false;
+            $feed->save();
 
             CacheLibrary::clear();
         });

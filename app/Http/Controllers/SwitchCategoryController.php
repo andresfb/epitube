@@ -13,6 +13,6 @@ final class SwitchCategoryController extends Controller
     {
         Session::put('category', $category);
 
-        return redirect()->route('home');
+        return to_route('home');
     }
 }

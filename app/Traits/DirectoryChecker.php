@@ -12,14 +12,14 @@ trait DirectoryChecker
     {
         // Ensure the path is a directory
         if (! is_dir($dir)) {
-            Log::warning("Item '$dir' is not a directory");
+            Log::warning("Item '{$dir}' is not a directory");
 
             return false;
         }
 
         // Ensure the path isis readable
         if (! is_readable($dir)) {
-            Log::warning("Item '$dir' is not readable");
+            Log::warning("Item '{$dir}' is not readable");
 
             return false;
         }
@@ -31,7 +31,7 @@ trait DirectoryChecker
         $files = array_diff($files, ['.', '..']);
 
         // If the remaining array is empty, the directory has no contents
-        return count($files) === 0;
+        return $files === [];
     }
 
     private function isHash(string $value): bool

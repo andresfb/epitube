@@ -35,7 +35,7 @@ trait TagsProcessor
         $deTitleWords = SpecialTag::getDeTitle();
         foreach ($deTitleWords as $word) {
             $text = $text->replace(
-                sprintf(' %s ', ucfirst($word)), " $word "
+                sprintf(' %s ', ucfirst($word)), " {$word} "
             );
         }
 

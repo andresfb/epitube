@@ -16,6 +16,6 @@ final readonly class TagGetListAction
     public function handle(): Collection
     {
         return Tag::getListWithCount()
-            ->map(fn (array $tag) => TagListItem::from($tag));
+            ->map(fn (array $tag): TagListItem => TagListItem::from($tag));
     }
 }

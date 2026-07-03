@@ -16,9 +16,9 @@ final class VideoProgressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'current_time' => 'required|numeric',
-            'duration' => 'required|numeric',
-            'completed' => 'required|boolean',
+            'current_time' => ['required', 'numeric'],
+            'duration' => ['required', 'numeric'],
+            'completed' => ['required', 'boolean'],
         ];
     }
 }

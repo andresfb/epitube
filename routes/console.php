@@ -18,11 +18,11 @@ Artisan::command('inspire', function (): void {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::job(app(ImportVideosJob::class))->dailyAt('09:20');
-Schedule::job(app(ImportRelatedVideosJob::class))->dailyAt('01:45');
-Schedule::job(app(CreateFeedJob::class))->dailyAt('03:25');
-Schedule::job(app(DeleteDisabledJob::class))->dailyAt('05:35');
-Schedule::job(app(ImportVideosPathsJob::class))->dailyAt('13:20');
-Schedule::job(app(UpdateFeedJob::class))->dailyAt('23:05');
-Schedule::job(app(CheckEncodingErrorsJob::class))->dailyAt('23:45');
-Schedule::job(app(ClearTemporaryDisksJob::class))->dailyAt('23:55');
+Schedule::job(resolve(ImportVideosJob::class))->dailyAt('09:20');
+Schedule::job(resolve(ImportRelatedVideosJob::class))->dailyAt('01:45');
+Schedule::job(resolve(CreateFeedJob::class))->dailyAt('03:25');
+Schedule::job(resolve(DeleteDisabledJob::class))->dailyAt('05:35');
+Schedule::job(resolve(ImportVideosPathsJob::class))->dailyAt('13:20');
+Schedule::job(resolve(UpdateFeedJob::class))->dailyAt('23:05');
+Schedule::job(resolve(CheckEncodingErrorsJob::class))->dailyAt('23:45');
+Schedule::job(resolve(ClearTemporaryDisksJob::class))->dailyAt('23:55');

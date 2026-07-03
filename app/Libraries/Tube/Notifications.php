@@ -15,10 +15,12 @@ final class Notifications
     public static function error(string $caller, int $mediaId, string $error): void
     {
         try {
-            $media = Media::where('id', $mediaId)
+            $media = Media::query()
+                ->where('id', $mediaId)
                 ->firstOrFail();
 
-            $content = Content::where('id', $media->model_id)
+            $content = Content::query()
+                ->where('id', $media->model_id)
                 ->firstOrFail();
 
             $content->notify(new EncodeErrorNotification(
@@ -29,7 +31,7 @@ final class Notifications
             ));
         } catch (Exception $e) {
             Log::error(
-                "Can't send notification for Media: $mediaId: Message: $error, Caller: $caller, Error: {$e->getMessage()}"
+                "Can't send notification for Media: {$mediaId}: Message: {$error}, Caller: {$caller}, Error: {$e->getMessage()}"
             );
         }
     }

@@ -14,7 +14,7 @@ final class ImportRelatedVideoService
 {
     public function execute(int $contentId): void
     {
-        Log::notice("Starting Related Videos process for Content Id: $contentId");
+        Log::notice("Starting Related Videos process for Content Id: {$contentId}");
 
         $key = md5(Config::string('content.related_checks_key'));
         $checkedList = array_map(intval(...), Cache::get($key, []));
@@ -73,7 +73,7 @@ final class ImportRelatedVideoService
         $this->saveChecked($checkedList);
         $content->touch();
 
-        Log::notice("Imported $imported out of $maxCount related videos for Content Id: $contentId");
+        Log::notice("Imported {$imported} out of {$maxCount} related videos for Content Id: {$contentId}");
     }
 
     private function saveChecked(array $checkedList): void

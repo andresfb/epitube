@@ -6,27 +6,18 @@ namespace App\Actions\Frontend;
 
 use App\Dtos\Tube\FeedItem;
 use App\Dtos\Tube\FeedListItem;
+use App\Dtos\Tube\VideoSearchItem;
 use App\Factories\FeedItemFactory;
-use App\Models\Tube\Category;
 use App\Models\Tube\Feed;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Session;
+use App\Services\Tube\Feed\VideoSearchService;
 
 final readonly class VideoSearchAction
 {
-    public function handle(string $term): FeedListItem
-    {
-        $cateSlug = Session::get(
-            'category',
-            Config::string('constants.main_category')
-        );
+    public function __construct(private VideoSearchService $service) {}
 
-        $feed = Feed::search($term)
-            ->where('category_id', Category::getId($cateSlug))
-            ->where('active', true)
-            ->paginate(
-                Config::integer('feed.per_page')
-            );
+    public function handle(VideoSearchItem $item): FeedListItem
+    {
+        $feed = $this->service->execute($item);
 
         return new FeedListItem(
             feed: $feed->map(fn (Feed $feed): FeedItem => FeedItemFactory::forListing($feed)),

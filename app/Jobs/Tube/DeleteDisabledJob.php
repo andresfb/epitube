@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Tube;
 
 use App\Services\Tube\DeleteDisabledService;
@@ -11,7 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class DeleteDisabledJob implements ShouldQueue
+final class DeleteDisabledJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

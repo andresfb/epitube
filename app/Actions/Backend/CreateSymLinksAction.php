@@ -32,7 +32,7 @@ final class CreateSymLinksAction
         }
 
         if (! $skipDelete && ! File::delete($mediaPath)) {
-            throw new RuntimeException("Unable to delete media file: $mediaPath");
+            throw new RuntimeException("Unable to delete media file: {$mediaPath}");
         }
 
         $mediaDir = dirname($mediaPath);
@@ -41,7 +41,7 @@ final class CreateSymLinksAction
         }
 
         if (! symlink($ogFile, $mediaPath)) {
-            throw new RuntimeException("Unable to link symlink: $ogFile -> $mediaPath");
+            throw new RuntimeException("Unable to link symlink: {$ogFile} -> {$mediaPath}");
         }
 
         $this->notice('Done replacing video file with symlink');

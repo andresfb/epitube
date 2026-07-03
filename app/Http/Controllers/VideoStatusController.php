@@ -14,6 +14,9 @@ final class VideoStatusController extends Controller
 {
     public function __construct(private readonly ContentChangeStatusAction $changeStatusAction) {}
 
+    /**
+     * Mark video as liked
+     */
     public function store(string $slug): JsonResponse
     {
         return $this->changeStatus(
@@ -22,6 +25,9 @@ final class VideoStatusController extends Controller
         );
     }
 
+    /**
+     * Mark video as featured
+     */
     public function update(ContentFeatureAction $action, string $slug)
     {
         try {
@@ -40,6 +46,9 @@ final class VideoStatusController extends Controller
         }
     }
 
+    /**
+     * Mark video as unliked
+     */
     public function delete(string $slug): JsonResponse
     {
         return $this->changeStatus(

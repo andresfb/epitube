@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Jobs\Tube\CreatePreviewsJob;
@@ -19,12 +21,12 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 use function Laravel\Prompts\clear;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
-use function Laravel\Prompts\intro;
 use function Laravel\Prompts\info;
+use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 use function Laravel\Prompts\warning;
 
-class CheckMissingMediaCommand extends Command
+final class CheckMissingMediaCommand extends Command
 {
     private const int CHUNK_SIZE = 200;
 
@@ -47,15 +49,15 @@ class CheckMissingMediaCommand extends Command
             $count = 0;
             $total = Content::query()
                 ->where('active', true)
-                ->where('created_at', '<', now()->startOfDay())
+                ->where('created_at', '<', today())
                 ->latest()
                 ->count();
 
-            info("Found $total Contents");
+            info("Found {$total} Contents");
 
             Content::query()
                 ->where('active', true)
-                ->where('created_at', '<', now()->startOfDay())
+                ->where('created_at', '<', today())
                 ->latest()
                 ->chunk(self::CHUNK_SIZE, function (Collection $contents) use (&$count, $total): void {
                     warning(sprintf("\nWorking on the next %s records\n", self::CHUNK_SIZE));
@@ -65,7 +67,7 @@ class CheckMissingMediaCommand extends Command
 
                             $this->info("Checking content: $content->id | $content->title. Created on {$content->created_at->toDateTimeString()}");
 
-                            if (!$content->hasMedia(MediaNamesLibrary::videos())) {
+                            if (! $content->hasMedia(MediaNamesLibrary::videos())) {
                                 $this->processMissingMedia($content, MediaNamesLibrary::videos());
                             } else {
                                 $this->line('Has Video');
@@ -92,7 +94,7 @@ class CheckMissingMediaCommand extends Command
 
                             if (! $content->hasMedia(MediaNamesLibrary::previews())) {
                                 $this->processMissingMedia($content, MediaNamesLibrary::previews());
-                            } else if ($content->getMedia(MediaNamesLibrary::previews())->count() < 2) {
+                            } elseif ($content->getMedia(MediaNamesLibrary::previews())->count() < 2) {
                                 $this->processMissingMedia($content, MediaNamesLibrary::previews());
                             } else {
                                 $this->line('Has Previews');
@@ -100,7 +102,7 @@ class CheckMissingMediaCommand extends Command
 
                             if (! $content->hasMedia(MediaNamesLibrary::downscaled())) {
                                 $this->processMissingMedia($content, MediaNamesLibrary::downscaled());
-                            } else  {
+                            } else {
                                 $this->line('Has Downscales');
                             }
                         } finally {
@@ -120,9 +122,12 @@ class CheckMissingMediaCommand extends Command
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function processMissingMedia(Content $content, string $collectionName): void
     {
-        $this->warn("Missing $collectionName Collection");
+        $this->warn("Missing {$collectionName} Collection");
 
         if (($collectionName === MediaNamesLibrary::videos()) && confirm('Content Missing `Videos` collection. Disable Content?')) {
             $content->active = false;
@@ -137,12 +142,12 @@ class CheckMissingMediaCommand extends Command
                 return;
             }
 
-            if (! $this->downscalesService->needsDownscale($media)) {
+            if ($this->downscalesService->needsDownscale($media) === 0) {
                 return;
             }
         }
 
-        if (! confirm("Queue creating the $collectionName files?")) {
+        if (! confirm("Queue creating the {$collectionName} files?")) {
             return;
         }
 
@@ -153,9 +158,10 @@ class CheckMissingMediaCommand extends Command
             MediaNamesLibrary::previews() => CreatePreviewsJob::dispatch($media->id),
             MediaNamesLibrary::thumbnails() => ExtractThumbnailsJob::dispatch($media->id),
             MediaNamesLibrary::downscaled() => GenerateDownscalesJob::dispatch($media->id),
+            default => throw new Exception("Unknown collection name: {$collectionName}"),
         };
 
-        $this->line("Dispatched job to create $collectionName files");
+        $this->line("Dispatched job to create {$collectionName} files");
     }
 
     private function getMedia(Content $content): Media|SpatieMedia

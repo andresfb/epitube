@@ -61,7 +61,7 @@ final class CompleteDownscalesCommand extends Command
                     }
 
                     $missing = $resolutions->count() - $downscaled->count();
-                    $this->line("\n\nContent: $content->id missing $missing downscale(s)");
+                    $this->line("\n\nContent: $content->id missing {$missing} downscale(s)");
 
                     if (! confirm('Dispatch Job?')) {
                         $this->newLine();

@@ -68,9 +68,12 @@ final readonly class DownloadSelectedVideoService
         }
 
         $videoId = (int) $videoId;
-        $video = SelectedVideo::where('id', $videoId)->first();
+        $video = SelectedVideo::query()
+            ->where('id', $videoId)
+            ->first();
+
         if ($video === null) {
-            Log::warning("Video $videoId not found");
+            Log::warning("Video {$videoId} not found");
             $this->dispatchJob($status);
 
             return;

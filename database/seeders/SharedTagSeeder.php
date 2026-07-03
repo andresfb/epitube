@@ -22,21 +22,23 @@ final class SharedTagSeeder extends Seeder
         }
 
         foreach ($list as $name => $tags) {
-            $sharedTag = SharedTag::updateOrCreate([
-                'hash' => md5(mb_strtolower($name)),
-            ], [
-                'name' => $name,
-                'active' => true,
-            ]);
-
-            foreach ($tags as $tag) {
-                SharedTagItem::updateOrCreate([
-                    'shared_tag_id' => $sharedTag->id,
-                    'hash' => md5(mb_strtolower($tag)),
+            $sharedTag = SharedTag::query()
+                ->updateOrCreate([
+                    'hash' => md5(mb_strtolower($name)),
                 ], [
-                    'tag' => $tag,
+                    'name' => $name,
                     'active' => true,
                 ]);
+
+            foreach ($tags as $tag) {
+                SharedTagItem::query()
+                    ->updateOrCreate([
+                        'shared_tag_id' => $sharedTag->id,
+                        'hash' => md5(mb_strtolower($tag)),
+                    ], [
+                        'tag' => $tag,
+                        'active' => true,
+                    ]);
             }
         }
     }

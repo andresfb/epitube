@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Tube;
 
 use App\Services\Tube\UpdateFeedService;
@@ -12,7 +14,7 @@ use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class UpdateFeedJob implements ShouldQueue
+final class UpdateFeedJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

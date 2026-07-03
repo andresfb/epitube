@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs\Tube;
 
-use App\Models\Tube\Content;
 use App\Models\Tube\Media;
 use App\Services\Tube\SearchableWordsService;
 use Exception;
@@ -14,7 +15,7 @@ use Illuminate\Queue\MaxAttemptsExceededException;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class SearchableWordsFromMediaJob implements ShouldQueue
+final class SearchableWordsFromMediaJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

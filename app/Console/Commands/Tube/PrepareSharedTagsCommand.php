@@ -37,7 +37,7 @@ final class PrepareSharedTagsCommand extends Command
                     transform: fn ($tag): string => ucwords($tag)
                 );
 
-                info("Processing $tag");
+                info("Processing {$tag}");
 
                 $childTags = text(
                     label: 'Enter Child Tags',
@@ -48,7 +48,7 @@ final class PrepareSharedTagsCommand extends Command
                 $tagList[$tag] = str($childTags)
                     ->explode(',')
                     ->map(fn (string $tag): string => ucwords(mb_trim($tag)))
-                    ->toArray();
+                    ->all();
 
                 if (! confirm('Add more Tags?')) {
                     break;

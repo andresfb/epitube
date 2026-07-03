@@ -1,0 +1,15 @@
+info:
+  name: Video Get
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: "{{process.env.API_URL}}/videos/vaDPs2OT410"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

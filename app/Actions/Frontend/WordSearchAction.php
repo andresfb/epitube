@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Frontend;
 
 use App\Dtos\Tube\WordResultItem;
+use App\Dtos\Tube\WordSearchItem;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Meilisearch\Client;
@@ -14,7 +15,7 @@ final readonly class WordSearchAction
     /**
      * @return Collection<WordResultItem>
      */
-    public function handle(string $term): Collection
+    public function handle(WordSearchItem $item): Collection
     {
         $client = new Client(
             config('scout.meilisearch.host'),
@@ -24,10 +25,10 @@ final readonly class WordSearchAction
         $index = $client->index(Config::string('content.search_word_index'));
 
         return collect(
-            $index->search($term, [
-                'limit' => 10,
+            $index->search($item->term, [
+                'limit' => $item->count,
             ])->getHits()
         )
-            ->map(fn (array $result) => WordResultItem::from($result));
+            ->map(fn (array $result): WordResultItem => WordResultItem::from($result));
     }
 }

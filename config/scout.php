@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Models\Tube\Feed;
+use App\Models\Tube\SearchableWord;
+
 return [
 
     /*
@@ -144,13 +147,13 @@ return [
         'typoTolerance' => ['minWordSizeForTypos' => ['oneTypo' => 4, 'twoTypos' => 8]],
         'rankingRules' => ['words', 'typo', 'proximity', 'attribute', 'sort', 'exactness'],
         'index-settings' => [
-            App\Models\Tube\SearchableWord::class => [
+            SearchableWord::class => [
                 'filterableAttributes' => [
                     'words',
                 ],
                 'stopWords' => ['the', 'of', 'to'],
             ],
-            App\Models\Tube\Feed::class => [
+            Feed::class => [
                 'filterableAttributes' => [
                     'id',
                     'title',
@@ -161,6 +164,7 @@ return [
                     'tags',
                     'tag_slugs',
                     'length',
+                    'like_status',
                 ],
                 'sortableAttributes' => [
                     'added_at',

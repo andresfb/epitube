@@ -13,6 +13,8 @@ final readonly class ContentGetAction
     public function handle(string $slug): ContentItem
     {
         $content = Content::query()
+            ->with('tags')
+            ->with('media')
             ->where('slug', $slug)
             ->firstOrFail();
 

@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Actions\Frontend\FeedGetDurationAction;
 use App\Enums\Durations;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 
 final class DurationController extends Controller
 {
-    public function __invoke(FeedGetDurationAction $action, Durations $duration)
+    public function __invoke(FeedGetDurationAction $action, Durations $duration): Factory|View
     {
         $feedList = $action->handle($duration, (int) request('page', 1));
 
@@ -21,7 +25,7 @@ final class DurationController extends Controller
                 'range' => sprintf(
                     '(%s mins)',
                     collect(Durations::list($duration))
-                        ->map(fn (int $seconds) => (int) floor($seconds / 60))
+                        ->map(fn (int $seconds): int => (int) floor($seconds / 60))
                         ->implode(' to ')
                 ),
             ]

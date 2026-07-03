@@ -1,0 +1,15 @@
+info:
+  name: Video Featured
+  type: http
+  seq: 12
+
+http:
+  method: PUT
+  url: "{{process.env.API_URL}}/videos/pSdRdK7vqhj/feature"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

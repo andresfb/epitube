@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
 use App\Libraries\Tube\MediaNamesLibrary;
@@ -8,10 +10,11 @@ use App\Models\Tube\Feed;
 use App\Models\Tube\Rejected;
 use App\Traits\Screenable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Sleep;
 
 use function Laravel\Prompts\confirm;
 
-class DeleteDisabledService
+final class DeleteDisabledService
 {
     use Screenable;
 
@@ -30,7 +33,7 @@ class DeleteDisabledService
                 return;
             }
 
-            if ($this->toScreen && !confirm("Deleting {$contents->count()} disabled contents. Continue?", false)) {
+            if ($this->toScreen && ! confirm("Deleting {$contents->count()} disabled contents. Continue?", false)) {
                 return;
             }
 
@@ -41,7 +44,7 @@ class DeleteDisabledService
 
                 $this->notice('Deleting Media records...');
                 foreach (MediaNamesLibrary::all() as $mediaName) {
-                    $this->notice("Looking for media collection $mediaName");
+                    $this->notice("Looking for media collection {$mediaName}");
 
                     $medias = $content->getMedia($mediaName);
                     if ($medias->isEmpty()) {
@@ -50,13 +53,15 @@ class DeleteDisabledService
                         continue;
                     }
 
-                    $this->notice("Deleting media items for $mediaName");
+                    $this->notice("Deleting media items for {$mediaName}");
                     foreach ($medias as $media) {
                         $this->character('.');
                         $media->forceDelete();
                     }
+
                     $this->character("\n");
                 }
+
                 $this->notice('Done deleting media records');
 
                 $this->notice('Deleting Tags...');
@@ -72,21 +77,24 @@ class DeleteDisabledService
                 $this->notice('Done deleting related Contents');
 
                 $this->notice('Adding Content to the Rejected table...');
-                Rejected::updateOrCreate([
-                    'item_id' => $content->item_id
-                ], [
-                    'og_path' => $content->og_path,
-                    'reason' => "Deleted disabled content $content->id | $content->slug",
-                    'duration' => $duration,
-                    'height' => $height,
-                    'width' => $width,
-                ]);
-                $this->notice('Done deleting related Contents');
+                Rejected::query()
+                    ->updateOrCreate([
+                        'item_id' => $content->item_id,
+                    ], [
+                        'og_path' => $content->og_path,
+                        'reason' => "Deleted disabled content $content->id | $content->slug",
+                        'duration' => $duration,
+                        'height' => $height,
+                        'width' => $width,
+                    ]);
 
+                $this->notice('Done deleting related Contents');
                 $this->notice('Deleting Feed...');
+
                 Feed::query()
                     ->where('slug', $content->slug)
                     ->forceDelete();
+
                 $this->notice('Done deleting related Feed');
 
                 $this->notice('Deleting Content...');
@@ -96,7 +104,7 @@ class DeleteDisabledService
                 $this->character("\n\n");
 
                 if ($this->toScreen) {
-                    sleep(2);
+                    Sleep::sleep(2);
                 }
             });
         } finally {
@@ -114,9 +122,9 @@ class DeleteDisabledService
         $media = $content->getMedia($collection)->firstOrFail();
 
         return [
-            (int)$media->getCustomProperty('duration', 0),
-            (int)$media->getCustomProperty('height', 0),
-            (int)$media->getCustomProperty('width', 0),
+            (int) $media->getCustomProperty('duration', 0),
+            (int) $media->getCustomProperty('height', 0),
+            (int) $media->getCustomProperty('width', 0),
         ];
     }
 }

@@ -7,6 +7,12 @@ namespace App\Models\Tube;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * @property int $id
+ * @property string $extension
+ * @property string $type
+ * @property bool $transcode
+ */
 final class MimeType extends Model
 {
     public $timestamps = false;
@@ -34,7 +40,8 @@ final class MimeType extends Model
             ->remember(
                 md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static fn (): array => self::select('type')
+                static fn (): array => self::query()
+                    ->select('type')
                     ->groupBy('type')
                     ->pluck('type')
                     ->toArray());
@@ -52,7 +59,8 @@ final class MimeType extends Model
             ->remember(
                 md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static fn (): array => self::where('extension', '!=', '*')
+                static fn (): array => self::query()
+                    ->where('extension', '!=', '*')
                     ->groupBy('extension')
                     ->pluck('extension')
                     ->toArray()
@@ -71,7 +79,8 @@ final class MimeType extends Model
             ->remember(
                 md5(self::class.__FUNCTION__),
                 now()->addDays(30),
-                static fn (): array => self::select('type')
+                static fn (): array => self::query()
+                    ->select('type')
                     ->where('transcode', true)
                     ->groupBy('type')
                     ->pluck('type')
@@ -95,7 +104,8 @@ final class MimeType extends Model
             ->remember(
                 md5(self::class.__FUNCTION__),
                 now()->addMinutes(30),
-                static fn (): array => self::select('type')
+                static fn (): array => self::query()
+                    ->select('type')
                     ->where('transcode', false)
                     ->groupBy('type')
                     ->pluck('type')

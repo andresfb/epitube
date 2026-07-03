@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Tube;
 
 use App\Dtos\Tube\ImportVideoItem;
@@ -16,17 +18,17 @@ use Illuminate\Support\Facades\Config;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-class ImportVideosPathsService
+final class ImportVideosPathsService
 {
     use ImportItemCreator;
-    use VideoValidator;
     use Screenable;
+    use VideoValidator;
 
     private int $maxFiles;
 
     private int $scanned = 0;
 
-    public function __construct(private readonly ImportVideoService $videoService)
+    public function __construct()
     {
         $this->maxFiles = (int) floor(Config::integer('content.max_import_videos') / 2);
     }
@@ -36,7 +38,7 @@ class ImportVideosPathsService
         $this->notice('Extra Videos Paths import started at '.now()->toDateTimeString());
 
         $paths = ExtraVideoPath::getActive();
-        if (empty($paths)) {
+        if (blank($paths)) {
             $this->warning('No Extra Videos Paths found');
 
             return;
@@ -45,7 +47,7 @@ class ImportVideosPathsService
         shuffle($paths);
         foreach ($paths as $path) {
             if ($this->scanned >= $this->maxFiles) {
-                $this->warning("Maximum number of imports reached");
+                $this->warning('Maximum number of imports reached');
 
                 break;
             }
@@ -60,15 +62,12 @@ class ImportVideosPathsService
     {
         $baseDir = sprintf('%s/%s', Config::string('content.data_path'), $path);
         if (! file_exists($baseDir)) {
-            $this->warning("Extra Videos Paths not found: $baseDir");
+            $this->warning("Extra Videos Paths not found: {$baseDir}");
 
             return;
         }
 
         $files = $this->scanPath($baseDir);
-        if (empty($files)) {
-            return;
-        }
 
         foreach ($files as $file) {
             if ($this->scanned >= $this->maxFiles) {
@@ -102,7 +101,7 @@ class ImportVideosPathsService
      */
     private function scanPath(string $baseDir): array
     {
-        $this->notice("Scanning directory $baseDir");
+        $this->notice("Scanning directory {$baseDir}");
 
         $videos = [];
         $extensions = MimeType::extensions();
@@ -124,7 +123,7 @@ class ImportVideosPathsService
                 continue;
             }
 
-            $ext = strtolower($fileInfo->getExtension());
+            $ext = mb_strtolower($fileInfo->getExtension());
             if (! in_array($ext, $extensions, true)) {
                 continue;
             }
@@ -137,7 +136,7 @@ class ImportVideosPathsService
         $count = count($videos);
 
         if ($count > 0) {
-            $this->notice("Found $count videos on $baseDir");
+            $this->notice("Found {$count} videos on {$baseDir}");
         }
 
         return $videos;

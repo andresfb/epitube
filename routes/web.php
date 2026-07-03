@@ -86,10 +86,10 @@ Route::post('/search/words', WordSearchController::class)
 Route::get('/tags/{slug}', TaggedVideoController::class)
     ->name('tag');
 
-Route::get('/tags-list', TagListController::class)
+Route::get('/tags', TagListController::class)
     ->name('tags.list');
 
-Route::post('/tags/', TagSearchController::class)
+Route::post('/search/tags', TagSearchController::class)
     ->name('tags.search');
 
 Route::get('/encoding/errors', EncodeErrorsController::class)

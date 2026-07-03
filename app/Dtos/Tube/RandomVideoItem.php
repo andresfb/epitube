@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dtos\Tube;
 
 use Spatie\LaravelData\Data;
 
-class RandomVideoItem extends Data
+final class RandomVideoItem extends Data
 {
     public function __construct(
         public ?int $category_id = 0,

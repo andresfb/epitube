@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands\Tube;
 
 use App\Jobs\Tube\ImportVideosPathsJob;
@@ -14,7 +16,7 @@ use function Laravel\Prompts\info;
 use function Laravel\Prompts\intro;
 use function Laravel\Prompts\outro;
 
-class ImportVideosPathsCommand extends Command
+final class ImportVideosPathsCommand extends Command
 {
     protected $signature = 'import:video-paths';
 
@@ -35,7 +37,7 @@ class ImportVideosPathsCommand extends Command
 
             $service->setToScreen(true)
                 ->execute();
-        }  catch (Throwable $e) {
+        } catch (Throwable $e) {
             $this->newLine();
             error($e->getMessage());
         } finally {

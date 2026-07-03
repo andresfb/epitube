@@ -91,7 +91,7 @@ final class ImportVideoPathCommand extends Command
             ->toString();
 
         if (! file_exists($file)) {
-            throw new RuntimeException("File not found $file");
+            throw new RuntimeException("File not found {$file}");
         }
 
         return $file;
@@ -99,7 +99,7 @@ final class ImportVideoPathCommand extends Command
 
     private function findItem(string $path): ImportVideoItem
     {
-        info("Looking up $path on Jellyfin");
+        info("Looking up {$path} on Jellyfin");
 
         $items = JellyfinLibrary::getItems();
         if (blank($items)) {
@@ -114,7 +114,7 @@ final class ImportVideoPathCommand extends Command
             return $this->createItem($item);
         }
 
-        throw new RuntimeException("Item $path found on Jellyfin");
+        throw new RuntimeException("Item {$path} found on Jellyfin");
     }
 
     private function checkImported(ImportVideoItem $importItem): void

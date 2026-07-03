@@ -25,7 +25,7 @@ final readonly class ContentListAction
     public function handle(ContentListItem $item): Collection
     {
         if ($item->isEmpty()) {
-            $item->created_after = now()->startOfDay();
+            $item->created_after = today();
         }
 
         $key = md5(json_encode($item->toArray(), JSON_THROW_ON_ERROR));

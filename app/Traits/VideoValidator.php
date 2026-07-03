@@ -16,7 +16,7 @@ trait VideoValidator
 
     private function getExtensions(): array
     {
-        if (! blank($this->videoExtensions)) {
+        if (filled($this->videoExtensions)) {
             return $this->videoExtensions;
         }
 

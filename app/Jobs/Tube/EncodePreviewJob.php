@@ -73,7 +73,7 @@ final class EncodePreviewJob implements ShouldQueue
             );
         }
 
-        if (!Cache::has($key)) {
+        if (! Cache::has($key)) {
             $count++;
             Cache::put($key, $count, now()->addMinutes(5));
 

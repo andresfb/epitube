@@ -5,10 +5,10 @@ declare(strict_types=1);
 $sharedTags = [];
 try {
     $rawData = env('CONTENT_SHARED_TAGS');
-    if (! blank($rawData)) {
+    if (filled($rawData)) {
         $sharedTags = (array) json_decode(base64_decode($rawData), false, 512, JSON_THROW_ON_ERROR);
     }
-} catch (JsonException $e) {
+} catch (JsonException) {
     $sharedTags = [];
 }
 

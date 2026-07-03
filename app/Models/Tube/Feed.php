@@ -147,7 +147,7 @@ final class Feed extends Model
         return [
             'active' => 'boolean',
             'viewed' => 'boolean',
-            'like_status' => 'int',
+            'like_status' => 'integer',
             'published' => 'boolean',
             'is_hd' => 'boolean',
             'featured' => 'boolean',

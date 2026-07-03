@@ -22,7 +22,7 @@ final class ExtractThumbnailsService extends BaseEncodeService
      */
     public function execute(int $mediaId): void
     {
-        Log::notice("Starting extracting thumbnails for Media Id: $mediaId");
+        Log::notice("Starting extracting thumbnails for Media Id: {$mediaId}");
 
         try {
             $this->prepare($mediaId);
@@ -35,7 +35,7 @@ final class ExtractThumbnailsService extends BaseEncodeService
         try {
             $this->generate($this->videoLibrary->getContent());
 
-            Log::notice("Finished extracting thumbnails for Media Id: $mediaId");
+            Log::notice("Finished extracting thumbnails for Media Id: {$mediaId}");
         } finally {
             $this->videoLibrary->deleteTempFiles();
             $this->deleteFlag($this->videoLibrary->getProcessingDisk());
@@ -90,9 +90,9 @@ final class ExtractThumbnailsService extends BaseEncodeService
                 $thumbnail,
             );
 
-            Log::notice("Generating $image");
+            Log::notice("Generating {$image}");
             Log::channel(Config::string('laravel-ffmpeg.log_channel'))
-                ->info("Generating $image with cmd: $cmd");
+                ->info("Generating {$image} with cmd: {$cmd}");
 
             $process = Process::fromShellCommandline($cmd)
                 ->enableOutput()
@@ -100,9 +100,9 @@ final class ExtractThumbnailsService extends BaseEncodeService
                 ->mustRun();
 
             $output = $process->getOutput();
-            if (! blank($output)) {
+            if (filled($output)) {
                 Log::channel(Config::string('laravel-ffmpeg.log_channel'))
-                    ->info("The command generated this output: $output");
+                    ->info("The command generated this output: {$output}");
             }
 
             if (! $process->isSuccessful()) {
@@ -110,7 +110,7 @@ final class ExtractThumbnailsService extends BaseEncodeService
             }
 
             if (! file_exists($thumbnail)) {
-                Log::error("Thumbnail $thumbnail not created");
+                Log::error("Thumbnail {$thumbnail} not created");
 
                 continue;
             }

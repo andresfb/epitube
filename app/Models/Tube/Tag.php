@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Tube;
 
 use App\Dtos\Tube\TagMenuItem;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
@@ -14,16 +15,28 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Spatie\Tags\Tag as SpatieTag;
 
+/**
+ * @property int $id
+ * @property string $slug
+ * @property string $name
+ * @property int $order_column
+ * @property string|null $type
+ * @property bool $active
+ * @property int $count
+ * @property-read CarbonImmutable|null $created_at
+ * @property-read CarbonImmutable|null $updated_at
+ */
 final class Tag extends SpatieTag
 {
     public static function getList(): array
     {
         return Cache::tags('tags')
             ->remember(
-                md5("TAG:LIST"),
+                md5('TAG:LIST'),
                 now()->addHours(5),
                 static function (): array {
                     return self::query()
+                        ->select('name', 'slug')
                         ->orderBy('order_column')
                         ->orderBy('name')
                         ->get()
@@ -37,7 +50,7 @@ final class Tag extends SpatieTag
     {
         return Cache::tags('tags')
             ->remember(
-                md5("TAG:CATEGORY:LIST:$categorySlug"),
+                md5("TAG:CATEGORY:LIST:{$categorySlug}"),
                 now()->addHours(5),
                 static function () use ($categorySlug): Collection {
                     return self::query()
@@ -63,25 +76,30 @@ final class Tag extends SpatieTag
 
     public static function getListWithCount(): Collection
     {
+        return self::getWithCount()
+            ->map(function (Tag $tag): array {
+                return [
+                    'name' => $tag->name,
+                    'slug' => $tag->slug,
+                    'count' => $tag->count,
+                ];
+            });
+    }
+
+    public static function getWithCount(): Collection
+    {
         return Cache::tags('tags')
             ->remember(
-                md5("TAG:LIST:COUNTED"),
+                md5('TAG:LIST:COUNTED'),
                 now()->addHour(),
                 static function (): Collection {
                     return self::query()
-                        ->select('tags.slug', 'tags.name', DB::raw('COUNT(taggables.tag_id) as count'))
+                        ->select('tags.id', 'tags.slug', 'tags.name', DB::raw('COUNT(taggables.tag_id) as count'))
                         ->leftJoin('taggables', 'tags.id', '=', 'taggables.tag_id')
                         ->where('taggables.taggable_type', Content::class)
                         ->groupBy('tags.id')
                         ->get()
-                        ->sortBy('name')
-                        ->map(function (Tag $tag) {
-                            return [
-                                'name' => $tag->name,
-                                'slug' => $tag->slug,
-                                'count' => $tag->count
-                            ];
-                        });
+                        ->sortBy('name');
                 });
     }
 
