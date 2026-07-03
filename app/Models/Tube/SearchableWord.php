@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Laravel\Scout\Searchable;
 
+/**
+ * @property int $id
+ * @property string $words
+ * @property string $hash
+ */
 final class SearchableWord extends Model
 {
     use Searchable;

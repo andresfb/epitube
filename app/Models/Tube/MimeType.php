@@ -7,6 +7,12 @@ namespace App\Models\Tube;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * @property int $id
+ * @property string $extension
+ * @property string $type
+ * @property bool $transcode
+ */
 final class MimeType extends Model
 {
     public $timestamps = false;

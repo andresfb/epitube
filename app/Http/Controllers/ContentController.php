@@ -13,7 +13,6 @@ use App\Models\Tube\Category;
 use App\Models\Tube\Tag;
 use App\Traits\ContentUpdatable;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 
 final class ContentController extends Controller
@@ -30,7 +29,7 @@ final class ContentController extends Controller
         return view('content.list', ['contents' => $contents]);
     }
 
-    public function edit(ContentGetAction $action, string $slug): JsonResponse|View
+    public function edit(ContentGetAction $action, string $slug): View
     {
         return view('content.edit-form', [
             'content' => $action->handle($slug),

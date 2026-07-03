@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Tube;
 
 use App\Dtos\Tube\TagMenuItem;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
@@ -14,6 +15,17 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Spatie\Tags\Tag as SpatieTag;
 
+/**
+ * @property int $id
+ * @property string $slug
+ * @property string $name
+ * @property int $order_column
+ * @property string|null $type
+ * @property bool $active
+ * @property int $count
+ * @property-read CarbonImmutable|null $created_at
+ * @property-read CarbonImmutable|null $updated_at
+ */
 final class Tag extends SpatieTag
 {
     public static function getList(): array
@@ -24,6 +36,7 @@ final class Tag extends SpatieTag
                 now()->addHours(5),
                 static function (): array {
                     return self::query()
+                        ->select('name', 'slug')
                         ->orderBy('order_column')
                         ->orderBy('name')
                         ->get()

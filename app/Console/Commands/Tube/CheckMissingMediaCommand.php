@@ -122,6 +122,9 @@ final class CheckMissingMediaCommand extends Command
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function processMissingMedia(Content $content, string $collectionName): void
     {
         $this->warn("Missing {$collectionName} Collection");
@@ -155,6 +158,7 @@ final class CheckMissingMediaCommand extends Command
             MediaNamesLibrary::previews() => CreatePreviewsJob::dispatch($media->id),
             MediaNamesLibrary::thumbnails() => ExtractThumbnailsJob::dispatch($media->id),
             MediaNamesLibrary::downscaled() => GenerateDownscalesJob::dispatch($media->id),
+            default => throw new Exception("Unknown collection name: {$collectionName}"),
         };
 
         $this->line("Dispatched job to create {$collectionName} files");

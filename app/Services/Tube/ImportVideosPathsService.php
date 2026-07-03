@@ -28,7 +28,7 @@ final class ImportVideosPathsService
 
     private int $scanned = 0;
 
-    public function __construct(private readonly ImportVideoService $videoService)
+    public function __construct()
     {
         $this->maxFiles = (int) floor(Config::integer('content.max_import_videos') / 2);
     }

@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Config;
  * @property CarbonInterface|null $deleted_at
  * @property CarbonInterface|null $created_at
  * @property CarbonInterface|null $updated_at
+ * @property Video $parent
  */
 final class SelectedVideo extends Model implements DownloadableVideoInterface
 {
