@@ -39,7 +39,7 @@ final class Category extends Model
 
     public static function getId(string $slug): int
     {
-        return Cache::tags('categories')
+        $item = Cache::tags('categories')
             ->remember(
                 md5(sprintf('%s:%s:%s', self::class, __FUNCTION__, $slug)),
                 now()->addDay(),
@@ -49,6 +49,12 @@ final class Category extends Model
                         ->firstOrFail()
                         ->id;
                 });
+
+        if (is_string($item)) {
+            return (int) $item;
+        }
+
+        return $item;
     }
 
     public static function getName(string $slug): string

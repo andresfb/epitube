@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View as ConcreteView;
 
 final class AppServiceProvider extends ServiceProvider
@@ -36,7 +37,15 @@ final class AppServiceProvider extends ServiceProvider
         $this->configureModels();
         $this->configureVite();
 
-        URL::forceScheme('http');
+        if ($this->app->isLocal()) {
+            URL::forceScheme('http');
+        } else {
+            URL::forceScheme('https');
+        }
+
+        Gate::define('viewApiDocs', static function (): bool {
+            return true;
+        });
 
         View::composer('components.navbar', static function (ConcreteView $view) {
             $slug = Session::get(
