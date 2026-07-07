@@ -33,7 +33,7 @@ final class FeedSelectsService
                         ->where('category_id', Category::getId($cateSlug))
                         ->where('active', true)
                         ->orderByDesc('published')
-                        ->orderBy('order')
+                        ->latest('updated_at')
                         ->limit(Config::integer('feed.max_feed_limit'));
 
                     match ($select) {
