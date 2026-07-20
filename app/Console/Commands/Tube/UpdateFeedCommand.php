@@ -39,14 +39,14 @@ final class UpdateFeedCommand extends Command
 
             $count = text(
                 label: 'How Many',
-                default: Config::integer('content.max_import_videos') * 2,
+                default: (string) Config::integer('content.max_import_videos'),
                 required: true,
                 validate: 'integer'
             );
 
             $this->newLine();
             $service->setToScreen(true)
-                ->execute($fromDate, $count);
+                ->execute($fromDate, (int) $count);
         } catch (Throwable $e) {
             $this->newLine();
             error($e->getMessage());

@@ -14,12 +14,8 @@ final class SearchableWordsService
 {
     use Screenable;
 
-    private readonly array $bandedWords;
-
-    public function __construct()
-    {
-        $this->bandedWords = $this->getRemovableWords();
-    }
+    /** @var list<string>|null */
+    private ?array $bandedWords = null;
 
     public function execute(Content $content): void
     {
@@ -56,6 +52,8 @@ final class SearchableWordsService
             '  ',
         ];
 
+        $bandedWords = $this->bandedWords();
+
         $list = collect();
         foreach ($items as $item) {
             $phrase = str($item)
@@ -71,7 +69,7 @@ final class SearchableWordsService
                 ->map(fn (string $w): string => trim($w))
                 ->reject(fn (string $w): bool => $w === ''
                     || mb_strlen($w) === 1
-                    || in_array($w, $this->bandedWords, true)
+                    || in_array($w, $bandedWords, true)
                 );
 
             $pairs = $words->sliding()
@@ -113,6 +111,17 @@ final class SearchableWordsService
             ->all();
     }
 
+    /**
+     * @return list<string>
+     */
+    private function bandedWords(): array
+    {
+        return $this->bandedWords ??= $this->getRemovableWords();
+    }
+
+    /**
+     * @return list<string>
+     */
     private function getRemovableWords(): array
     {
         return collect(array_unique(array_merge(
@@ -120,6 +129,7 @@ final class SearchableWordsService
             Config::array('constants.removable_words')
         )))
             ->sort()
-            ->toArray();
+            ->values()
+            ->all();
     }
 }

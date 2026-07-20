@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * @property int $id
@@ -86,6 +88,13 @@ final class Category extends Model
 
     public static function getSlugs(): array
     {
+        if (! Schema::hasTable((new self)->getTable())) {
+            return [
+                Config::string('constants.main_category'),
+                Config::string('constants.alt_category'),
+            ];
+        }
+
         return Cache::tags('categories')
             ->remember(
                 md5(self::class.__FUNCTION__),
