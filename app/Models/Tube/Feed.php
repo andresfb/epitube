@@ -52,10 +52,11 @@ final class Feed extends Model
 
     public static function generate(Content $content): void
     {
-        self::query()->updateOrCreate(
-            ['id' => $content->id],
-            ContentItemFactory::withRelated($content)->toArray()
-        );
+        self::query()
+            ->updateOrCreate(
+                ['id' => $content->id],
+                ContentItemFactory::withRelated($content)->toArray()
+            );
     }
 
     public static function activateFeed(Content $content, int $index = 1): void

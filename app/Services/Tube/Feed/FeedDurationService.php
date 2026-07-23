@@ -38,7 +38,7 @@ final class FeedDurationService
                         ->whereBetween('length', $durations)
                         ->orderBy('length')
                         ->orderByDesc('published')
-                        ->orderBy('order')
+                        ->orderBy('added_at')
                         ->limit(Config::integer('feed.max_feed_limit'))
                         ->paginate($perPage);
                 });

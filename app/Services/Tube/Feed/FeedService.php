@@ -109,6 +109,7 @@ final class FeedService
 
                     return Feed::query()
                         ->whereIn('slug', $contents)
+                        ->latest('added_at')
                         ->limit(Config::integer('feed.max_feed_limit'))
                         ->paginate($perPage);
                 });
