@@ -8,6 +8,8 @@ use App\Dtos\Tube\VideoSearchItem;
 use App\Models\Tube\Category;
 use App\Models\Tube\Feed;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Meilisearch\Client;
@@ -21,18 +23,32 @@ final class VideoSearchService
             Config::string('constants.main_category')
         );
 
-        $client = new Client(
-            config('scout.meilisearch.host'),
-            config('scout.meilisearch.key')
+        $cacheKey = sprintf(
+            "SEARCH:TERM%s:CATE:%s:LIKED:%s:VIEWED:%s",
+            $item->term,
+            $cateSlug,
+            $item->liked,
+            $item->viewed
         );
 
-        $index = $client->index((new Feed)->searchableAs());
+        $ids = Cache::tags('feed')
+            ->remember(
+                md5($cacheKey),
+                now()->addHour(),
+                function () use ($item): Collection {
+                    $client = new Client(
+                        config('scout.meilisearch.host'),
+                        config('scout.meilisearch.key')
+                    );
 
-        $ids = collect(
-            $index->search($item->term, [
-                'limit' => Config::integer('feed.per_page') * 50,
-            ])->getHits()
-        );
+                    $index = $client->index((new Feed)->searchableAs());
+
+                    return collect(
+                        $index->search($item->term, [
+                            'limit' => Config::integer('feed.per_page') * 50,
+                        ])->getHits()
+                    );
+                });
 
         return Feed::query()
             ->whereIn('id', $ids->pluck('id')->all())
@@ -43,6 +59,7 @@ final class VideoSearchService
             ->orderByDesc('added_at')
             ->paginate(
                 Config::integer('feed.per_page')
-            );
+            )
+            ->withQueryString();
     }
 }

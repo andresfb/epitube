@@ -24,7 +24,7 @@ final class VideoSearchController extends Controller
         }
 
         return view(
-            'home',
+            'search.list',
             [
                 'feed' => $feed->feed,
                 'links' => $feed->links,
