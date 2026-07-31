@@ -30,6 +30,7 @@ use MongoDB\Laravel\Eloquent\Model;
  * @property int $order
  * @property int $view_count
  * @property bool $featured
+ * @property bool $watch_later
  * @property string $service_url
  * @property array $tags
  * @property array $tag_slugs
@@ -152,6 +153,7 @@ final class Feed extends Model
             'published' => 'boolean',
             'is_hd' => 'boolean',
             'featured' => 'boolean',
+            'watch_later' => 'boolean',
             'view_count' => 'integer',
             'order' => 'integer',
             'tags' => 'array',

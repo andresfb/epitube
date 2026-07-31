@@ -12,6 +12,7 @@ enum Selects: string
     case WATCHED = 'watched';
     case LIKED = 'liked';
     case DISLIKED = 'disliked';
+    case WATCH_LATER = 'watch-later';
 
     public static function title(self $select): string
     {
@@ -19,6 +20,7 @@ enum Selects: string
             self::WATCHED => 'Watched',
             self::LIKED => 'Liked',
             self::DISLIKED => 'Disliked',
+            self::WATCH_LATER => 'Watch Later',
             default => Config::string('content.featured_title'),
         };
     }
@@ -29,6 +31,7 @@ enum Selects: string
             self::WATCHED => '👀',
             self::LIKED => '❤️',
             self::DISLIKED => '👎',
+            self::WATCH_LATER => '⏱️',
             default => Config::string('content.featured_icon'),
         };
     }

@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Actions\Frontend\ContentChangeStatusAction;
 use App\Actions\Frontend\ContentFeatureAction;
+use App\Actions\Frontend\ContentWatchLaterAction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -34,6 +35,33 @@ final class VideoStatusController extends Controller
             $action->handle($slug);
 
             return response()->noContent();
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+
+            return response()->json([
+                'data' => [
+                    'status' => 500,
+                    'message' => $e->getMessage(),
+                ],
+            ], 500);
+        }
+    }
+
+    /**
+     * Toggle watch later
+     */
+    public function watchLater(ContentWatchLaterAction $action, string $slug): JsonResponse
+    {
+        try {
+            $watchLater = $action->handle($slug);
+
+            return response()->json([
+                'data' => [
+                    'status' => 200,
+                    'watch_later' => $watchLater,
+                    'message' => 'success',
+                ],
+            ]);
         } catch (Throwable $e) {
             Log::error($e->getMessage());
 

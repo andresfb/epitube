@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -46,6 +47,7 @@ use Spatie\Tags\HasTags;
  * @property CarbonImmutable $updated_at
  * @property-read Category $category
  * @property-read Collection<int, View> $views
+ * @property-read WatchLater|null $watchLater
  * @property-read Collection<int, Media> $media
  * @property-read Collection<int, Tag> $tags
  * @property-read Collection<int, Content> $related
@@ -98,6 +100,11 @@ final class Content extends Model implements HasMedia
     public function views(): HasMany
     {
         return $this->hasMany(View::class);
+    }
+
+    public function watchLater(): HasOne
+    {
+        return $this->hasOne(WatchLater::class);
     }
 
     public function related(): BelongsToMany
@@ -165,6 +172,7 @@ final class Content extends Model implements HasMedia
         $content['category'] = $this->category->name;
         $content['viewed'] = $this->viewed ?? false;
         $content['view_count'] = $this->view_count ?? 0;
+        $content['watch_later'] = $this->watchLater()->exists();
 
         $content['tags'] = $this->tags->pluck('name')->toArray();
         $content['tag_slugs'] = $this->tags->pluck('slug')->toArray();
