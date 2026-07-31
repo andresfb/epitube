@@ -40,6 +40,7 @@ final class FeedSelectsService
                         Selects::FEATURED => $query->where('featured', true),
                         Selects::LIKED => $query->where('like_status', 1),
                         Selects::DISLIKED => $query->where('like_status', -1),
+                        Selects::WATCH_LATER => $query->where('watch_later', true),
                         default => $query->where('viewed', true),
                     };
 

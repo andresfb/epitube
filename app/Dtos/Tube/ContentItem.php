@@ -42,5 +42,6 @@ final class ContentItem extends Data
         public array $previews = [],
         public array $thumbnails = [],
         public array $related = [],
+        public bool $watch_later = false,
     ) {}
 }

@@ -11,35 +11,41 @@ use App\Models\Tube\WatchLater;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-final readonly class ContentViewedAction
+final readonly class ContentWatchLaterAction
 {
     public function __construct(private FeedMirror $feedMirror) {}
 
     /**
      * @throws Throwable
      */
-    public function handle(string $slug): void
+    public function handle(string $slug): bool
     {
-        DB::transaction(function () use ($slug): void {
+        return DB::transaction(function () use ($slug): bool {
             $content = Content::query()
                 ->where('slug', $slug)
                 ->firstOrFail();
 
-            $content->viewed = true;
-            $content->view_count++;
-            $content->updateQuietly();
-
-            WatchLater::query()
+            $existing = WatchLater::query()
                 ->where('content_id', $content->id)
-                ->delete();
+                ->first();
+
+            if ($existing !== null) {
+                $existing->delete();
+                $watchLater = false;
+            } else {
+                WatchLater::query()->create([
+                    'content_id' => $content->id,
+                ]);
+                $watchLater = true;
+            }
 
             $this->feedMirror->updateBySlug($content->slug, [
-                'viewed' => true,
-                'view_count' => $content->view_count,
-                'watch_later' => false,
+                'watch_later' => $watchLater,
             ]);
 
             CacheLibrary::clear(['feed']);
+
+            return $watchLater;
         });
     }
 }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Contracts\FeedMirror;
 use App\Models\Tube\Category;
 use App\Models\Tube\Tag;
+use App\Services\Tube\Feed\FeedMirrorService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
@@ -26,6 +28,7 @@ final class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind('category', fn ($app): Collection => collect());
+        $this->app->bind(FeedMirror::class, FeedMirrorService::class);
     }
 
     /**

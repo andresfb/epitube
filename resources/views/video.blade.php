@@ -166,7 +166,7 @@
             @endif
 
                 {{-- Action Buttons --}}
-                <div class="flex gap-2 pt-4" x-data="{ likeStatus: {{ $video->like_status }} }">
+                <div class="flex gap-2 pt-4" x-data="{ likeStatus: {{ $video->like_status }}, watchLater: {{ $video->watch_later ? 'true' : 'false' }} }">
                     <a id="like"
                        href="#"
                        hx-post="{{ route('videos.like', $video->slug) }}"
@@ -286,6 +286,39 @@
                        ])
                        title="Feature">
                         {{ config('content.featured_icon') }}
+                    </a>
+
+                    <a id="watch-later"
+                       href="#"
+                       hx-post="{{ route('videos.watch-later', $video->slug) }}"
+                       hx-headers='{"X-CSRF-TOKEN": "{{ csrf_token() }}"}'
+                       hx-swap="none"
+                       hx-on::after-request="handleWatchLaterResponse(event)"
+                       @class([
+                           'inline-flex',
+                           'items-center',
+                           'justify-center',
+                           'w-10',
+                           'h-10',
+                           'rounded-lg',
+                           'bg-gray-100',
+                           'hover:bg-gray-200',
+                           'dark:bg-gray-800',
+                           'dark:hover:bg-gray-700',
+                           'text-gray-700',
+                           'dark:text-gray-300',
+                           'transition-colors',
+                       ])
+                       title="Watch Later">
+                        <svg x-show="watchLater" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/>
+                        </svg>
+                        <svg x-show="!watchLater" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
                     </a>
 
                     <a id="disable"
@@ -476,6 +509,18 @@
             const container = event.target.closest('[x-data]');
             const alpineData = Alpine.$data(container);
             alpineData.likeStatus = response.data.like_status;
+        } else if (event.detail.xhr.status === 500) {
+            const response = JSON.parse(event.detail.xhr.response);
+            alert('Error: ' + response.data.message);
+        }
+    }
+
+    function handleWatchLaterResponse(event) {
+        if (event.detail.successful) {
+            const response = JSON.parse(event.detail.xhr.response);
+            const container = event.target.closest('[x-data]');
+            const alpineData = Alpine.$data(container);
+            alpineData.watchLater = response.data.watch_later;
         } else if (event.detail.xhr.status === 500) {
             const response = JSON.parse(event.detail.xhr.response);
             alert('Error: ' + response.data.message);

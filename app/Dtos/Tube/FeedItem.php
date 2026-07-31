@@ -28,5 +28,6 @@ final class FeedItem extends Data
         public array $videos = [],
         public array $previews = [],
         public array $related = [],
+        public bool $watch_later = false,
     ) {}
 }

@@ -58,6 +58,9 @@ Route::controller(VideoStatusController::class)->group(function () {
     Route::put('/videos/{slug}/feature', 'update')
         ->name('videos.feature');
 
+    Route::post('/videos/{slug}/watch-later', 'watchLater')
+        ->name('videos.watch-later');
+
     Route::delete('/videos/{slug}/dislike', 'delete')
         ->name('videos.dislike');
 });

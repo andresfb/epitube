@@ -75,6 +75,7 @@ final class FeedItemFactory
         $thumb = collect($feed->thumbnails)->random();
         $feedArray['thumbnail'] = $thumb['srcset'];
         $feedArray['added_at'] = $feed->added_at->diffForHumans();
+        $feedArray['watch_later'] = (bool) ($feedArray['watch_later'] ?? false);
 
         return $feedArray;
     }

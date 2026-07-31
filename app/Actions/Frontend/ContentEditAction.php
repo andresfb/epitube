@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Actions\Frontend;
 
+use App\Contracts\FeedMirror;
 use App\Dtos\Tube\ContentEditItem;
 use App\Dtos\Tube\ContentItem;
 use App\Factories\ContentItemFactory;
 use App\Jobs\Tube\SearchableWordsFromContentJob;
 use App\Libraries\Tube\CacheLibrary;
 use App\Models\Tube\Content;
-use App\Models\Tube\Feed;
 use Illuminate\Support\Facades\DB;
 use JsonException;
 use Throwable;
 
 final readonly class ContentEditAction
 {
+    public function __construct(private FeedMirror $feedMirror) {}
+
     /**
      * @throws Throwable
      */
@@ -26,6 +28,7 @@ final readonly class ContentEditAction
             $tags = $this->parseTags($item->tags);
 
             $content = Content::query()
+                ->with('tags')
                 ->where('slug', $item->slug)
                 ->firstOrFail();
 
@@ -33,18 +36,20 @@ final readonly class ContentEditAction
             $content->category_id = $item->category_id;
             $content->active = $item->active;
             $content->updateQuietly();
+
+            $content = $content->fresh();
+            $content->syncTags($tags);
             $content = $content->fresh();
 
-            $content->syncTags($tags);
-
-            Feed::query()
-                ->where('slug', $item->slug)
-                ->update([
-                    'title' => $item->title,
-                    'category_id' => $item->category_id,
-                    'category' => $content->category->name,
-                    'active' => $item->active,
-                ]);
+            $this->feedMirror->updateBySlug($content->slug, [
+                'title' => $item->title,
+                'category_id' => $item->category_id,
+                'category' => $content->category->name,
+                'active' => $item->active,
+                'tags' => $content->tags->pluck('name')->toArray(),
+                'tag_slugs' => $content->tags->pluck('slug')->toArray(),
+                'tag_array' => $content->tags->pluck('name', 'slug')->toArray(),
+            ]);
 
             CacheLibrary::clear();
 
