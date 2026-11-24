@@ -22,6 +22,10 @@ _Avoid_: Teaser, thumbnail, trailer
 A top-level partition of the library; every Feed is scoped to exactly one Category.
 _Avoid_: Section, library
 
+**Current Category**:
+The Category a client is browsing right now. Each client remembers its own; it starts as the main Category.
+_Avoid_: Active category, selected category
+
 **Tag**:
 A label on Content, browsable and searchable on its own.
 _Avoid_: Keyword, label
